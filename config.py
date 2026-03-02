@@ -32,17 +32,34 @@ IMG_EXTS   = {".jpg"}     # Extensiones de imagen aceptadas
 # ============================================================
 # DATALOADER (PyTorch)
 # ============================================================
-# Número de procesos paralelos para cargar imágenes.
-# 0 = carga en el proceso principal (más seguro en Windows).
-# En Linux/Mac puedes subir a 4 u 8 si tienes suficientes cores.
+# Con precarga en RAM, los workers no son necesarios.
 NUM_WORKERS = int(os.getenv("NUM_WORKERS", "0"))
 
 # pin_memory acelera la transferencia CPU→GPU. Activar solo con GPU.
 PIN_MEMORY  = (os.getenv("PIN_MEMORY", "1") == "1")
 
-# persistent_workers mantiene los procesos de carga vivos entre epochs (más rápido).
+# persistent_workers mantiene los procesos de carga vivos entre epochs.
 # Solo tiene efecto si NUM_WORKERS > 0.
 PERSISTENT_WORKERS = NUM_WORKERS > 0
+
+# ============================================================
+# ACELERACIÓN GPU
+# ============================================================
+
+# Precisión mixta float16/float32 (duplica throughput en GPU moderna).
+USE_AMP = (os.getenv("USE_AMP", "1") == "1")
+
+# torch.compile: no disponible en Windows (requiere Triton).
+# Activar solo en Linux/Mac.
+USE_COMPILE = (os.getenv("USE_COMPILE", "0") == "1")
+
+# Gradient clipping: evita explosión de gradientes.
+GRAD_CLIP = float(os.getenv("GRAD_CLIP", "1.0"))
+
+# ============================================================
+# MODELOS GUARDADOS
+# ============================================================
+MODELS_DIR = EXPORT_DIR / "models"
 
 # ============================================================
 # ENTRENAMIENTO

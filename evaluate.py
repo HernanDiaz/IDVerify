@@ -85,9 +85,9 @@ def eval_model(
 
             out = model(imgs)
 
-            # Clasificación
+            # Clasificación — aplicar sigmoid a logits
             yt = labels.cpu().numpy().reshape(-1).astype(int)
-            yp = out["cls"].cpu().numpy().reshape(-1).astype(float)
+            yp = torch.sigmoid(out["cls"]).cpu().numpy().reshape(-1).astype(float)
             y_true_cls.append(yt)
             y_prob_cls.append(yp)
 

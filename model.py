@@ -15,13 +15,12 @@ import torch.nn.functional as F
 
 def dice_loss(y_pred: torch.Tensor, y_true: torch.Tensor, smooth: float = 1e-6) -> torch.Tensor:
     """
-    Dice Loss por imagen. Devuelve un tensor escalar (media del batch).
-    Diseñada para manejar el desbalanceo de clases a nivel de pixel.
+    Dice Loss por imagen sobre probabilidades (aplica sigmoid internamente).
+    Devuelve un tensor escalar (media del batch).
     """
-    y_true = y_true.float()
-    y_pred = y_pred.float()
+    y_true  = y_true.float()
+    y_pred  = torch.sigmoid(y_pred.float())  # logits → probabilidades
 
-    # Aplanar dimensiones espaciales: (B, 1, H, W) → (B, H*W)
     y_true_f = y_true.view(y_true.size(0), -1)
     y_pred_f = y_pred.view(y_pred.size(0), -1)
 
@@ -34,10 +33,10 @@ def dice_loss(y_pred: torch.Tensor, y_true: torch.Tensor, smooth: float = 1e-6) 
 
 def bce_dice_loss(y_pred: torch.Tensor, y_true: torch.Tensor) -> torch.Tensor:
     """
-    Pérdida combinada para segmentación:
-      BCE(y_pred, y_true) + DiceLoss(y_pred, y_true)
+    Pérdida combinada para segmentación (trabaja con logits, compatible con AMP):
+      BCEWithLogits(y_pred, y_true) + DiceLoss(sigmoid(y_pred), y_true)
     """
-    bce = F.binary_cross_entropy(y_pred, y_true.float())
+    bce = F.binary_cross_entropy_with_logits(y_pred, y_true.float())
     return bce + dice_loss(y_pred, y_true)
 
 
@@ -208,7 +207,7 @@ class DocVerifyModel(nn.Module):
 
         # Clasificación
         c = self.cls_gap(bottleneck).flatten(1)
-        cls_out = torch.sigmoid(self.cls_head(c))  # (B, 1)
+        cls_out = self.cls_head(c)  # logits (B, 1) — sigmoid aplicado en la pérdida
 
         # Segmentación
         m = self.mask_proj(bottleneck)
@@ -220,7 +219,7 @@ class DocVerifyModel(nn.Module):
 
         # Asegurar que la salida tiene el mismo tamaño que la entrada
         m = F.interpolate(m, size=(H, W), mode="bilinear", align_corners=False)
-        mask_out = torch.sigmoid(self.mask_out(m))  # (B, 1, H, W)
+        mask_out = self.mask_out(m)  # logits (B, 1, H, W) — sigmoid aplicado en la pérdida
 
         return {"cls": cls_out, "mask": mask_out}
 

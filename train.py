@@ -15,11 +15,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
+import torch.nn as nn
+from sklearn.metrics import average_precision_score
 from sklearn.model_selection import GroupShuffleSplit
+from tqdm import tqdm
 
 import config
 import evaluate as ev
-from dataset import make_dataloader
+from dataset import VRAMCache, make_dataloader
 from model import bce_dice_loss, build_model, build_optimizer
 
 # ============================================================
@@ -27,7 +30,6 @@ from model import bce_dice_loss, build_model, build_optimizer
 # ============================================================
 
 def _set_seeds(seed: int):
-    """Fija todas las semillas de aleatoriedad para reproducibilidad."""
     os.environ["PYTHONHASHSEED"] = str(seed)
     random.seed(seed)
     np.random.seed(seed)
@@ -37,14 +39,25 @@ def _set_seeds(seed: int):
 
 
 def _append_row_csv(path: Path, row: dict):
-    """Añade una fila a un CSV de forma incremental."""
     df_row = pd.DataFrame([row])
     df_row.to_csv(path, mode="a", header=not path.exists(), index=False)
 
 
 def get_device() -> torch.device:
-    """Devuelve el device disponible (CUDA si hay GPU, si no CPU)."""
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def _maybe_compile(model: nn.Module) -> nn.Module:
+    """Aplica torch.compile si está activado y disponible."""
+    if not config.USE_COMPILE:
+        return model
+    try:
+        compiled = torch.compile(model, mode="reduce-overhead")
+        print("  [INFO] torch.compile activado")
+        return compiled
+    except Exception as e:
+        print(f"  [WARN] torch.compile no disponible: {e}")
+        return model
 
 
 # ============================================================
@@ -101,7 +114,6 @@ def _get_pareto_trials(study: optuna.Study) -> list:
     dirs = getattr(study, "directions", None)
     cand = [t for t in study.trials
             if t.state == optuna.trial.TrialState.COMPLETE and t.values is not None]
-
     if dirs is None:
         return cand
 
@@ -133,74 +145,93 @@ def _select_best_trial(study: optuna.Study) -> tuple:
 
 
 # ============================================================
-# LOOP DE ENTRENAMIENTO (una epoch)
+# LOOP DE ENTRENAMIENTO CON AMP + PROGRESS BAR
 # ============================================================
 
 def _train_one_epoch(
-    model: torch.nn.Module,
-    loader: torch.utils.data.DataLoader,
-    optimizer: torch.optim.Optimizer,
-    device: torch.device,
-    loss_w_mask: float,
+    model:       nn.Module,
+    loader:      torch.utils.data.DataLoader,
+    optimizer:   torch.optim.Optimizer,
+    scaler:      torch.cuda.amp.GradScaler,
+    device:      torch.device,
+    lw_cls:      float,
+    lw_mask:     float,
+    epoch:       int,
+    max_epochs:  int,
+    desc:        str = "",
 ) -> float:
-    """Entrena el modelo durante una epoch. Devuelve la pérdida media."""
+    """Entrena una epoch con AMP, gradient clipping y barra de progreso."""
     model.train()
+    bce_fn     = nn.BCEWithLogitsLoss()
     total_loss = 0.0
-    bce_loss_fn = torch.nn.BCELoss()
+    n_batches  = len(loader)
 
-    for imgs, labels, masks in loader:
-        imgs   = imgs.to(device)
-        labels = labels.to(device)
-        masks  = masks.to(device)
+    pbar = tqdm(loader, desc=f"  Epoch {epoch}/{max_epochs} {desc}",
+                leave=False, unit="batch")
 
-        optimizer.zero_grad()
-        out = model(imgs)
+    for imgs, labels, masks in pbar:
+        # Si los datos NO están ya en GPU, moverlos ahora
+        if imgs.device != device:
+            imgs   = imgs.to(device,   non_blocking=True)
+            labels = labels.to(device, non_blocking=True)
+            masks  = masks.to(device,  non_blocking=True)
 
-        loss_cls  = bce_loss_fn(out["cls"], labels)
-        loss_mask = bce_dice_loss(out["mask"], masks)
-        loss      = loss_cls + loss_w_mask * loss_mask
+        optimizer.zero_grad(set_to_none=True)
 
-        loss.backward()
-        optimizer.step()
+        with torch.autocast(device_type=device.type, enabled=config.USE_AMP):
+            out       = model(imgs)
+            loss_cls  = bce_fn(out["cls"], labels)
+            loss_mask = bce_dice_loss(out["mask"], masks)
+            loss      = lw_cls * loss_cls + lw_mask * loss_mask
+
+        scaler.scale(loss).backward()
+
+        # Gradient clipping
+        if config.GRAD_CLIP > 0:
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), config.GRAD_CLIP)
+
+        scaler.step(optimizer)
+        scaler.update()
 
         total_loss += loss.item()
+        pbar.set_postfix(loss=f"{loss.item():.4f}")
 
-    return total_loss / max(len(loader), 1)
+    return total_loss / max(n_batches, 1)
 
 
 def _eval_prauc_dice(
-    model: torch.nn.Module,
+    model:  nn.Module,
     loader: torch.utils.data.DataLoader,
     device: torch.device,
 ) -> tuple[float, float]:
     """Evaluación rápida para HPO: devuelve (PR-AUC, Dice global)."""
-    from sklearn.metrics import average_precision_score
-
     model.eval()
     y_true_cls, y_prob_cls = [], []
     TP = FP = FN = 0
 
     with torch.no_grad():
         for imgs, labels, masks in loader:
-            imgs  = imgs.to(device)
-            masks = masks.to(device)
-            out   = model(imgs)
+            if imgs.device != device:
+                imgs  = imgs.to(device,  non_blocking=True)
+                masks = masks.to(device, non_blocking=True)
 
-            y_true_cls.append(labels.numpy().reshape(-1).astype(int))
-            y_prob_cls.append(out["cls"].cpu().numpy().reshape(-1).astype(float))
+            with torch.autocast(device_type=device.type, enabled=config.USE_AMP):
+                out = model(imgs)
+
+            y_true_cls.append(labels.cpu().numpy().reshape(-1).astype(int))
+            y_prob_cls.append(out["cls"].float().cpu().numpy().reshape(-1).astype(float))
 
             yt_m = (masks > 0.5)
-            yp_m = (out["mask"] > config.THR_MASK)
+            yp_m = (out["mask"].float() > config.THR_MASK)
             TP += int(( yt_m &  yp_m).sum().item())
             FP += int((~yt_m &  yp_m).sum().item())
             FN += int(( yt_m & ~yp_m).sum().item())
 
     y_true = np.concatenate(y_true_cls)
     y_prob = np.concatenate(y_prob_cls)
-
     pr_auc = float(average_precision_score(y_true, y_prob)) if y_true.size else 0.0
     dice   = float((2 * TP + 1e-6) / (2 * TP + FP + FN + 1e-6))
-
     return pr_auc, dice
 
 
@@ -208,7 +239,12 @@ def _eval_prauc_dice(
 # OBJETIVO OPTUNA (inner CV)
 # ============================================================
 
-def _make_inner_objective(df_outer_train: pd.DataFrame, outer_fold_id: int, device: torch.device):
+def _make_inner_objective(
+    df_outer_train: pd.DataFrame,
+    outer_fold_id: int,
+    device: torch.device,
+    cache: VRAMCache,          # ← cache ya cargada en VRAM
+):
     splitter = _make_sgkf(config.N_INNER, seed=config.SEED_BASE + 100 + outer_fold_id)
     y = df_outer_train["label"].values
     g = df_outer_train["stem"].values
@@ -237,18 +273,21 @@ def _make_inner_objective(df_outer_train: pd.DataFrame, outer_fold_id: int, devi
                 seed_fold = config.SEED_BASE + 1000 * outer_fold_id + 10 * inner_id
                 _set_seeds(seed_fold)
 
-                df_tr = df_outer_train.iloc[tr_idx].reset_index(drop=True)
-                df_va = df_outer_train.iloc[va_idx].reset_index(drop=True)
+                # Slices instantáneos sobre la cache en VRAM — sin IO
+                loader_tr = cache.make_loader(tr_idx, training=True,  seed=seed_fold)
+                loader_va = cache.make_loader(va_idx, training=False, seed=seed_fold)
 
-                loader_tr = make_dataloader(df_tr, training=True,  seed=seed_fold)
-                loader_va = make_dataloader(df_va, training=False, seed=seed_fold)
-
-                model     = build_model(params, device)
+                model     = _maybe_compile(build_model(params, device))
                 optimizer = build_optimizer(model, params)
+                scaler    = torch.amp.GradScaler("cuda", enabled=config.USE_AMP and device.type == "cuda")
 
-                for _ in range(config.MAX_EPOCHS_TRIAL):
-                    _train_one_epoch(model, loader_tr, optimizer, device,
-                                     float(params["loss_w_mask"]))
+                for epoch in range(1, config.MAX_EPOCHS_TRIAL + 1):
+                    _train_one_epoch(
+                        model, loader_tr, optimizer, scaler, device,
+                        lw_cls=1.0, lw_mask=float(params["loss_w_mask"]),
+                        epoch=epoch, max_epochs=config.MAX_EPOCHS_TRIAL,
+                        desc=f"[trial={trial.number} inner={inner_id}]",
+                    )
 
                 pr_auc, dice = _eval_prauc_dice(model, loader_va, device)
                 fold_metrics.append({"prauc": pr_auc, "dice": dice})
@@ -291,20 +330,19 @@ def _make_inner_objective(df_outer_train: pd.DataFrame, outer_fold_id: int, devi
 # ============================================================
 
 def _train_with_early_stopping(
-    model: torch.nn.Module,
-    optimizer: torch.optim.Optimizer,
-    loader_tr: torch.utils.data.DataLoader,
-    loader_va: torch.utils.data.DataLoader,
-    device: torch.device,
-    params: dict,
+    model:      nn.Module,
+    optimizer:  torch.optim.Optimizer,
+    scaler:     torch.cuda.amp.GradScaler,
+    loader_tr:  torch.utils.data.DataLoader,
+    loader_va:  torch.utils.data.DataLoader,
+    device:     torch.device,
+    params:     dict,
     max_epochs: int,
-    patience: int = 8,
-    variant: str = "multitask",
-) -> torch.nn.Module:
-    """
-    Entrena el modelo con early stopping basado en distancia al punto ideal (1,1).
-    Devuelve el modelo con los mejores pesos.
-    """
+    patience:   int = 8,
+    variant:    str = "multitask",
+    desc:       str = "",
+) -> nn.Module:
+    """Entrena con early stopping, AMP y barra de progreso por epoch."""
     best_dist  = float("inf")
     best_state = None
     patience_counter = 0
@@ -313,7 +351,6 @@ def _train_with_early_stopping(
         optimizer, mode="min", factor=0.5, patience=3, min_lr=1e-6
     )
 
-    # Peso de máscara según variante
     lw_mask = {
         "multitask":         float(params.get("loss_w_mask", 1.0)),
         "cls_only":          0.0,
@@ -321,28 +358,18 @@ def _train_with_early_stopping(
         "unweighted_losses": 1.0,
     }.get(variant, float(params.get("loss_w_mask", 1.0)))
 
-    # Peso de clasificación según variante
     lw_cls = 0.0 if variant == "seg_only" else 1.0
 
-    bce_fn = torch.nn.BCELoss()
+    outer_pbar = tqdm(range(1, max_epochs + 1),
+                      desc=f"  Entrenando {desc}", unit="epoch", leave=True)
 
-    for epoch in range(max_epochs):
-        # Train
-        model.train()
-        for imgs, labels, masks in loader_tr:
-            imgs   = imgs.to(device)
-            labels = labels.to(device)
-            masks  = masks.to(device)
+    for epoch in outer_pbar:
+        _train_one_epoch(
+            model, loader_tr, optimizer, scaler, device,
+            lw_cls=lw_cls, lw_mask=lw_mask,
+            epoch=epoch, max_epochs=max_epochs, desc=desc,
+        )
 
-            optimizer.zero_grad()
-            out = model(imgs)
-
-            loss = (lw_cls  * bce_fn(out["cls"], labels) +
-                    lw_mask * bce_dice_loss(out["mask"], masks))
-            loss.backward()
-            optimizer.step()
-
-        # Validación
         pr_auc, dice = _eval_prauc_dice(model, loader_va, device)
 
         if variant == "cls_only":
@@ -354,6 +381,14 @@ def _train_with_early_stopping(
 
         scheduler.step(monitor)
 
+        outer_pbar.set_postfix(
+            pr_auc=f"{pr_auc:.4f}",
+            dice=f"{dice:.4f}",
+            dist=f"{monitor:.4f}",
+            best=f"{best_dist:.4f}",
+            patience=f"{patience_counter}/{patience}",
+        )
+
         if monitor < best_dist:
             best_dist = monitor
             best_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
@@ -361,9 +396,9 @@ def _train_with_early_stopping(
         else:
             patience_counter += 1
             if patience_counter >= patience:
+                print(f"  [EarlyStopping] Epoch {epoch} — sin mejora en {patience} epochs")
                 break
 
-    # Restaurar mejores pesos
     if best_state is not None:
         model.load_state_dict({k: v.to(device) for k, v in best_state.items()})
 
@@ -376,6 +411,8 @@ def _train_with_early_stopping(
 
 def run_nested_cv(df_dev: pd.DataFrame) -> list[dict]:
     device = get_device()
+    config.MODELS_DIR.mkdir(parents=True, exist_ok=True)
+
     outer_splitter = _make_sgkf(config.N_OUTER, seed=config.SEED_BASE + 7)
     y = df_dev["label"].values
     g = df_dev["stem"].values
@@ -391,6 +428,13 @@ def run_nested_cv(df_dev: pd.DataFrame) -> list[dict]:
         df_outer_train = df_dev.iloc[train_idx].reset_index(drop=True)
         df_outer_test  = df_dev.iloc[test_idx].reset_index(drop=True)
 
+        # Cargar outer_train en VRAM una sola vez — todos los trials del HPO
+        # usarán slices de esta cache sin ninguna transferencia adicional
+        cache_train = VRAMCache(
+            df_outer_train, device,
+            label=f"outer_fold={outer_fold} train ({len(df_outer_train)} imgs)",
+        )
+
         study_name = f"DOCVERIFY{config.RUN_TAG}_OUTER{outer_fold}"
         storage    = f"sqlite:///{config.SQLITE_PATH}"
 
@@ -403,7 +447,7 @@ def run_nested_cv(df_dev: pd.DataFrame) -> list[dict]:
             load_if_exists = True,
         )
 
-        objective = _make_inner_objective(df_outer_train, outer_fold, device)
+        objective = _make_inner_objective(df_outer_train, outer_fold, device, cache_train)
 
         t_hpo0 = time.perf_counter()
         study.optimize(objective, n_trials=config.N_TRIALS, gc_after_trial=True)
@@ -418,7 +462,10 @@ def run_nested_cv(df_dev: pd.DataFrame) -> list[dict]:
         print(f"[HPO] Trial #{best_trial.number} | dist={best_dist:.4f} | "
               f"(PR-AUC, Dice)={best_trial.values}")
 
-        # Exportar frente de Pareto
+        # Liberar cache del HPO — el entrenamiento final crea sus propios loaders
+        cache_train.free()
+        del cache_train
+
         for t in pareto:
             pr, dc = (t.values or [np.nan, np.nan])
             _append_row_csv(config.PARETO_CSV, {
@@ -439,29 +486,44 @@ def run_nested_cv(df_dev: pd.DataFrame) -> list[dict]:
         _set_seeds(seed_final)
 
         loader_tr   = make_dataloader(df_outer_train.iloc[tr2_idx].reset_index(drop=True),
-                                      training=True,  seed=seed_final)
+                                      training=True,  seed=seed_final, device=device)
         loader_sel  = make_dataloader(df_outer_train.iloc[sel_idx].reset_index(drop=True),
-                                      training=False, seed=seed_final)
-        loader_test = make_dataloader(df_outer_test, training=False, seed=seed_final)
+                                      training=False, seed=seed_final, device=device)
+        loader_test = make_dataloader(df_outer_test, training=False, seed=seed_final, device=device)
 
         params    = dict(best_trial.params)
-        model     = build_model(params, device)
+        model     = _maybe_compile(build_model(params, device))
         optimizer = build_optimizer(model, params)
+        scaler    = torch.amp.GradScaler("cuda", enabled=config.USE_AMP and device.type == "cuda")
 
         t0 = time.perf_counter()
         model = _train_with_early_stopping(
-            model, optimizer, loader_tr, loader_sel, device,
-            params, config.MAX_EPOCHS_FINAL, patience=8
+            model, optimizer, scaler, loader_tr, loader_sel, device,
+            params, config.MAX_EPOCHS_FINAL, patience=8,
+            desc=f"[outer_fold={outer_fold}]",
         )
         train_time = time.perf_counter() - t0
+
+        # Guardar modelo del fold
+        model_path = config.MODELS_DIR / f"model_outer{outer_fold}{config.RUN_TAG}.pt"
+        torch.save({
+            "outer_fold":  outer_fold,
+            "params":      params,
+            "state_dict":  {k: v.cpu() for k, v in model.state_dict().items()},
+        }, model_path)
+        print(f"  [OK] Modelo guardado: {model_path}")
 
         # Umbral desde loader_sel
         y_true_sel, y_prob_sel = [], []
         model.eval()
         with torch.no_grad():
             for imgs, labels, _ in loader_sel:
-                y_true_sel.append(labels.numpy().reshape(-1).astype(int))
-                y_prob_sel.append(model(imgs.to(device))["cls"].cpu().numpy().reshape(-1))
+                if imgs.device != device:
+                    imgs = imgs.to(device, non_blocking=True)
+                with torch.autocast(device_type=device.type, enabled=config.USE_AMP):
+                    out = model(imgs)
+                y_true_sel.append(labels.cpu().numpy().reshape(-1).astype(int))
+                y_prob_sel.append(out["cls"].float().cpu().numpy().reshape(-1))
 
         thr_bacc, best_bacc, thr_f1, best_f1m = ev.threshold_sweep(
             np.concatenate(y_true_sel), np.concatenate(y_prob_sel)
@@ -484,7 +546,7 @@ def run_nested_cv(df_dev: pd.DataFrame) -> list[dict]:
         _append_row_csv(config.OUTER_CSV, row)
         outer_rows.append(row)
 
-        del model, optimizer
+        del model, optimizer, loader_tr, loader_sel, loader_test
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
@@ -514,12 +576,12 @@ def print_nested_cv_summary(outer_rows: list[dict]):
 # ============================================================
 
 def _train_final_model(
-    params: dict,
-    seed: int,
-    variant: str,
-    df_dev: pd.DataFrame,
+    params:     dict,
+    seed:       int,
+    variant:    str,
+    df_dev:     pd.DataFrame,
     df_holdout: pd.DataFrame,
-    device: torch.device,
+    device:     torch.device,
 ) -> dict:
     gc.collect()
     if torch.cuda.is_available():
@@ -530,31 +592,44 @@ def _train_final_model(
     tr_idx, sel_idx = next(gss.split(df_dev, y=df_dev["label"], groups=df_dev["stem"]))
 
     loader_tr   = make_dataloader(df_dev.iloc[tr_idx].reset_index(drop=True),
-                                  training=True,  seed=seed)
+                                  training=True,  seed=seed, device=device)
     loader_sel  = make_dataloader(df_dev.iloc[sel_idx].reset_index(drop=True),
-                                  training=False, seed=seed)
-    loader_test = make_dataloader(df_holdout, training=False, seed=seed)
+                                  training=False, seed=seed, device=device)
+    loader_test = make_dataloader(df_holdout, training=False, seed=seed, device=device)
 
-    model     = build_model(params, device)
+    model     = _maybe_compile(build_model(params, device))
     optimizer = build_optimizer(model, params)
+    scaler    = torch.amp.GradScaler("cuda", enabled=config.USE_AMP and device.type == "cuda")
 
     epochs = (config.MAX_EPOCHS_FINAL if variant == "multitask"
               else min(config.MAX_EPOCHS_ABLATION, config.MAX_EPOCHS_FINAL))
 
     t0 = time.perf_counter()
     model = _train_with_early_stopping(
-        model, optimizer, loader_tr, loader_sel, device,
-        params, epochs, patience=8, variant=variant
+        model, optimizer, scaler, loader_tr, loader_sel, device,
+        params, epochs, patience=8, variant=variant,
+        desc=f"[variant={variant} seed={seed}]",
     )
     train_time = time.perf_counter() - t0
+
+    # Guardar modelo final
+    model_path = config.MODELS_DIR / f"model_{variant}_seed{seed}{config.RUN_TAG}.pt"
+    torch.save({
+        "variant": variant, "seed": seed, "params": params,
+        "state_dict": {k: v.cpu() for k, v in model.state_dict().items()},
+    }, model_path)
 
     if variant != "seg_only":
         y_true_sel, y_prob_sel = [], []
         model.eval()
         with torch.no_grad():
             for imgs, labels, _ in loader_sel:
-                y_true_sel.append(labels.numpy().reshape(-1).astype(int))
-                y_prob_sel.append(model(imgs.to(device))["cls"].cpu().numpy().reshape(-1))
+                if imgs.device != device:
+                    imgs = imgs.to(device, non_blocking=True)
+                with torch.autocast(device_type=device.type, enabled=config.USE_AMP):
+                    out = model(imgs)
+                y_true_sel.append(labels.cpu().numpy().reshape(-1).astype(int))
+                y_prob_sel.append(out["cls"].float().cpu().numpy().reshape(-1))
         thr_bacc, best_bacc, thr_f1, best_f1m = ev.threshold_sweep(
             np.concatenate(y_true_sel), np.concatenate(y_prob_sel)
         )
@@ -573,10 +648,9 @@ def _train_final_model(
         **{f"hp_{k}": v for k, v in params.items()},
     }
     row["test_cm_TN_FP_FN_TP"] = json.dumps(met["cm_TN_FP_FN_TP"])
-
     _append_row_csv(config.FINAL_TEST_CSV, row)
 
-    del model, optimizer
+    del model, optimizer, loader_tr, loader_sel, loader_test
     gc.collect()
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
@@ -601,7 +675,7 @@ def run_blind_test(df_dev: pd.DataFrame, df_holdout: pd.DataFrame, final_params:
 
     for variant in variants:
         for seed in config.FINAL_SEEDS:
-            print(f"  [FINAL] variant={variant} seed={seed}")
+            print(f"\n  [FINAL] variant={variant} seed={seed}")
             _train_final_model(final_params, seed=seed, variant=variant,
                                df_dev=df_dev, df_holdout=df_holdout, device=device)
 
@@ -680,7 +754,6 @@ def run_stats_tests():
             continue
 
         pvals_w, pvals_t, tmp = [], [], []
-
         for met in METRICS:
             a = mrg[f"{met}_A"].values
             b = mrg[f"{met}_B"].values
@@ -741,9 +814,9 @@ def export_zip():
     n = 0
     with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         for p in config.EXPORT_DIR.rglob("*"):
-            if p.is_file():
+            if p.is_file() and p.suffix != ".pt":  # Excluir modelos del ZIP (son grandes)
                 zf.write(p, arcname=p.relative_to(config.EXPORT_DIR.parent))
                 n += 1
 
-    print(f"[OK] ZIP exportado: {zip_path} ({n} archivos)")
+    print(f"[OK] ZIP exportado: {zip_path} ({n} archivos, modelos .pt excluidos)")
     return zip_path
