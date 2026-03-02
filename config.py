@@ -30,9 +30,24 @@ PATCH_SIZE = 224          # Resolución de entrada al modelo (alto y ancho)
 IMG_EXTS   = {".jpg"}     # Extensiones de imagen aceptadas
 
 # ============================================================
+# DATALOADER (PyTorch)
+# ============================================================
+# Número de procesos paralelos para cargar imágenes.
+# 0 = carga en el proceso principal (más seguro en Windows).
+# En Linux/Mac puedes subir a 4 u 8 si tienes suficientes cores.
+NUM_WORKERS = int(os.getenv("NUM_WORKERS", "0"))
+
+# pin_memory acelera la transferencia CPU→GPU. Activar solo con GPU.
+PIN_MEMORY  = (os.getenv("PIN_MEMORY", "1") == "1")
+
+# persistent_workers mantiene los procesos de carga vivos entre epochs (más rápido).
+# Solo tiene efecto si NUM_WORKERS > 0.
+PERSISTENT_WORKERS = NUM_WORKERS > 0
+
+# ============================================================
 # ENTRENAMIENTO
 # ============================================================
-BATCH_SIZE  = int(os.getenv("BATCH_SIZE",  "32"))
+BATCH_SIZE  = int(os.getenv("BATCH_SIZE",  "64"))
 THR_MASK    = float(os.getenv("THR_MASK",  "0.5"))   # Umbral de binarización de la máscara
 
 # ============================================================
@@ -40,14 +55,14 @@ THR_MASK    = float(os.getenv("THR_MASK",  "0.5"))   # Umbral de binarización d
 # ============================================================
 SEED_BASE = 42
 
-N_OUTER  = int(os.getenv("N_OUTER",  "3"))    # Folds del loop externo        (prueba: 2)
-N_INNER  = int(os.getenv("N_INNER",  "2"))    # Folds del loop interno (HPO)  (prueba: 2)
-N_TRIALS = int(os.getenv("N_TRIALS", "5"))    # Trials de Optuna por fold     (prueba: 2)
+N_OUTER  = int(os.getenv("N_OUTER",  "5"))    # Folds del loop externo        (prueba: 2)
+N_INNER  = int(os.getenv("N_INNER",  "5"))    # Folds del loop interno (HPO)  (prueba: 2)
+N_TRIALS = int(os.getenv("N_TRIALS", "50"))   # Trials de Optuna por fold     (prueba: 2)
 
 # Epochs (subir para runs de producción)
-MAX_EPOCHS_TRIAL    = int(os.getenv("MAX_EPOCHS_TRIAL",    "3"))   # producción: 5-10
-MAX_EPOCHS_FINAL    = int(os.getenv("MAX_EPOCHS_FINAL",    "15"))  # producción: 30-100
-MAX_EPOCHS_ABLATION = int(os.getenv("MAX_EPOCHS_ABLATION", "10"))  # producción: 20
+MAX_EPOCHS_TRIAL    = int(os.getenv("MAX_EPOCHS_TRIAL",    "10"))  # prueba: 1-3
+MAX_EPOCHS_FINAL    = int(os.getenv("MAX_EPOCHS_FINAL",    "100")) # prueba: 5-15
+MAX_EPOCHS_ABLATION = int(os.getenv("MAX_EPOCHS_ABLATION", "50"))  # prueba: 5-10
 
 # Validación durante los trials de HPO
 TRIAL_VALIDATION_FREQ  = int(os.getenv("TRIAL_VALIDATION_FREQ",  "2"))

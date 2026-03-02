@@ -19,13 +19,15 @@ import os
 import random
 
 import numpy as np
-import tensorflow as tf
+import pandas as pd
+import torch
 from sklearn.model_selection import GroupShuffleSplit
 
 import config
 from dataset import add_json_paths, build_full_doc_df, build_image_dataframe
 from train import (
     export_zip,
+    get_device,
     print_nested_cv_summary,
     run_blind_test,
     run_nested_cv,
@@ -39,20 +41,24 @@ from train import (
 
 def check_environment():
     """Verifica dependencias básicas y disponibilidad de GPU."""
-    print("[INFO] TensorFlow:", tf.__version__)
+    print(f"[INFO] PyTorch: {torch.__version__}")
 
-    gpus = tf.config.list_physical_devices("GPU")
-    if gpus:
-        for gpu in gpus:
-            tf.config.experimental.set_memory_growth(gpu, True)
-        print(f"[INFO] ✓ Ejecutando en GPU: {[g.name for g in gpus]}")
+    if torch.cuda.is_available():
+        n_gpus = torch.cuda.device_count()
+        for i in range(n_gpus):
+            props = torch.cuda.get_device_properties(i)
+            vram  = props.total_memory / 1024 ** 3
+            print(f"[INFO] ✓ GPU {i}: {props.name} | VRAM: {vram:.1f} GB | "
+                  f"CUDA: {torch.version.cuda}")
     else:
-        print("[WARN] ✗ No se detectó GPU. Ejecutando en CPU (el entrenamiento será significativamente más lento).")
+        print("[WARN] ✗ No se detectó GPU. Ejecutando en CPU "
+              "(el entrenamiento será significativamente más lento).")
 
     print(f"[INFO] DATASET_ROOT : {config.DATASET_ROOT.resolve()}")
     print(f"[INFO] EXPORT_DIR   : {config.EXPORT_DIR.resolve()}")
     print(f"[INFO] PATCH_SIZE   : {config.PATCH_SIZE}")
     print(f"[INFO] BATCH_SIZE   : {config.BATCH_SIZE}")
+    print(f"[INFO] NUM_WORKERS  : {config.NUM_WORKERS}")
     print(f"[INFO] N_OUTER      : {config.N_OUTER}")
     print(f"[INFO] N_INNER      : {config.N_INNER}")
     print(f"[INFO] N_TRIALS     : {config.N_TRIALS}")
@@ -68,14 +74,18 @@ def set_global_seeds():
     os.environ["PYTHONHASHSEED"] = str(config.SEED_BASE)
     random.seed(config.SEED_BASE)
     np.random.seed(config.SEED_BASE)
-    tf.keras.utils.set_random_seed(config.SEED_BASE)
+    torch.manual_seed(config.SEED_BASE)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(config.SEED_BASE)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark     = False
 
 
 # ============================================================
 # 2. CARGA Y PREPARACIÓN DEL DATASET
 # ============================================================
 
-def load_and_prepare_data():
+def load_and_prepare_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Carga el dataset desde disco, valida la estructura de directorios,
     empareja imágenes con sus JSON de anotación, realiza el split
@@ -133,17 +143,14 @@ def load_and_prepare_data():
     df_val   = build_full_doc_df(df_val_base,   "val")
     df_test  = build_full_doc_df(df_test_base,  "test")
 
-    # Distribución de etiquetas
     for name, d in [("train", df_train), ("val", df_val), ("test", df_test)]:
         n_attack      = int((d["label"] == 1).sum())
         n_attack_mask = int(((d["label"] == 1) & (d["mask_n_rects"] > 0)).sum())
         print(f"  [{name}] bonafide={int((d['label']==0).sum())} | "
               f"attack={n_attack} | attack con máscara={n_attack_mask}")
 
-    # df_dev = train + val para Nested CV
-    import pandas as pd
-    df_dev      = pd.concat([df_train, df_val], ignore_index=True)
-    df_holdout  = df_test.reset_index(drop=True)
+    df_dev     = pd.concat([df_train, df_val], ignore_index=True)
+    df_holdout = df_test.reset_index(drop=True)
 
     return df_dev, df_holdout
 
@@ -160,21 +167,17 @@ def main():
     check_environment()
     set_global_seeds()
 
-    # Crear directorio de exportación
     config.EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Cargar y preparar datos
     df_dev, df_holdout = load_and_prepare_data()
 
-    # Nested CV con HPO
     outer_rows = run_nested_cv(df_dev)
     print_nested_cv_summary(outer_rows)
 
-    # Selección de HPs finales (fold con menor distancia al ideal)
-    import pandas as pd
+    # Selección de HPs finales
     df_outer = pd.DataFrame(outer_rows)
     best_idx = int(df_outer["distance_to_ideal_innercv"].astype(float).idxmin())
-    best_hp_row = df_outer.loc[best_idx]
+    best_hp_row  = df_outer.loc[best_idx]
     final_params = {
         k.replace("hp_", ""): best_hp_row[k]
         for k in df_outer.columns if k.startswith("hp_")
@@ -183,15 +186,12 @@ def main():
     for k, v in final_params.items():
         print(f"  {k}: {v}")
 
-    # Test ciego multi-seed + ablación
     if config.RUN_FINAL_BLIND_TEST:
         run_blind_test(df_dev, df_holdout, final_params)
 
-    # Estadística inferencial
     if config.RUN_STATS_TESTS:
         run_stats_tests()
 
-    # Exportar resultados en ZIP
     export_zip()
 
     print("\n[OK] Pipeline completado.")

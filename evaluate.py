@@ -1,11 +1,9 @@
 """
-evaluate.py — Métricas de evaluación completas para clasificación y segmentación.
+evaluate.py — Métricas de evaluación completas para clasificación y segmentación (PyTorch).
 """
 
-import math
-
 import numpy as np
-import tensorflow as tf
+import torch
 from sklearn.metrics import (
     average_precision_score,
     balanced_accuracy_score,
@@ -37,8 +35,8 @@ def threshold_sweep(
     y_prob = np.asarray(y_prob).astype(float)
     ths    = np.linspace(0, 1, n)
 
-    baccs  = np.full(n, np.nan)
-    f1mac  = np.full(n, np.nan)
+    baccs = np.full(n, np.nan)
+    f1mac = np.full(n, np.nan)
 
     has_two_classes = np.unique(y_true).size == 2
 
@@ -59,59 +57,62 @@ def threshold_sweep(
 # ============================================================
 
 def eval_model(
-    model: tf.keras.Model,
-    ds: tf.data.Dataset,
+    model: torch.nn.Module,
+    loader: torch.utils.data.DataLoader,
     thr_cls: float,
+    device: torch.device,
     thr_mask: float = None,
 ) -> dict:
     """
-    Evalúa el modelo sobre un tf.data.Dataset y devuelve métricas
-    completas de clasificación y segmentación.
-
-    Métricas de clasificación: PR-AUC, ROC-AUC, Balanced Accuracy,
-      F1 binario, F1 macro, precisión, recall, confusion matrix.
-
-    Métricas de segmentación: Dice global, Dice(+) (solo positivos),
-      mIoU, especificidad a nivel de pixel, F1 pixel, precisión pixel, recall pixel.
+    Evalúa el modelo sobre un DataLoader y devuelve métricas completas
+    de clasificación y segmentación.
     """
     if thr_mask is None:
         thr_mask = config.THR_MASK
+
+    model.eval()
 
     y_true_cls, y_prob_cls = [], []
     TP = FP = TN = FN = 0
     sum_dice_pos = 0.0
     cnt_dice_pos = 0
 
-    for x_batch, y_batch in ds:
-        out = model(x_batch, training=False)
+    with torch.no_grad():
+        for imgs, labels, masks in loader:
+            imgs   = imgs.to(device)
+            labels = labels.to(device)
+            masks  = masks.to(device)
 
-        # Clasificación
-        yt = y_batch["cls"].numpy().reshape(-1).astype(int)
-        yp = out["cls"].numpy().reshape(-1).astype(float)
-        y_true_cls.append(yt)
-        y_prob_cls.append(yp)
+            out = model(imgs)
 
-        # Segmentación — Dice solo en positivos (reporting)
-        yt_m = tf.cast(y_batch["mask"] > 0.5,  tf.bool)
-        yp_m = tf.cast(out["mask"]  > thr_mask, tf.bool)
+            # Clasificación
+            yt = labels.cpu().numpy().reshape(-1).astype(int)
+            yp = out["cls"].cpu().numpy().reshape(-1).astype(float)
+            y_true_cls.append(yt)
+            y_prob_cls.append(yp)
 
-        yt_f = tf.cast(yt_m, tf.float32)
-        yp_f = tf.cast(yp_m, tf.float32)
+            # Segmentación
+            yt_m = (masks > 0.5)
+            yp_m = (out["mask"] > thr_mask)
 
-        inter_s = tf.reduce_sum(yt_f * yp_f, axis=[1, 2, 3])
-        denom_s = tf.reduce_sum(yt_f, axis=[1, 2, 3]) + tf.reduce_sum(yp_f, axis=[1, 2, 3])
-        dice_s  = (2.0 * inter_s + 1e-6) / (denom_s + 1e-6)
-        pos_s   = tf.reduce_sum(yt_f, axis=[1, 2, 3]) > 0
+            yt_f = yt_m.float()
+            yp_f = yp_m.float()
 
-        dice_pos_s = tf.boolean_mask(dice_s, pos_s)
-        sum_dice_pos += float(tf.reduce_sum(dice_pos_s).numpy())
-        cnt_dice_pos += int(tf.size(dice_pos_s).numpy())
+            # Dice solo en positivos (reporting)
+            inter_s = (yt_f * yp_f).sum(dim=[1, 2, 3])
+            denom_s = yt_f.sum(dim=[1, 2, 3]) + yp_f.sum(dim=[1, 2, 3])
+            dice_s  = (2.0 * inter_s + 1e-6) / (denom_s + 1e-6)
+            pos_s   = yt_f.sum(dim=[1, 2, 3]) > 0
 
-        # Pixel-level TP/FP/TN/FN acumulados
-        TP += int(tf.reduce_sum(tf.cast( yt_m &  yp_m, tf.int64)).numpy())
-        FP += int(tf.reduce_sum(tf.cast(~yt_m &  yp_m, tf.int64)).numpy())
-        TN += int(tf.reduce_sum(tf.cast(~yt_m & ~yp_m, tf.int64)).numpy())
-        FN += int(tf.reduce_sum(tf.cast( yt_m & ~yp_m, tf.int64)).numpy())
+            if pos_s.any():
+                sum_dice_pos += dice_s[pos_s].sum().item()
+                cnt_dice_pos += pos_s.sum().item()
+
+            # Pixel-level TP/FP/TN/FN
+            TP += int(( yt_m &  yp_m).sum().item())
+            FP += int((~yt_m &  yp_m).sum().item())
+            TN += int((~yt_m & ~yp_m).sum().item())
+            FN += int(( yt_m & ~yp_m).sum().item())
 
     y_true_cls = np.concatenate(y_true_cls)
     y_prob_cls = np.concatenate(y_prob_cls)
@@ -141,19 +142,19 @@ def eval_model(
     dice_pos_mean = float(sum_dice_pos / cnt_dice_pos) if cnt_dice_pos > 0 else float("nan")
 
     return {
-        "pr_auc":           pr_auc,
-        "roc_auc":          roc_auc,
-        "bacc":             bacc,
-        "f1_1":             float(f1),
-        "f1_macro":         f1m,
-        "prec1":            float(prec),
-        "rec1":             float(rec),
+        "pr_auc":          pr_auc,
+        "roc_auc":         roc_auc,
+        "bacc":            bacc,
+        "f1_1":            float(f1),
+        "f1_macro":        f1m,
+        "prec1":           float(prec),
+        "rec1":            float(rec),
         "cm_TN_FP_FN_TP":  cm.ravel().tolist() if cm.size == 4 else None,
-        "dice_global":      float(dice_global),
-        "dice_pos_mean":    float(dice_pos_mean),
-        "miou":             float(miou),
-        "pix_specificity":  float(pix_spec),
-        "pix_f1":           float(pix_f1),
-        "pix_prec":         float(pix_prec),
-        "pix_rec":          float(pix_rec),
+        "dice_global":     float(dice_global),
+        "dice_pos_mean":   float(dice_pos_mean),
+        "miou":            float(miou),
+        "pix_specificity": float(pix_spec),
+        "pix_f1":          float(pix_f1),
+        "pix_prec":        float(pix_prec),
+        "pix_rec":         float(pix_rec),
     }

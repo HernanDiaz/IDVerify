@@ -1,5 +1,5 @@
 """
-dataset.py — Indexación, parsing de anotaciones y construcción de tf.data.Dataset.
+dataset.py — Indexación, parsing de anotaciones y construcción de DataLoader (PyTorch).
 """
 
 import ast
@@ -10,7 +10,10 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
-import tensorflow as tf
+import torch
+from PIL import Image
+from torch.utils.data import DataLoader, Dataset
+from torchvision import transforms
 from tqdm import tqdm
 
 import config
@@ -137,13 +140,6 @@ def parse_doc_full_image(
     """
     Parsea el JSON de anotación de un documento y extrae los rectángulos
     de regiones alteradas (falsificadas).
-
-    Devuelve un diccionario con:
-      - mask_rects_abs: JSON string con lista de rects {x,y,w,h} alterados
-      - mask_n_rects: número de rectángulos alterados
-      - mask_area_px: suma de áreas (puede sobrecontar si hay solapamiento)
-      - n_rect_regions: total de regiones rectangulares en el JSON
-      - n_altered_rect_regions: total de regiones rectangulares alteradas
     """
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -185,15 +181,15 @@ def parse_doc_full_image(
             mask_area += w * h
 
     return {
-        "subset":               subset,
-        "stem":                 stem,
-        "img_path":             img_path,
-        "json_path":            json_path,
-        "label":                int(label),
-        "mask_rects_abs":       json.dumps(altered_rects),
-        "mask_n_rects":         len(altered_rects),
-        "mask_area_px":         mask_area,
-        "n_rect_regions":       n_rect,
+        "subset":                 subset,
+        "stem":                   stem,
+        "img_path":               img_path,
+        "json_path":              json_path,
+        "label":                  int(label),
+        "mask_rects_abs":         json.dumps(altered_rects),
+        "mask_n_rects":           len(altered_rects),
+        "mask_area_px":           mask_area,
+        "n_rect_regions":         n_rect,
         "n_altered_rect_regions": n_rect_altered,
     }
 
@@ -214,35 +210,15 @@ def build_full_doc_df(df_base: pd.DataFrame, subset_name: str) -> pd.DataFrame:
 
 
 # ============================================================
-# 4. PIPELINE tf.data
+# 4. PYTORCH DATASET
 # ============================================================
 
-def _to_py(x):
-    """Convierte tensores o arrays a tipo Python nativo."""
-    if hasattr(x, "numpy"):
-        x = x.numpy()
-    if isinstance(x, np.ndarray):
-        x = x.item()
-    return x
-
-
-def _mask_from_rects_abs_json_py(rects_json, W, H) -> np.ndarray:
+def _mask_from_rects(rects_json: str, W: int, H: int) -> np.ndarray:
     """
     Reconstruye la máscara binaria (H×W, uint8) a partir del JSON
     de rectángulos alterados en coordenadas absolutas.
     """
-    rects_json = _to_py(rects_json)
-    W = int(_to_py(W))
-    H = int(_to_py(H))
-
-    if rects_json is None:
-        s = "[]"
-    elif isinstance(rects_json, (bytes, bytearray, np.bytes_)):
-        s = rects_json.decode("utf-8", errors="ignore")
-    else:
-        s = str(rects_json)
-
-    s = s.strip() or "[]"
+    s = (rects_json or "").strip() or "[]"
 
     try:
         rects = json.loads(s)
@@ -267,69 +243,83 @@ def _mask_from_rects_abs_json_py(rects_json, W, H) -> np.ndarray:
     return mask
 
 
-def _load_full_image_and_mask(img_path, label, mask_rects_abs):
+class DocVerifyDataset(Dataset):
     """
-    Función de mapeo para tf.data:
-      - Carga y normaliza la imagen a float32 [0,1]
-      - Reconstruye la máscara binaria desde los rectángulos JSON
-      - Redimensiona imagen y máscara a PATCH_SIZE × PATCH_SIZE
-      - Devuelve (imagen, {"cls": label, "mask": máscara})
+    Dataset PyTorch para DocVerify.
+    Precarga todas las imágenes en RAM al inicializarse para eliminar
+    el cuello de botella de lectura de disco durante el entrenamiento.
+
+    Cada elemento devuelve:
+      img   — tensor float32 (3, PATCH_SIZE, PATCH_SIZE) normalizado [0, 1]
+      label — tensor float32 (1,)
+      mask  — tensor float32 (1, PATCH_SIZE, PATCH_SIZE) binaria {0, 1}
     """
-    img_bytes = tf.io.read_file(img_path)
-    img = tf.io.decode_image(img_bytes, channels=3, expand_animations=False)
-    img = tf.image.convert_image_dtype(img, tf.float32)
-    img.set_shape([None, None, 3])
 
-    H = tf.shape(img)[0]
-    W = tf.shape(img)[1]
+    def __init__(self, df: pd.DataFrame):
+        self.df = df.copy().reset_index(drop=True)
+        self.df["mask_rects_abs"] = self.df["mask_rects_abs"].fillna("[]").astype(str)
 
-    mask = tf.py_function(
-        func=_mask_from_rects_abs_json_py,
-        inp=[mask_rects_abs, W, H],
-        Tout=tf.uint8,
-    )
-    mask.set_shape([None, None])
-    mask = tf.cast(mask, tf.float32)[..., None]
+        self.img_transform = transforms.Compose([
+            transforms.Resize((config.PATCH_SIZE, config.PATCH_SIZE),
+                              interpolation=transforms.InterpolationMode.BILINEAR),
+            transforms.ToTensor(),
+        ])
 
-    img_r  = tf.clip_by_value(
-        tf.image.resize(img,  (config.PATCH_SIZE, config.PATCH_SIZE), method="bilinear"),
-        0.0, 1.0,
-    )
-    mask_r = tf.cast(
-        tf.image.resize(mask, (config.PATCH_SIZE, config.PATCH_SIZE), method="nearest") > 0.5,
-        tf.float32,
-    )
+        # Precargar todas las imágenes y máscaras en RAM
+        print(f"  [Dataset] Precargando {len(self.df)} imágenes en RAM...")
+        self.imgs   = []
+        self.labels = []
+        self.masks  = []
 
-    label = tf.expand_dims(tf.cast(label, tf.float32), axis=-1)
+        for _, row in tqdm(self.df.iterrows(), total=len(self.df), leave=False):
+            # Imagen
+            img = Image.open(row["img_path"]).convert("RGB")
+            W, H = img.size
+            self.imgs.append(self.img_transform(img))
 
-    return img_r, {"cls": label, "mask": mask_r}
+            # Máscara
+            mask_np  = _mask_from_rects(row["mask_rects_abs"], W, H)
+            mask_img = Image.fromarray(mask_np, mode="L")
+            mask_img = mask_img.resize(
+                (config.PATCH_SIZE, config.PATCH_SIZE),
+                resample=Image.NEAREST,
+            )
+            mask_t = torch.from_numpy(np.array(mask_img)).float().unsqueeze(0)
+            self.masks.append((mask_t > 0.5).float())
+
+            # Label
+            self.labels.append(torch.tensor([float(row["label"])], dtype=torch.float32))
+
+        print(f"  [Dataset] Precarga completada.")
+
+    def __len__(self) -> int:
+        return len(self.df)
+
+    def __getitem__(self, idx: int) -> tuple:
+        return self.imgs[idx], self.labels[idx], self.masks[idx]
 
 
-def make_dataset(
+def make_dataloader(
     df: pd.DataFrame,
     training: bool,
     seed: int,
-    reshuffle_each_iteration: bool = False,
-) -> tf.data.Dataset:
+) -> DataLoader:
     """
-    Convierte un DataFrame de anotaciones en un tf.data.Dataset
-    listo para entrenamiento o evaluación.
+    Construye un DataLoader PyTorch a partir de un DataFrame de anotaciones.
     """
-    df = df.copy()
-    df["mask_rects_abs"] = df["mask_rects_abs"].fillna("[]").astype(str)
+    dataset = DocVerifyDataset(df)
 
-    paths  = df["img_path"].astype(str).values
-    labels = df["label"].astype(np.int32).values
-    rects  = df["mask_rects_abs"].values
+    generator = torch.Generator()
+    generator.manual_seed(seed)
 
-    ds = tf.data.Dataset.from_tensor_slices((paths, labels, rects))
-    ds = ds.map(_load_full_image_and_mask, num_parallel_calls=tf.data.AUTOTUNE)
-
-    if training:
-        ds = ds.shuffle(
-            min(len(df), 6000),
-            seed=seed,
-            reshuffle_each_iteration=reshuffle_each_iteration,
-        )
-
-    return ds.batch(config.BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+    return DataLoader(
+        dataset,
+        batch_size   = config.BATCH_SIZE,
+        shuffle      = training,
+        num_workers  = config.NUM_WORKERS,
+        pin_memory   = config.PIN_MEMORY,
+        prefetch_factor = 4 if config.NUM_WORKERS > 0 else None,
+        persistent_workers = config.PERSISTENT_WORKERS,
+        generator    = generator if training else None,
+        drop_last    = False,
+    )
