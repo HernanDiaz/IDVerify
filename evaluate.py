@@ -33,7 +33,7 @@ def threshold_sweep(
     """
     y_true = np.asarray(y_true).astype(int)
     y_prob = np.asarray(y_prob).astype(float)
-    ths    = np.linspace(0, 1, n)
+    ths    = np.linspace(0.001, 1, n)
 
     baccs = np.full(n, np.nan)
     f1mac = np.full(n, np.nan)

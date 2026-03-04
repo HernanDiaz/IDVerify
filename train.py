@@ -256,11 +256,11 @@ def _make_inner_objective(
             torch.cuda.empty_cache()
 
         params = {
-            "lr":           trial.suggest_float("lr", 1e-5, 1e-3, log=True),
+            "lr":           trial.suggest_float("lr", 5e-5, 9e-4, log=True),
             "weight_decay": trial.suggest_float("weight_decay", 1e-7, 1e-4, log=True),
-            "dropout_rate": trial.suggest_float("dropout_rate", 0.0, 0.6),
-            "alpha":        trial.suggest_float("alpha", 0.05, 0.30),
-            "dec_ch":       trial.suggest_categorical("dec_ch", [96, 128, 192]),
+            "dropout_rate": trial.suggest_float("dropout_rate", 0.1, 0.4),
+            "alpha":        0.2,   # fijo — sin señal en HPO anterior
+            "dec_ch":       trial.suggest_categorical("dec_ch", [96, 128, 192, 256]),
             "loss_w_mask":  trial.suggest_float("loss_w_mask", 0.5, 3.0),
         }
 
@@ -499,7 +499,7 @@ def run_nested_cv(df_dev: pd.DataFrame) -> list[dict]:
         t0 = time.perf_counter()
         model = _train_with_early_stopping(
             model, optimizer, scaler, loader_tr, loader_sel, device,
-            params, config.MAX_EPOCHS_FINAL, patience=8,
+            params, config.MAX_EPOCHS_FINAL, patience=12,
             desc=f"[outer_fold={outer_fold}]",
         )
         train_time = time.perf_counter() - t0
@@ -526,7 +526,8 @@ def run_nested_cv(df_dev: pd.DataFrame) -> list[dict]:
                 y_prob_sel.append(out["cls"].float().cpu().numpy().reshape(-1))
 
         thr_bacc, best_bacc, thr_f1, best_f1m = ev.threshold_sweep(
-            np.concatenate(y_true_sel), np.concatenate(y_prob_sel)
+            np.concatenate(y_true_sel),
+            torch.sigmoid(torch.tensor(np.concatenate(y_prob_sel))).numpy(),
         )
 
         met = ev.eval_model(model, loader_test, thr_cls=thr_bacc, device=device)
@@ -607,7 +608,7 @@ def _train_final_model(
     t0 = time.perf_counter()
     model = _train_with_early_stopping(
         model, optimizer, scaler, loader_tr, loader_sel, device,
-        params, epochs, patience=8, variant=variant,
+        params, epochs, patience=12, variant=variant,
         desc=f"[variant={variant} seed={seed}]",
     )
     train_time = time.perf_counter() - t0
@@ -631,7 +632,8 @@ def _train_final_model(
                 y_true_sel.append(labels.cpu().numpy().reshape(-1).astype(int))
                 y_prob_sel.append(out["cls"].float().cpu().numpy().reshape(-1))
         thr_bacc, best_bacc, thr_f1, best_f1m = ev.threshold_sweep(
-            np.concatenate(y_true_sel), np.concatenate(y_prob_sel)
+            np.concatenate(y_true_sel),
+            torch.sigmoid(torch.tensor(np.concatenate(y_prob_sel))).numpy(),
         )
     else:
         thr_bacc, best_bacc, thr_f1, best_f1m = 0.5, float("nan"), 0.5, float("nan")

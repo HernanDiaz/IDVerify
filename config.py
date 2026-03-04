@@ -30,8 +30,16 @@ PATCH_SIZE = 224          # Resolución de entrada al modelo (alto y ancho)
 IMG_EXTS   = {".jpg"}     # Extensiones de imagen aceptadas
 
 # ============================================================
-# DATALOADER (PyTorch)
+# ARQUITECTURA
 # ============================================================
+LEAKY_RELU_ALPHA = 0.2   # Fijo — eliminado del HPO (sin señal en 250 trials)
+# ============================================================
+# lr:           log-uniform [5e-5, 9e-4]  — rango inferior eliminado (lr<5e-5 → Dice≈0 en 10 epochs)
+# weight_decay: log-uniform [1e-7, 1e-4]
+# dropout_rate: uniform [0.1, 0.4]        — rango reducido (sin señal fuera de ese rango)
+# alpha:        fijo 0.2                  — eliminado del HPO (sin impacto en resultados)
+# dec_ch:       categórico [96,128,192,256] — añadido 256 (16GB VRAM suficiente)
+# loss_w_mask:  uniform [0.5, 3.0]
 # Con precarga en RAM, los workers no son necesarios.
 NUM_WORKERS = int(os.getenv("NUM_WORKERS", "0"))
 
@@ -77,7 +85,7 @@ N_INNER  = int(os.getenv("N_INNER",  "5"))    # Folds del loop interno (HPO)  (p
 N_TRIALS = int(os.getenv("N_TRIALS", "50"))   # Trials de Optuna por fold     (prueba: 2)
 
 # Epochs (subir para runs de producción)
-MAX_EPOCHS_TRIAL    = int(os.getenv("MAX_EPOCHS_TRIAL",    "10"))  # prueba: 1-3
+MAX_EPOCHS_TRIAL    = int(os.getenv("MAX_EPOCHS_TRIAL",    "15"))  # prueba: 1-3
 MAX_EPOCHS_FINAL    = int(os.getenv("MAX_EPOCHS_FINAL",    "100")) # prueba: 5-15
 MAX_EPOCHS_ABLATION = int(os.getenv("MAX_EPOCHS_ABLATION", "50"))  # prueba: 5-10
 

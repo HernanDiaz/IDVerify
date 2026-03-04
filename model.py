@@ -8,6 +8,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import config
+
 
 # ============================================================
 # PÉRDIDAS
@@ -231,7 +233,7 @@ class DocVerifyModel(nn.Module):
 def build_model(params: dict, device: torch.device) -> DocVerifyModel:
     """Construye el modelo con los hiperparámetros dados y lo mueve al device."""
     model = DocVerifyModel(
-        alpha        = float(params["alpha"]),
+        alpha        = float(params.get("alpha", config.LEAKY_RELU_ALPHA)),
         dropout_rate = float(params["dropout_rate"]),
         dec_ch       = int(params["dec_ch"]),
     )
