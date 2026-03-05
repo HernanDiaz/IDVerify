@@ -98,7 +98,7 @@ TRIAL_VAL_STEPS        = int(os.getenv("TRIAL_VAL_STEPS",          "0"))  # 0 = 
 # ============================================================
 # TEST CIEGO Y ABLACIÓN
 # ============================================================
-N_FINAL_SEEDS        = int(os.getenv("N_FINAL_SEEDS", "5"))
+N_FINAL_SEEDS        = int(os.getenv("N_FINAL_SEEDS", "20"))
 FINAL_SEEDS          = [SEED_BASE + i for i in range(N_FINAL_SEEDS)]
 
 RUN_FINAL_BLIND_TEST = (os.getenv("RUN_FINAL_BLIND_TEST", "1") == "1")
@@ -122,3 +122,22 @@ PARETO_CSV     = EXPORT_DIR / f"pareto_front_trials{RUN_TAG}.csv"
 FINAL_TEST_CSV = EXPORT_DIR / f"final_blind_test_multiseed{RUN_TAG}.csv"
 STATS_CSV      = EXPORT_DIR / f"stat_tests{RUN_TAG}.csv"
 SQLITE_PATH    = EXPORT_DIR / f"optuna_nested_outer{RUN_TAG}.sqlite3"
+
+# ============================================================
+# EXPERIMENTO DE ESCALARIZACIÓN CLÁSICA
+# ============================================================
+
+# Subcarpeta dedicada dentro de EXPORT_DIR
+SCALAR_EXPORT_DIR = EXPORT_DIR / "scalar_experiment"
+
+# Grid de valores de loss_w_mask a explorar.
+# Cubre el mismo rango [0.5, 3.0] que el espacio HPO, con paso uniforme.
+SCALAR_GRID = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0]
+
+# Epochs para cada entrenamiento del grid (igual que ablaciones del blind test)
+MAX_EPOCHS_SCALAR = int(os.getenv("MAX_EPOCHS_SCALAR", "50"))
+
+# Rutas de exportación del experimento de escalarización
+SCALAR_GRID_CSV     = SCALAR_EXPORT_DIR / "scalar_grid_full.csv"
+SCALAR_SELECTED_CSV = SCALAR_EXPORT_DIR / "scalar_grid_selected.csv"
+SCALAR_STATS_CSV    = SCALAR_EXPORT_DIR / "scalar_stats.csv"
