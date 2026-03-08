@@ -142,15 +142,17 @@ por incompatibilidad de TensorFlow con CUDA 13.0 / arquitectura Blackwell.
 
 ```
 DocVerify/
-├── config.py          — Configuración global (rutas, hiperparámetros, flags)
-├── dataset.py         — Indexación, parsing JSON, VRAMCache, DataLoader
-├── model.py           — Arquitectura, pérdidas (logits), factory
-├── evaluate.py        — Métricas completas (PR-AUC, Dice, mIoU, etc.)
-├── train.py           — Nested CV, HPO, early stopping, test ciego, estadística
-├── main.py            — Punto de entrada
-├── requirements.txt   — Dependencias (torch cu124, optuna, sklearn, etc.)
-├── .gitignore         — Excluye FantasyID/, venv_torch/, exports/, *.pt
-├── PROJECT_CONTEXT.md — Este archivo
+├── config.py                        — Configuración global (rutas, hiperparámetros, flags)
+├── dataset.py                       — Indexación, parsing JSON, VRAMCache, DataLoader
+├── model.py                         — Arquitectura, pérdidas (logits), factory
+├── evaluate.py                      — Métricas internas (PR-AUC, Dice, mIoU, BACC, etc.)
+├── evaluate_challenge_metrics.py    — Métricas del DeepID Challenge (F1@0.5, F1 per-image)
+├── train.py                         — Nested CV, HPO, early stopping, test ciego, estadística
+├── main.py                          — Punto de entrada principal (nested CV + blind test)
+├── scalar_experiment.py             — Experimento de escalarización clásica (grid w_mask)
+├── requirements.txt                 — Dependencias (torch cu124, optuna, sklearn, etc.)
+├── .gitignore                       — Excluye FantasyID/, venv_torch/, exports/, *.pt
+├── PROJECT_CONTEXT.md               — Este archivo
 └── exports_hpo_pareto_nested/
     ├── optuna_nested_outer.sqlite3       — Base de datos Optuna (DB Browser para ver)
     ├── optuna_trials_nested.csv          — Todos los trials HPO
@@ -158,20 +160,82 @@ DocVerify/
     ├── nested_outer_results.csv          — Métricas outer test por fold
     ├── final_blind_test_multiseed.csv    — Métricas test ciego por variante/seed
     ├── stat_tests.csv                    — Wilcoxon + Holm + Cohen's d
-    └── models/                           — Modelos .pt guardados
+    ├── challenge_metrics.csv             — F1@0.5 y F1 per-image por seed (challenge)
+    ├── challenge_metrics_summary.csv     — Resumen estadístico de challenge_metrics.csv
+    ├── scalar_experiment/
+    │   ├── scalar_grid_full.csv          — Resultados del grid completo por w_mask y fold
+    │   ├── scalar_grid_selected.csv      — Selección por criterio (by_prauc, by_dice, pareto)
+    │   └── scalar_stats.csv             — Tests estadísticos del scalar experiment
+    └── models/                           — Modelos .pt guardados (excluidos del ZIP/git)
 ```
+
+---
+
+## Cómo Ejecutar los Experimentos
+
+### Pipeline principal (Nested CV + Blind Test)
+Entrena el modelo completo desde cero: nested CV con HPO multi-objetivo, test ciego
+con 4 variantes de ablación (30 seeds cada una) y tests estadísticos.
+
+```bash
+python main.py
+```
+
+Configuración relevante en `config.py` o vía variables de entorno:
+```bash
+set N_OUTER=10
+set N_FINAL_SEEDS=30
+set DATASET_ROOT=./FantasyID
+python main.py
+```
+
+Tiempo estimado: ~59h en RTX 5060 Ti 16GB. Outputs en `exports_hpo_pareto_nested/`.
+
+---
+
+### Experimento de escalarización clásica (scalar experiment)
+Compara el HPO multi-objetivo (Pareto) contra selección mono-objetivo con un grid
+fijo de valores de `loss_w_mask`. Requiere haber ejecutado el pipeline principal
+previamente (usa los mismos splits y semillas).
+
+```bash
+python scalar_experiment.py
+```
+
+Outputs en `exports_hpo_pareto_nested/scalar_experiment/`.
+Tiempo estimado: ~4.6h en RTX 5060 Ti 16GB.
+
+---
+
+### Métricas del DeepID Challenge (re-evaluación sin reentrenar)
+Calcula F1 a umbral fijo 0.5 (Track 1) y F1 per-image de localización (Track 2),
+las mismas métricas usadas por el challenge para el ranking. Carga los modelos `.pt`
+ya entrenados del blind test — no requiere reentrenar.
+
+```bash
+python evaluate_challenge_metrics.py
+```
+
+Prerrequisito: haber ejecutado `python main.py` (necesita los modelos en `models/`).
+Outputs en `exports_hpo_pareto_nested/challenge_metrics.csv` y `challenge_metrics_summary.csv`.
+Tiempo estimado: ~15 min en RTX 5060 Ti 16GB (solo inferencia, 30 seeds).
 
 ---
 
 ## CSVs Generados (resumen)
 
-| CSV | Cuándo se escribe | Para qué sirve |
-|-----|-------------------|----------------|
-| `optuna_trials_nested.csv` | Durante HPO | Registro de todos los trials |
-| `pareto_front_trials.csv` | Durante HPO | Solo trials no dominados |
-| `nested_outer_results.csv` | Tras cada outer fold | Métricas de generalización |
-| `final_blind_test_multiseed.csv` | Test ciego | Rendimiento final por variante |
-| `stat_tests.csv` | Al final | Significancia estadística |
+| CSV | Script que lo genera | Para qué sirve |
+|-----|----------------------|----------------|
+| `optuna_trials_nested.csv` | `main.py` | Registro de todos los trials HPO |
+| `pareto_front_trials.csv` | `main.py` | Solo trials no dominados |
+| `nested_outer_results.csv` | `main.py` | Métricas de generalización por fold |
+| `final_blind_test_multiseed.csv` | `main.py` | Rendimiento final por variante/seed |
+| `stat_tests.csv` | `main.py` | Wilcoxon + Holm + Cohen's d |
+| `scalar_experiment/scalar_grid_full.csv` | `scalar_experiment.py` | Grid completo w_mask × fold |
+| `scalar_experiment/scalar_grid_selected.csv` | `scalar_experiment.py` | Selección por criterio |
+| `scalar_experiment/scalar_stats.csv` | `scalar_experiment.py` | Tests estadísticos scalar |
+| `challenge_metrics.csv` | `evaluate_challenge_metrics.py` | F1@0.5 y F1 per-image por seed |
+| `challenge_metrics_summary.csv` | `evaluate_challenge_metrics.py` | Resumen estadístico challenge |
 
 ---
 
@@ -336,13 +400,32 @@ que explicita el trade-off entre clasificación y localización de alteraciones,
 permitiendo selección del punto de operación según el contexto de despliegue."
 
 **Contexto competitivo — DeepID Challenge (ICCV 2025):**
-- Nuestro F1 de clase 1 (~0.93–0.96 según fold) comparable con 3er puesto del
-  challenge (AG/EdgeDoc: F1=0.958) entrenando solo con FantasyID.
-- Sunlight (1º) usa 60K+ imágenes externas + 2 etapas de preentrenamiento.
+
+Resultados calculados con `evaluate_challenge_metrics.py` sobre el holdout (n=30 seeds):
+
+| Sistema | F1 det (thr=0.5) | F1 loc (per-img) | Datos entrenamiento |
+|---------|-----------------|-----------------|---------------------|
+| Sunlight (1º) | 0.991 | 0.784 | 60K+ imgs externas |
+| Incode (2º) | 0.868 | — | 100K imgs propietarias |
+| AG / EdgeDoc (3º) | 0.958 | 0.686 | Solo FantasyID |
+| UAM-Biometrics (4º) | 0.712 | 0.620 | Fine-tune TruFor |
+| TruFor baseline | 0.807 | 0.590 | 876K imgs preentrenado |
+| **Nuestro (multitask)** | **0.9687±0.0137** | **0.807±0.096** | **Solo FantasyID** |
+
+Observaciones clave:
+- Track 1 (detección): superamos al AG team (+1.1pp) entrenando solo en FantasyID,
+  sin preentrenamiento externo.
+- Track 2 (localización): F1=0.807 supera al 1º del challenge (Sunlight: 0.784),
+  aunque con alta varianza (std=0.096).
+- La varianza en localización viene del F1 bonafide (0.733±0.181), que es inestable:
+  las seeds donde el modelo clasifica mal algunos bonafide generan falsos positivos
+  en la máscara → F1=0.0 para esas imágenes según la métrica del challenge.
+- F1 attack es estable (0.881±0.015), confirmando que la segmentación de regiones
+  alteradas es robusta.
+- Caveat: evaluamos sobre nuestro holdout (15% del dataset), no sobre el test set
+  oficial del challenge. La comparación es aproximada.
 - 6/7 equipos que superan el baseline dependen de TruFor preentrenado en 876K imgs.
-- Nuestro sistema es el único con HPO multi-objetivo explícito y arquitectura propia.
-- Métricas del challenge calculables sin reentrenar (F1 a umbral 0.5 fijo +
-  F1 per-image de localización): pendiente de implementar en evaluate.py.
+  Nuestro sistema es el único con HPO multi-objetivo y arquitectura completamente propia.
 - Dataset privado de PXL Vision (20K IDs reales): pendiente solicitar a Idiap
   para comparación cross-domain.
 
@@ -358,10 +441,10 @@ permitiendo selección del punto de operación según el contexto de despliegue.
 - ✅ Comparativa 4 variantes ablación + tests estadísticos (fig2, fig4)
 - ✅ Trade-off clasificación/segmentación (fig3_scalar_tradeoff.png)
 - ✅ Comparativa con baselines del paper FantasyID (fig5_baseline_comparison.png)
+- ✅ Métricas del challenge (F1@0.5, F1 per-image) — `evaluate_challenge_metrics.py`
 
 **Elementos pendientes para el paper:**
 - ⏳ SIDTD dataset (segundo dataset para Q1) — implementación parser pendiente
-- ⏳ Métricas del challenge (F1@0.5, F1 per-image localización) — 2 funciones en evaluate.py
 - ⏳ Solicitud dataset privado PXL Vision a equipo Idiap
 - ⏳ Redacción paper
 
