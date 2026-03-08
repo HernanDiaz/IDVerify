@@ -80,7 +80,7 @@ THR_MASK    = float(os.getenv("THR_MASK",  "0.5"))   # Umbral de binarización d
 # ============================================================
 SEED_BASE = 42
 
-N_OUTER  = int(os.getenv("N_OUTER",  "5"))    # Folds del loop externo        (prueba: 2)
+N_OUTER  = int(os.getenv("N_OUTER",  "10"))   # Folds del loop externo        (prueba: 2)
 N_INNER  = int(os.getenv("N_INNER",  "5"))    # Folds del loop interno (HPO)  (prueba: 2)
 N_TRIALS = int(os.getenv("N_TRIALS", "50"))   # Trials de Optuna por fold     (prueba: 2)
 
@@ -98,7 +98,7 @@ TRIAL_VAL_STEPS        = int(os.getenv("TRIAL_VAL_STEPS",          "0"))  # 0 = 
 # ============================================================
 # TEST CIEGO Y ABLACIÓN
 # ============================================================
-N_FINAL_SEEDS        = int(os.getenv("N_FINAL_SEEDS", "20"))
+N_FINAL_SEEDS        = int(os.getenv("N_FINAL_SEEDS", "30"))
 FINAL_SEEDS          = [SEED_BASE + i for i in range(N_FINAL_SEEDS)]
 
 RUN_FINAL_BLIND_TEST = (os.getenv("RUN_FINAL_BLIND_TEST", "1") == "1")

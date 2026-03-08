@@ -189,11 +189,33 @@ PATCH_SIZE           = 224
 USE_AMP              = True
 USE_COMPILE          = False  # Windows no soporta Triton
 GRAD_CLIP            = 1.0
-N_FINAL_SEEDS        = 5
+N_FINAL_SEEDS        = 20
 patience_final       = 12     # v1: 8
 ```
 
-**Tiempo estimado:** ~24 horas en RTX 5060 Ti 16GB.
+**Tiempo real:** ~24 horas en RTX 5060 Ti 16GB.
+
+---
+
+## Configuración de Producción (v3 — completada)
+
+```python
+N_OUTER              = 10     # v2: 5 — necesario para potencia estadística Q1
+N_INNER              = 5
+N_TRIALS             = 50
+MAX_EPOCHS_TRIAL     = 15
+MAX_EPOCHS_FINAL     = 100
+MAX_EPOCHS_ABLATION  = 50
+BATCH_SIZE           = 64     # subir a 256 si se usa A100/H100
+PATCH_SIZE           = 224
+USE_AMP              = True
+USE_COMPILE          = False  # activar con USE_COMPILE=1 en Linux
+GRAD_CLIP            = 1.0
+N_FINAL_SEEDS        = 30     # v2: 20
+patience_final       = 12
+```
+
+**Tiempo real:** ~59h en RTX 5060 Ti 16GB (Windows).
 
 ---
 
@@ -211,33 +233,137 @@ patience_final       = 12     # v1: 8
   - dropout sin señal fuera de [0.1, 0.4]
   - dec_ch=192 dominante en Pareto → añadido 256
 
-### v2 (ejecución actual)
+### v2 (completada — N_OUTER=5, N_FINAL_SEEDS=20)
 - Todos los bugs corregidos
 - Espacio HPO refinado a 4 dimensiones efectivas
 - MAX_EPOCHS_TRIAL=15, patience=12
-- Pendiente: resultados
+- Nested CV: PR-AUC=0.9904±0.0013, Dice=0.829±0.017
+- Blind test (20 seeds): multitask PR-AUC=0.9970±0.0009, Dice=0.868±0.006
+- Scalar experiment: completado, diferencias no significativas (n=5 insuficiente)
+- Limitación: N_OUTER=5 → Wilcoxon p mínimo=0.0625, potencia estadística insuficiente para Q1
+
+### v3 (completada — N_OUTER=10, N_FINAL_SEEDS=30)
+- N_OUTER duplicado para alcanzar potencia estadística Q1 (Wilcoxon p mínimo=0.002)
+- N_FINAL_SEEDS: 20→30
+- Exports en: `exports_hpo_pareto_nested/`
+
+**Nested CV (10 folds):**
+
+| Fold | PR-AUC | Dice | ROC-AUC | BACC | w_mask sel. |
+|------|--------|------|---------|------|-------------|
+| 1 | 0.9939 | 0.861 | 0.9848 | 0.9491 | 2.46 |
+| 2 | 0.9769 | 0.871 | 0.9615 | 0.9319 | 2.70 |
+| 3 | 0.9993 | 0.909 | 0.9981 | 0.9470 | 2.47 |
+| 4 | 0.9915 | 0.858 | 0.9773 | 0.8986 | 2.43 |
+| 5 | 0.9948 | 0.827 | 0.9869 | 0.9318 | 1.41 |
+| 6 | 0.9936 | 0.874 | 0.9830 | 0.9319 | 2.89 |
+| 7 | 0.9940 | 0.861 | 0.9834 | 0.9479 | 2.67 |
+| 8 | 0.9967 | 0.887 | 0.9911 | 0.9557 | 2.29 |
+| 9 | 0.9896 | 0.807 | 0.9722 | 0.9023 | 1.95 |
+| 10 | 0.9909 | 0.800 | 0.9765 | 0.9294 | 2.65 |
+| **Media** | **0.9921±0.0058** | **0.856±0.030** | **0.9815±0.0110** | **0.9326±0.0192** | **2.39±0.43** |
+
+Observación: Pareto selecciona consistentemente w_mask en rango 2.3–2.7.
+Folds 5 y 9 (w_mask=1.41, 1.95) coinciden con los peores Dice.
+
+**Blind test (30 seeds, 4 variantes):**
+
+| Variante | PR-AUC | Dice |
+|----------|--------|------|
+| multitask | 0.9967±0.0021 | 0.875±0.018 |
+| cls_only | 0.9503±0.0744 | 0.002±0.008 |
+| seg_only | 0.7277±0.0528 | 0.867±0.023 |
+| unweighted_losses | 0.9958±0.0016 | 0.857±0.016 |
+
+**Tests estadísticos (Wilcoxon + Holm, n=30):**
+
+| Comparación | Métrica | p_holm | Significativo | Cohen's d |
+|-------------|---------|--------|---------------|-----------|
+| multitask vs cls_only | PR-AUC | 1.5e-08 | ✅ | — |
+| multitask vs cls_only | Dice | 1.3e-08 | ✅ | — |
+| multitask vs seg_only | PR-AUC | 1.5e-08 | ✅ | — |
+| multitask vs seg_only | Dice | 0.288 | ❌ (esperado) | — |
+| multitask vs unweighted | Dice | 1.3e-04 | ✅ | d=1.01 (grande) |
+| multitask vs unweighted | PR-AUC | 0.083 | ❌ (esperado) | — |
+| multitask vs unweighted | BACC | 0.121 | ❌ (esperado) | — |
+
+Resultado clave: multitask vs unweighted_losses significativo en Dice (p=1.3e-4, d=1.01).
+Valida la contribución del HPO multi-objetivo. PR-AUC no significativo — correcto,
+ambas variantes clasifican bien.
+
+**Scalar experiment (10 folds, grid loss_w_mask ∈ {0.5, 1.0, 1.5, 2.0, 2.5, 3.0}):**
+
+Grid completo (media ± std, n=10):
+
+| w_mask | PR-AUC | Dice |
+|--------|--------|------|
+| 0.5 | 0.9911±0.0030 | 0.8007±0.0183 |
+| 1.0 | 0.9938±0.0023 | 0.8289±0.0353 |
+| 1.5 | 0.9888±0.0084 | 0.8237±0.0465 |
+| 2.0 | 0.9943±0.0027 | 0.8498±0.0241 |
+| 2.5 | 0.9926±0.0059 | 0.8480±0.0194 |
+| 3.0 | 0.9923±0.0035 | 0.8552±0.0227 |
+
+Selección por criterio (media ± std, n=10 folds):
+
+| Método | PR-AUC | Dice | Dice std |
+|--------|--------|------|----------|
+| by_prauc | 0.9959±0.0015 | 0.8574±0.0166 | 0.0166 |
+| by_dice | 0.9936±0.0033 | 0.8630±0.0147 | 0.0147 |
+| multiobjective (Pareto) | 0.9921±0.0060 | 0.8555±0.0345 | 0.0345 |
+
+Tests estadísticos (Wilcoxon + Holm, n=10): ninguna comparación significativa.
+El Pareto tiene mayor std en Dice (0.0345 vs 0.0166) porque explora el espacio
+continuo y en folds 5/9 selecciona w_mask bajos (1.41, 1.95); los escalares
+colapsan hacia w_mask altos (by_dice: μ=2.60, 6/10 folds eligen w=3.0).
+
+Argumento para el paper: la ventaja del Pareto no es superar estadísticamente
+a los escalares (n=10 insuficiente para detectar diferencias pequeñas), sino
+(a) evitar la decisión arbitraria del criterio mono-objetivo, (b) búsqueda
+continua en lugar de grid discreto, y (c) la diferencia significativa ya
+establecida frente a unweighted_losses en el blind test (p=1.3e-4, d=1.01).
 
 ---
 
 ## Orientación hacia Publicación
 
-**Target realista:** Workshop CVPR/ECCV/ICCV especializado en biometría/seguridad
-documental, o IEEE TIFS / Pattern Recognition si se añade un segundo dataset.
+**Target realista:** IEEE TIFS / Pattern Recognition (Q1) si se añade SIDTD como
+segundo dataset. Workshop CVPR/ECCV/ICCV como opción más rápida con solo FantasyID.
 
 **Narrativa del paper:**
 "Framework de optimización multi-objetivo para sistemas de verificación documental
 que explicita el trade-off entre clasificación y localización de alteraciones,
 permitiendo selección del punto de operación según el contexto de despliegue."
 
+**Contexto competitivo — DeepID Challenge (ICCV 2025):**
+- Nuestro F1 de clase 1 (~0.93–0.96 según fold) comparable con 3er puesto del
+  challenge (AG/EdgeDoc: F1=0.958) entrenando solo con FantasyID.
+- Sunlight (1º) usa 60K+ imágenes externas + 2 etapas de preentrenamiento.
+- 6/7 equipos que superan el baseline dependen de TruFor preentrenado en 876K imgs.
+- Nuestro sistema es el único con HPO multi-objetivo explícito y arquitectura propia.
+- Métricas del challenge calculables sin reentrenar (F1 a umbral 0.5 fijo +
+  F1 per-image de localización): pendiente de implementar en evaluate.py.
+- Dataset privado de PXL Vision (20K IDs reales): pendiente solicitar a Idiap
+  para comparación cross-domain.
+
 **Limitaciones conocidas:**
-- Dataset único (FantasyID) — revistas primer nivel exigen ≥2 datasets
+- Dataset único hasta SIDTD — revistas Q1 exigen ≥2 datasets
 - Arquitectura Patel CNN no es estado del arte (revisores pedirán comparativa con ViT)
 - 50 trials de Optuna razonable pero no exhaustivo
 
+**Elementos completados para el paper:**
+- ✅ Análisis visual del frente de Pareto (fig1_pareto_front.png)
+- ✅ Comparativa con escalarización clásica — scalar experiment v3
+- ✅ Análisis de consistencia de w_mask por fold (fig6_wmask_per_fold.png)
+- ✅ Comparativa 4 variantes ablación + tests estadísticos (fig2, fig4)
+- ✅ Trade-off clasificación/segmentación (fig3_scalar_tradeoff.png)
+- ✅ Comparativa con baselines del paper FantasyID (fig5_baseline_comparison.png)
+
 **Elementos pendientes para el paper:**
-- Análisis visual del frente de Pareto
-- Comparativa con escalarización clásica (barrido manual de loss_w_mask)
-- Análisis de patrones de hiperparámetros en el frente de Pareto
+- ⏳ SIDTD dataset (segundo dataset para Q1) — implementación parser pendiente
+- ⏳ Métricas del challenge (F1@0.5, F1 per-image localización) — 2 funciones en evaluate.py
+- ⏳ Solicitud dataset privado PXL Vision a equipo Idiap
+- ⏳ Redacción paper
 
 ---
 
