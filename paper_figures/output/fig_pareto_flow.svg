@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2.917in" height="4.125in" viewBox="0 0 210 297">
+<defs><marker id="ah" markerWidth="6" markerHeight="5" refX="5.5" refY="2.5" orient="auto"><path d="M0,0 L0,5 L6,2.5 z" fill="#2C3E50"/></marker></defs>
+<rect x="0" y="0" width="210" height="297" fill="white"/>
+<rect x="10.0" y="12.0" width="190.0" height="27.0" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.7" rx="0"/>
+<text x="105.0" y="20.6" font-family="'Times New Roman', Georgia, serif" font-size="7.2" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Document Image Dataset</text>
+<text x="105.0" y="30.9" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">4 000 images  ·  forgery / tampering</text>
+<line x1="105.0" y1="39.0" x2="105.0" y2="48.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="10.0" y="53.0" width="190.0" height="27.0" fill="#D5F5E3" stroke="#2C3E50" stroke-width="0.7" rx="0"/>
+<text x="105.0" y="61.6" font-family="'Times New Roman', Georgia, serif" font-size="7.2" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Multi-task U-Net Architecture</text>
+<text x="105.0" y="71.9" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">Shared encoder  ·  decoder  ·  cls head</text>
+<line x1="105.0" y1="80.0" x2="105.0" y2="89.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="10.0" y="94.0" width="190.0" height="27.0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.7" rx="0"/>
+<text x="105.0" y="102.6" font-family="'Times New Roman', Georgia, serif" font-size="7.2" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Multi-objective HPO  (Optuna TPE)</text>
+<text x="105.0" y="112.9" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">Obj 1: PR-AUC        Obj 2: Dice Global</text>
+<line x1="105.0" y1="121.0" x2="105.0" y2="130.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="10.0" y="135.0" width="190.0" height="27.0" fill="#FAD7A0" stroke="#2C3E50" stroke-width="0.7" rx="0"/>
+<text x="105.0" y="143.6" font-family="'Times New Roman', Georgia, serif" font-size="7.2" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Pareto Front</text>
+<text x="105.0" y="153.9" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">51 non-dominated configurations</text>
+<line x1="105.0" y1="162.0" x2="105.0" y2="171.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="10.0" y="176.0" width="190.0" height="27.0" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.7" rx="0"/>
+<text x="105.0" y="184.6" font-family="'Times New Roman', Georgia, serif" font-size="7.2" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Model Selection</text>
+<text x="105.0" y="194.9" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">Min. Euclidean dist. to ideal point (1, 1)</text>
+<line x1="105.0" y1="203.0" x2="105.0" y2="212.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="10.0" y="217.0" width="190.0" height="27.0" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.7" rx="0"/>
+<text x="105.0" y="225.6" font-family="'Times New Roman', Georgia, serif" font-size="7.2" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Nested CV Evaluation</text>
+<text x="105.0" y="235.9" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">10-fold outer  ×  5-fold inner HPO</text>
+<line x1="105.0" y1="244.0" x2="105.0" y2="253.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="10.0" y="258.0" width="190.0" height="27.0" fill="#F4ECF7" stroke="#2C3E50" stroke-width="0.7" rx="0"/>
+<text x="105.0" y="266.6" font-family="'Times New Roman', Georgia, serif" font-size="7.2" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Blind Test</text>
+<text x="105.0" y="276.9" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">30 independent random seeds</text>
+</svg>

@@ -1,0 +1,84 @@
+FIGURE 0 — DocVerify architecture caption (for the paper)
+==========================================================
+
+Suggested caption:
+------------------
+DocVerify architecture: a Patel CNN Encoder coupled with a U-Net Decoder for
+multi-task document-forgery detection and localisation. The encoder comprises
+six convolutional blocks (8–256 filters) separated by pooling operations,
+progressively reducing the spatial resolution from 224×224 to a 7×7 bottleneck.
+Five skip connections (s224–s14) preserve fine-grained spatial detail by directly
+linking encoder feature maps to their spatially corresponding decoder blocks.
+The Classification Head applies global average pooling to the 256-dimensional
+bottleneck representation followed by four fully-connected layers with dropout
+regularisation, producing a scalar attack-probability score. The Segmentation
+Head recovers the original resolution through five bilinear upsampling blocks
+that concatenate encoder skip features at each scale, followed by a 1×1
+convolution and bilinear interpolation, yielding a pixel-wise tampering mask of
+the same spatial dimensions as the input (224×224×1). Both heads are trained
+jointly with a combined BCE + Dice segmentation loss and a BCE classification
+loss, allowing shared feature representations to benefit both tasks.
+
+
+What the figure shows (for the Methods section):
+-------------------------------------------------
+The diagram uses the Patel-style two-row layout: the encoder flows left-to-right
+along the top row, and the decoder flows right-to-left along the bottom row,
+mirroring the encoder column structure. The dual-head outputs (Classification
+Head and Segmentation Head) are placed on opposite horizontal extremes to
+emphasise the two complementary prediction branches.
+
+Encoder blocks:
+  Block 1 — Conv2D 8 filters (3×3), LeakyReLU(α=0.2), BatchNorm2D.
+             Output: 224×224×8. No skip connection (insufficient semantic content).
+  Block 2 — 2× Conv2D 16 filters (3×3), LeakyReLU, BatchNorm2D,
+             AvgPool2D(2×2). Skip s224 (224×224×16).
+  Block 3 — 3× Conv2D 32 filters (3×3), LeakyReLU, BatchNorm2D,
+             AvgPool2D(2×2). Skip s112 (112×112×32).
+  Block 4 — 4× Conv2D 64 filters (3×3), LeakyReLU, BatchNorm2D,
+             AvgPool2D(2×2). Skip s56 (56×56×64).
+  Block 5 — Conv2D 128 filters (5×5), LeakyReLU, BatchNorm2D,
+             MaxPool2D(2×2). Skip s28 (28×28×128).
+  Block 6 — Conv2D 256 filters (5×5), LeakyReLU, BatchNorm2D,
+             MaxPool2D(2×2). Skip s14 (14×14×256).
+  Bottleneck — AdaptiveAvgPool2D(1) → 7×7×256 feature volume.
+
+Decoder blocks (dec_ch = 128 for the Pareto-selected configuration):
+  Block 1 (7→14)   — Conv2D 128 (1×1) projection, Upsample ×2,
+                      Concat s14 (→384 ch), 2× Conv2D 128 (3×3). Output 14×14×128.
+  Block 2 (14→28)  — Upsample ×2, Concat s28 (→256 ch),
+                      2× Conv2D 64 (3×3). Output 28×28×64.
+  Block 3 (28→56)  — Upsample ×2, Concat s56 (→128 ch),
+                      2× Conv2D 32 (3×3). Output 56×56×32.
+  Block 4 (56→112) — Upsample ×2, Concat s112 (→64 ch),
+                      2× Conv2D 16 (3×3). Output 112×112×16.
+  Block 5 (112→224)— Upsample ×2, Concat s224 (→32 ch),
+                      2× Conv2D 8 (3×3). Output 224×224×8.
+  Segmentation Head — Conv2D 1 filter (1×1), bilinear interpolation
+                       to input resolution → Mask 224×224×1 (logits).
+
+Classification Head (from bottleneck):
+  Dropout → Linear(256→32) → LeakyReLU →
+  Dropout → Linear(32→16)  → LeakyReLU →
+  Dropout → Linear(16→16)  → LeakyReLU →
+  Dropout → Linear(16→1)   → Score (sigmoid applied at inference).
+
+All LeakyReLU activations use α = 0.2. Dropout rate and dec_ch are
+hyperparameters selected by the multi-objective HPO (see Fig. 1).
+
+
+Key design choices for the Discussion section:
+-----------------------------------------------
+- The use of AvgPool in shallow blocks (1–4) vs MaxPool in deep blocks (5–6)
+  preserves spatial averaging information in early layers while enforcing
+  stronger feature selection in high-level semantic layers.
+- The 5×5 kernels in Blocks 5–6 provide a larger receptive field at lower
+  spatial resolutions (28×28 and 14×14), helping to capture broader textural
+  inconsistencies characteristic of forgery regions.
+- Sharing the encoder between classification and segmentation enforces a joint
+  representation that must simultaneously support global (document-level) and
+  local (pixel-level) discrimination, acting as an implicit regulariser.
+- The absence of a skip connection from Block 1 avoids injecting low-level
+  noise (edges, textures not related to forgery) directly into the decoder,
+  which was observed to marginally improve segmentation quality in ablation
+  experiments.

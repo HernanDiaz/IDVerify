@@ -1,0 +1,49 @@
+FIGURE 2 — Nested CV results caption (for the paper)
+=====================================================
+
+Suggested caption:
+------------------
+Per-fold test metrics from the 10-fold nested cross-validation. Blue bars show
+Validation PR-AUC and orange bars show Validation Dice (global mask overlap)
+for each outer fold (F0–F9). Dashed horizontal lines indicate the cross-fold
+mean for each metric: PR-AUC mean = 0.9921 ± 0.0060 and
+Dice mean = 0.8555 ± 0.0345. The y-axis is truncated at 0.75 to emphasise
+fold-to-fold variation. All 10 folds share the same HPO procedure (50 Optuna
+MOTPE trials on the inner validation split); no fold result informs any other.
+
+
+What the figure shows (for the Methods section):
+-------------------------------------------------
+The figure presents the generalisation performance of DocVerify evaluated under
+a 10-fold nested cross-validation (NCV) scheme. The outer loop partitions the
+FantasyID training set into 10 non-overlapping stratified splits; each split
+serves once as the held-out test set while the remaining 9 folds are used for
+inner-loop HPO (5 inner folds × 50 Optuna trials) and final model training.
+
+This design ensures that the HPO process is entirely blind to the test fold:
+hyperparameter selection (via the Pareto distance-to-ideal criterion, see Fig. 1)
+is performed on the inner validation set, and the chosen configuration is
+retrained from scratch on all 9 training folds before evaluation on the test
+fold. Consequently, each bar in the figure is an unbiased estimate of
+generalisation performance.
+
+Two complementary metrics are reported per fold:
+- PR-AUC (Precision-Recall Area Under the Curve): measures detection quality
+  at the image level, aggregated across all classification thresholds.
+- Dice coefficient (global): measures localisation quality as the harmonic mean
+  of pixel-level precision and recall between the predicted and ground-truth
+  forgery masks.
+
+
+Key observations for the Results section:
+------------------------------------------
+- PR-AUC is consistently high across all folds (0.9769–0.9993), with a mean of
+  0.9921 ± 0.0060, indicating that the detection head generalises reliably
+  regardless of the data partition.
+- Dice scores show slightly more fold-to-fold variability (0.8001–0.9091, mean
+  0.8555 ± 0.0345), reflecting the inherent difficulty of pixel-level
+  localisation on diverse forgery patterns.
+- No fold exhibits a performance collapse, confirming that the model does not
+  overfit to any particular subset of the training distribution.
+- The small standard deviations on both metrics support the robustness of the
+  nested CV design and the stability of the Pareto-based HPO strategy.

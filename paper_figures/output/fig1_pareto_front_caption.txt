@@ -1,0 +1,52 @@
+FIGURE 1 — Pareto front caption (for the paper)
+================================================
+
+Suggested caption:
+------------------
+Validation objective space across all 500 HPO trials (10 outer folds × 50 Optuna
+trials per fold). Each grey point represents one evaluated hyperparameter
+configuration; blue points denote the 50 Pareto-optimal trials (non-dominated
+solutions across folds). The dashed step-line traces the global Pareto frontier
+computed from all trials. The red diamond at (1, 1) marks the ideal point
+(simultaneous perfect PR-AUC and Dice), with dotted lines indicating its
+projection onto each axis. The annotated point corresponds to the configuration
+selected for final training, chosen as the Pareto-optimal trial minimising the
+Euclidean distance to the ideal point (d = 0.316). A lower distance indicates a
+better simultaneous trade-off between detection and localisation quality.
+
+
+What the figure shows (for the Methods section):
+-------------------------------------------------
+The figure illustrates the multi-objective hyperparameter optimisation (HPO)
+landscape of the DocVerify training procedure. For each of the 10 outer folds of
+the nested cross-validation, 50 candidate configurations are evaluated using the
+inner validation set, yielding 500 points in the (PR-AUC, Dice) objective space.
+
+A configuration A dominates configuration B if A achieves equal or higher values
+on both objectives and strictly higher on at least one. The Pareto-optimal set
+(blue points) comprises all non-dominated configurations: no other trial
+simultaneously outperforms them on both PR-AUC and Dice.
+
+From each fold's Pareto front, the configuration closest to the ideal point (1, 1)
+in Euclidean distance is selected for final model training:
+
+    d = sqrt( (1 - PR-AUC)^2 + (1 - Dice)^2 )
+
+This criterion assigns equal weight to both objectives, consistent with the
+DeepID 2025 Challenge evaluation protocol, which ranks systems independently on
+Track 1 (detection) and Track 2 (localisation).
+
+The global frontier line (dashed, grey) is derived post-hoc from all 500 trials
+for visualisation purposes only; model selection was performed per-fold.
+
+
+Key observations for the Results section:
+------------------------------------------
+- The Pareto front spans a meaningful range of trade-offs: configurations with
+  high PR-AUC (>0.96) tend to achieve lower Dice (~0.64), while balanced
+  configurations achieve PR-AUC ~0.94 with Dice ~0.69.
+- The selected configuration (d = 0.316) lies near the centre of the frontier,
+  confirming that the distance-to-ideal criterion avoids extreme solutions.
+- The density of grey points in the upper-right region indicates that MOTPE
+  (Multi-objective Tree-structured Parzen Estimator) efficiently focused the
+  search towards high-quality regions without exhaustive grid exploration.

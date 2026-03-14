@@ -1,0 +1,78 @@
+FIGURE 5 — Pareto vs. scalar HPO caption (for the paper)
+=========================================================
+
+Suggested caption:
+------------------
+Comparison of multi-objective Pareto HPO against scalar grid search across 10
+outer folds of the nested cross-validation. Box plots show the distribution of
+(left) PR-AUC and (right) global Dice; individual fold results are overlaid as
+jittered dots. Scalar variants select the configuration that maximises a single
+objective: either PR-AUC ("Scalar best PR-AUC") or Dice ("Scalar best Dice").
+Significance symbols above each scalar box indicate Wilcoxon signed-rank tests
+with Holm correction against the Pareto baseline (ns: p >= 0.05, n = 10 folds).
+No statistically significant differences were found between methods.
+
+
+What the figure shows (for the Methods / Results section):
+----------------------------------------------------------
+The figure evaluates whether the multi-objective Pareto selection criterion
+confers a measurable advantage over simpler scalar alternatives on this dataset.
+
+Three HPO selection strategies are compared, all using the same 50 MOTPE trials
+per inner fold and the same nested CV outer splits:
+
+  - Pareto (ours): configuration selected as the Pareto-optimal trial minimising
+    Euclidean distance to the ideal point (1, 1) in the (PR-AUC, Dice) space.
+    This criterion does not commit to a single objective a priori.
+
+  - Scalar (best PR-AUC): from all 50 trials per fold, the configuration with
+    the highest inner-validation PR-AUC is selected, ignoring Dice entirely.
+
+  - Scalar (best Dice): from all 50 trials per fold, the configuration with the
+    highest inner-validation Dice is selected, ignoring PR-AUC entirely.
+
+Statistical testing uses the two-sided Wilcoxon signed-rank test (non-parametric,
+paired across folds) with Holm-Bonferroni correction for two comparisons per
+metric. With n = 10 paired observations (outer folds), the test is low-powered;
+effect sizes below approximately 0.01 cannot be reliably detected.
+
+
+Key observations and honest interpretation for the Results / Discussion section:
+---------------------------------------------------------------------------------
+- Numerically, all three methods achieve closely matched performance:
+    Pareto:            PR-AUC 0.9921 +/- 0.0060,  Dice 0.8555 +/- 0.0345
+    Scalar by_prauc:   PR-AUC 0.9958 +/- 0.0015,  Dice 0.8574 +/- 0.0166
+    Scalar by_dice:    PR-AUC 0.9936 +/- 0.0033,  Dice 0.8630 +/- 0.0147
+
+- Pareto shows slightly lower means on both metrics (delta PR-AUC approx -0.004,
+  delta Dice approx -0.002 to -0.008 vs scalar variants), but none of these
+  differences reach statistical significance (all p >= 0.05 after Holm
+  correction).
+
+- Pareto also exhibits higher variance than scalar methods (std 0.006 vs 0.002
+  on PR-AUC; 0.035 vs 0.015-0.017 on Dice), which may reflect sensitivity to
+  the random composition of inner folds with only 10 outer splits.
+
+IMPORTANT — honest framing for the paper:
+  The Pareto approach does NOT outperform scalar selection in absolute metric
+  terms on this dataset. The contribution of Pareto HPO should therefore be
+  framed around methodological advantages rather than performance gains:
+
+  (1) Objective-agnostic selection: no single metric is privileged before
+      training. The criterion is consistent with the DeepID 2025 evaluation
+      protocol, which ranks systems independently on Track 1 and Track 2.
+
+  (2) Transparency: the selection is justified by position in the full
+      objective space rather than by an arbitrary scalar weight lambda.
+
+  (3) Richer diagnostics: the Pareto front (Figure 1) reveals the full
+      trade-off landscape across 500 trials, enabling post-hoc analysis of
+      alternative solutions — something scalar search cannot provide.
+
+  Suggested phrasing for the Discussion:
+  "Pareto HPO achieves performance statistically indistinguishable from scalar
+  selection on both metrics (all p >= 0.05, Wilcoxon + Holm, n = 10), with
+  absolute differences below 0.01 on PR-AUC and Dice. The advantage of the
+  multi-objective approach lies not in raw performance but in the principled,
+  objective-agnostic nature of the selection criterion and the richer
+  characterisation of the HPO landscape it provides."

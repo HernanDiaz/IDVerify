@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1312" height="586"
+     viewBox="0 0 1312 586">
+  <defs>
+    <marker id="ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#2C3E50"/>
+    </marker>
+    <marker id="ahs" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#7F8C8D"/>
+    </marker>
+  </defs>
+  <rect width="1312" height="586" fill="white"/>
+
+<rect x="18.0" y="167.0" width="138.0" height="28.0" rx="2" fill="#F2F3F4" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="87.0" y="181.0" text-anchor="middle" dominant-baseline="middle" font-size="7.5" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Input  224×224×3</text>
+<line x1="87.0" y1="167.0" x2="87.0" y2="124.0" stroke="#2C3E50" stroke-width="1.0" marker-end="url(#ah)"/>
+<text x="121.0" y="142.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">224×224×3</text>
+<rect x="18.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="87.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 1</text>
+<rect x="18.0" y="42.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="87.0" y="54.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  8 filt. (3×3)</text>
+<rect x="18.0" y="67.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="87.0" y="79.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="18.0" y="92.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="87.0" y="104.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
+<line x1="156.0" y1="57.0" x2="197.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="180.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">224×224×8</text>
+<rect x="204.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 2</text>
+<rect x="204.0" y="42.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="54.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 16 filt. (3×3)</text>
+<rect x="204.0" y="67.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="79.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="204.0" y="92.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="104.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 16 filt. (3×3)</text>
+<rect x="204.0" y="117.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="129.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="204.0" y="142.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="154.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
+<rect x="204.0" y="167.0" width="138.0" height="27.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="180.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AvgPool2D (2×2)</text>
+<line x1="342.0" y1="57.0" x2="383.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="366.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">112×112×16</text>
+<rect x="390.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 3</text>
+<rect x="390.0" y="42.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="54.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 32 filt. (3×3)</text>
+<rect x="390.0" y="67.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="79.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="390.0" y="92.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="104.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 32 filt. (3×3)</text>
+<rect x="390.0" y="117.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="129.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="390.0" y="142.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="154.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 32 filt. (3×3)</text>
+<rect x="390.0" y="167.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="179.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="390.0" y="192.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="204.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
+<rect x="390.0" y="217.0" width="138.0" height="27.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="230.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AvgPool2D (2×2)</text>
+<line x1="528.0" y1="57.0" x2="569.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="552.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">56×56×32</text>
+<rect x="576.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 4</text>
+<rect x="576.0" y="42.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="54.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 64 filt. (3×3)</text>
+<rect x="576.0" y="67.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="79.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="576.0" y="92.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="104.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 64 filt. (3×3)</text>
+<rect x="576.0" y="117.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="129.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="576.0" y="142.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="154.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 64 filt. (3×3)</text>
+<rect x="576.0" y="167.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="179.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="576.0" y="192.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="204.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 64 filt. (3×3)</text>
+<rect x="576.0" y="217.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="229.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="576.0" y="242.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="254.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
+<rect x="576.0" y="267.0" width="138.0" height="27.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="280.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AvgPool2D (2×2)</text>
+<line x1="714.0" y1="57.0" x2="755.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="738.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">28×28×64</text>
+<rect x="762.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 5</text>
+<rect x="762.0" y="42.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="54.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 128 filt. (5×5)</text>
+<rect x="762.0" y="67.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="79.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="762.0" y="92.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="104.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
+<rect x="762.0" y="117.0" width="138.0" height="27.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="130.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">MaxPool2D (2×2)</text>
+<line x1="900.0" y1="57.0" x2="941.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="924.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">14×14×128</text>
+<rect x="948.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 6</text>
+<rect x="948.0" y="42.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="54.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 256 filt. (5×5)</text>
+<rect x="948.0" y="67.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="79.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="948.0" y="92.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="104.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
+<rect x="948.0" y="117.0" width="138.0" height="27.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="130.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">MaxPool2D (2×2)</text>
+<rect x="1144.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C9E8C5" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Bottleneck</text>
+<rect x="1144.0" y="42.0" width="138.0" height="25.0" rx="2" fill="#D5F5E3" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="54.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AdaptiveAvgPool2D(1)</text>
+<rect x="1144.0" y="67.0" width="138.0" height="25.0" rx="2" fill="#D5F5E3" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="79.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Bottleneck  7×7×256</text>
+<line x1="1086.0" y1="57.0" x2="1137.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="1115.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">7×7×256</text>
+<line x1="1213.0" y1="92.0" x2="1213.0" y2="105.0" stroke="#2C3E50" stroke-width="1.0" marker-end="url(#ah)"/>
+<text x="1245.0" y="102.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">256-d vector</text>
+<rect x="1144.0" y="112.0" width="138.0" height="20.0" rx="2" fill="#E8C5C5" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="122.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Classification Head</text>
+<rect x="1144.0" y="132.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="144.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Dropout</text>
+<rect x="1144.0" y="157.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="169.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Linear (256 → 32)</text>
+<rect x="1144.0" y="182.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="194.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="1144.0" y="207.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="219.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Dropout</text>
+<rect x="1144.0" y="232.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="244.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Linear (32 → 16)</text>
+<rect x="1144.0" y="257.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="269.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="1144.0" y="282.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="294.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Dropout</text>
+<rect x="1144.0" y="307.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="319.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Linear (16 → 16)</text>
+<rect x="1144.0" y="332.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="344.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="1144.0" y="357.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="369.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Dropout</text>
+<rect x="1144.0" y="382.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="394.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Linear (16 → 1)</text>
+<line x1="1213.0" y1="407.0" x2="1213.0" y2="415.0" stroke="#2C3E50" stroke-width="1.0" marker-end="url(#ah)"/>
+<rect x="1144.0" y="422.0" width="138.0" height="28.0" rx="2" fill="#F2F3F4" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1213.0" y="436.0" text-anchor="middle" dominant-baseline="middle" font-size="7.5" font-weight="bold" fill="#8B0000" font-family="'Times New Roman', Georgia, serif">Score  (sigmoid)</text>
+<line x1="1017.0" y1="304.0" x2="1017.0" y2="337.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="1049.0" y="324.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">7×7×256</text>
+<rect x="948.0" y="344.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="354.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 1  (7→14)</text>
+<rect x="948.0" y="364.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="376.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 128 filt. (1×1)</text>
+<rect x="948.0" y="389.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="401.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="948.0" y="414.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="426.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Upsample ×2 (bilinear)</text>
+<rect x="948.0" y="439.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="451.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Concat  s14  (→384ch)</text>
+<rect x="948.0" y="464.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="476.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 128 filt. (3×3)</text>
+<rect x="948.0" y="489.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="501.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="948.0" y="514.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 128 filt. (3×3)</text>
+<rect x="948.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="1017.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<line x1="948.0" y1="479.0" x2="907.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="924.0" y="471.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">14×14×128</text>
+<rect x="762.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 2  (14→28)</text>
+<rect x="762.0" y="414.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="426.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Upsample ×2 (bilinear)</text>
+<rect x="762.0" y="439.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="451.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Concat  s28  (→256ch)</text>
+<rect x="762.0" y="464.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="476.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  64 filt. (3×3)</text>
+<rect x="762.0" y="489.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="501.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="762.0" y="514.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  64 filt. (3×3)</text>
+<rect x="762.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="831.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<line x1="762.0" y1="479.0" x2="721.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="738.0" y="471.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">28×28×64</text>
+<rect x="576.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 3  (28→56)</text>
+<rect x="576.0" y="414.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="426.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Upsample ×2 (bilinear)</text>
+<rect x="576.0" y="439.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="451.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Concat  s56  (→128ch)</text>
+<rect x="576.0" y="464.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="476.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  32 filt. (3×3)</text>
+<rect x="576.0" y="489.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="501.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="576.0" y="514.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  32 filt. (3×3)</text>
+<rect x="576.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="645.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<line x1="576.0" y1="479.0" x2="535.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="552.0" y="471.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">56×56×32</text>
+<rect x="390.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 4  (56→112)</text>
+<rect x="390.0" y="414.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="426.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Upsample ×2 (bilinear)</text>
+<rect x="390.0" y="439.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="451.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Concat s112  (→64ch)</text>
+<rect x="390.0" y="464.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="476.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  16 filt. (3×3)</text>
+<rect x="390.0" y="489.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="501.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="390.0" y="514.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  16 filt. (3×3)</text>
+<rect x="390.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="459.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<line x1="390.0" y1="479.0" x2="349.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="366.0" y="471.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">112×112×16</text>
+<rect x="204.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 5  (112→224)</text>
+<rect x="204.0" y="414.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="426.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Upsample ×2 (bilinear)</text>
+<rect x="204.0" y="439.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="451.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Concat s224  (→32ch)</text>
+<rect x="204.0" y="464.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="476.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D   8 filt. (3×3)</text>
+<rect x="204.0" y="489.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="501.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<rect x="204.0" y="514.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D   8 filt. (3×3)</text>
+<rect x="204.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="273.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
+<line x1="204.0" y1="429.0" x2="163.0" y2="429.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<text x="180.0" y="421.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">224×224×8</text>
+<rect x="18.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#E8C5C5" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="87.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Segmentation Head</text>
+<rect x="18.0" y="414.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="87.0" y="426.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 1 filt. (1×1)</text>
+<rect x="18.0" y="439.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="87.0" y="451.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Interpolate (bilinear)</text>
+<line x1="87.0" y1="464.0" x2="87.0" y2="472.0" stroke="#2C3E50" stroke-width="1.0" marker-end="url(#ah)"/>
+<rect x="18.0" y="479.0" width="138.0" height="28.0" rx="2" fill="#F2F3F4" stroke="#2C3E50" stroke-width="0.9"/>
+<text x="87.0" y="493.0" text-anchor="middle" dominant-baseline="middle" font-size="7.5" font-weight="bold" fill="#00008B" font-family="'Times New Roman', Georgia, serif">Mask  224×224×1</text>
+<line x1="273.0" y1="194.0" x2="273.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<text x="305.0" y="294.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s224: 224×224×16</text>
+<line x1="459.0" y1="244.0" x2="459.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<text x="491.0" y="319.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s112: 112×112×32</text>
+<line x1="645.0" y1="294.0" x2="645.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<text x="677.0" y="344.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s56: 56×56×64</text>
+<line x1="831.0" y1="144.0" x2="831.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<text x="863.0" y="269.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s28: 28×28×128</text>
+<line x1="1017.0" y1="144.0" x2="1017.0" y2="337.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<text x="1049.0" y="244.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s14: 14×14×256</text>
+<text x="576.0" y="10.0" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="bold" fill="#1A5276" font-family="'Times New Roman', Georgia, serif">PATEL CNN ENCODER</text>
+<text x="576.0" y="382.0" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="bold" fill="#784212" font-family="'Times New Roman', Georgia, serif">U-NET DECODER</text>
+<text x="1213.0" y="10.0" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="bold" fill="#641E16" font-family="'Times New Roman', Georgia, serif">DUAL HEADS</text>
+<rect x="1126.0" y="475.0" width="174.0" height="89.0" rx="2" fill="white" stroke="#2C3E50" stroke-width="0.8"/>
+<text x="1213.0" y="490.0" text-anchor="middle" dominant-baseline="middle" font-size="7.5" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Legend</text>
+<rect x="1134.0" y="500.0" width="12.0" height="12.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.6"/>
+<text x="1150.0" y="506.0" text-anchor="start" dominant-baseline="middle" font-size="7.0" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder operation</text>
+<rect x="1134.0" y="519.0" width="12.0" height="12.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
+<text x="1150.0" y="525.0" text-anchor="start" dominant-baseline="middle" font-size="7.0" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder operation</text>
+<rect x="1134.0" y="538.0" width="12.0" height="12.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.6"/>
+<text x="1150.0" y="544.0" text-anchor="start" dominant-baseline="middle" font-size="7.0" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Class. / Seg. head</text>
+<rect x="1212.0" y="500.0" width="12.0" height="12.0" rx="2" fill="#D5F5E3" stroke="#2C3E50" stroke-width="0.6"/>
+<text x="1228.0" y="506.0" text-anchor="start" dominant-baseline="middle" font-size="7.0" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Bottleneck / GAP</text>
+<rect x="1212.0" y="519.0" width="12.0" height="12.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.6"/>
+<text x="1228.0" y="525.0" text-anchor="start" dominant-baseline="middle" font-size="7.0" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Pool / Upsample</text>
+<line x1="1212.0" y1="544.0" x2="1224.0" y2="544.0" stroke="#7F8C8D" stroke-width="1.2" stroke-dasharray="4,2"/>
+<text x="1228.0" y="544.0" text-anchor="start" dominant-baseline="middle" font-size="7.0" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Skip connection</text>
+</svg>

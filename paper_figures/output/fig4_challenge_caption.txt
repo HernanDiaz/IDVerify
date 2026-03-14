@@ -1,0 +1,64 @@
+FIGURE 4 — Challenge comparison caption (for the paper)
+========================================================
+
+Suggested caption:
+------------------
+Comparison of DocVerify against the top four systems of the DeepID 2025 Challenge
+on Track 1 (Detection F1@0.5, left) and Track 2 (Localisation F1 per-image,
+right). Grey bars represent official challenge results; the blue bar corresponds
+to DocVerify (mean over 30 random seeds). The horizontal error bar on DocVerify
+indicates ±1 standard deviation across seeds (Track 1: 0.969 ± 0.014;
+Track 2: 0.807 ± 0.096). Systems that did not participate in a given track are
+omitted from that subplot. Incode (2nd) did not submit to Track 2.
+
+
+What the figure shows (for the Results section):
+-------------------------------------------------
+The figure contextualises DocVerify's performance relative to the competitive
+landscape of the DeepID 2025 Challenge, which attracted teams from both industry
+and academia using a range of training data and model sizes.
+
+Track 1 — Detection F1@0.5:
+  - Sunlight (1st):       0.991  (60K+ external training images)
+  - AG / EdgeDoc (3rd):   0.958  (FantasyID only)
+  - DocVerify (ours):     0.969 ± 0.014  (FantasyID only)
+  - Incode (2nd):         0.868  (100K proprietary images)
+  - UAM-Biometrics (4th): 0.712  (FantasyID only)
+
+Track 2 — Localisation F1 (per-image):
+  - Sunlight (1st):       0.784  (60K+ external training images)
+  - DocVerify (ours):     0.807 ± 0.096  (FantasyID only)
+  - AG / EdgeDoc (3rd):   0.686  (FantasyID only)
+  - UAM-Biometrics (4th): 0.620  (FantasyID only)
+
+The error bar on DocVerify reflects variability across 30 independent training
+seeds and is absent for challenge systems, which report a single-run result.
+
+Important caveat (to be discussed in the paper):
+DocVerify was evaluated on an internal holdout split (15% of FantasyID), whereas
+challenge systems were evaluated on the official held-out test set released by the
+organisers. The two evaluation sets are not identical, so the comparison is
+indicative rather than strictly controlled. This limitation should be acknowledged
+explicitly in the paper.
+
+
+Key observations for the Results / Discussion section:
+-------------------------------------------------------
+- On Track 1 (detection), DocVerify (0.969) outperforms all systems that trained
+  exclusively on FantasyID, including AG/EdgeDoc (0.958) and UAM-Biometrics
+  (0.712), and approaches Sunlight (0.991), which used 60K+ additional external
+  images. Incode (0.868) used 100K proprietary images and still scores lower.
+
+- On Track 2 (localisation), DocVerify (0.807) surpasses all four challenge
+  finishers, including Sunlight (0.784), the overall winner. This is the strongest
+  result: the only system to exceed Sunlight on localisation trained exclusively
+  on FantasyID with no external data.
+
+- The std on Track 2 (±0.096) is notably larger than on Track 1 (±0.014),
+  suggesting that localisation performance is more sensitive to the random seed
+  than detection. This motivates reporting mean ± std rather than a single value.
+
+- The combination of competitive detection and leading localisation validates the
+  Pareto-based multi-objective HPO strategy: the selected configuration achieves
+  a strong simultaneous trade-off rather than optimising one track at the expense
+  of the other.

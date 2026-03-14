@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="7.153in" height="3.056in" viewBox="0 0 515 220">
+<defs><marker id="ah" markerWidth="6" markerHeight="5" refX="5.5" refY="2.5" orient="auto"><path d="M0,0 L0,5 L6,2.5 z" fill="#2C3E50"/></marker></defs>
+<rect x="0" y="0" width="515" height="220" fill="white"/>
+<rect x="8.0" y="14.0" width="236.0" height="12.0" fill="#EBF5FB" stroke="#2C3E50" stroke-width="0.5" rx="0"/>
+<text x="126.0" y="20.0" font-family="'Times New Roman', Georgia, serif" font-size="7.8" font-weight="bold" fill="#1A5276" text-anchor="middle" dominant-baseline="middle">OUTER LOOP  (K = 10)</text>
+<text x="35.0" y="35.0" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 1</text>
+<rect x="38.0" y="31.0" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="31.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="31.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="31.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="31.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="31.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="31.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="31.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="31.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="31.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="35.0" y="45.5" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 2</text>
+<rect x="38.0" y="41.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="41.5" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="41.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="41.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="41.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="41.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="41.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="41.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="41.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="41.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="35.0" y="56.0" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 3</text>
+<rect x="38.0" y="52.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="52.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="52.0" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="52.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="52.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="52.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="52.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="52.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="52.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="52.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="35.0" y="66.5" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 4</text>
+<rect x="38.0" y="62.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="62.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="62.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="62.5" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="62.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="62.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="62.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="62.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="62.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="62.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="35.0" y="77.0" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 5</text>
+<rect x="38.0" y="73.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="73.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="73.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="73.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="73.0" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="73.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="73.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="73.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="73.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="73.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="35.0" y="87.5" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 6</text>
+<rect x="38.0" y="83.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="83.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="83.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="83.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="83.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="83.5" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="83.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="83.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="83.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="83.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="35.0" y="98.0" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 7</text>
+<rect x="38.0" y="94.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="94.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="94.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="94.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="94.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="94.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="94.0" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="94.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="94.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="94.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="35.0" y="108.5" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 8</text>
+<rect x="38.0" y="104.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="104.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="104.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="104.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="104.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="104.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="104.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="104.5" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="104.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="104.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="35.0" y="119.0" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 9</text>
+<rect x="38.0" y="115.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="115.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="115.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="115.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="115.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="115.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="115.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="115.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="115.0" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="115.0" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="35.0" y="129.5" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="end" dominant-baseline="middle">Fold 10</text>
+<rect x="38.0" y="125.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="58.7" y="125.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="79.4" y="125.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="100.1" y="125.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="120.8" y="125.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="141.5" y="125.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="162.2" y="125.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="182.9" y="125.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="203.6" y="125.5" width="19.7" height="8.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="224.3" y="125.5" width="19.7" height="8.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<rect x="38.0" y="139.5" width="7.0" height="7.0" fill="#AED6F1" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="48.0" y="143.0" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="start" dominant-baseline="middle">Outer train (9 folds)</text>
+<rect x="133.0" y="139.5" width="7.0" height="7.0" fill="#F1948A" stroke="#2C3E50" stroke-width="0.3" rx="0"/>
+<text x="143.0" y="143.0" font-family="'Times New Roman', Georgia, serif" font-size="6.0" font-weight="normal" fill="#2C3E50" text-anchor="start" dominant-baseline="middle">Outer test (1 fold)</text>
+<line x1="244.0" y1="93.5" x2="267.0" y2="93.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="272.0" y="14.0" width="235.0" height="12.0" fill="#EBF5FB" stroke="#2C3E50" stroke-width="0.5" rx="0"/>
+<text x="389.5" y="20.0" font-family="'Times New Roman', Georgia, serif" font-size="7.8" font-weight="bold" fill="#1A5276" text-anchor="middle" dominant-baseline="middle">INNER LOOP  (per outer fold)</text>
+<rect x="272.0" y="31.0" width="235.0" height="24.0" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.6" rx="0"/>
+<text x="389.5" y="38.7" font-family="'Times New Roman', Georgia, serif" font-size="7.0" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">5-Fold Inner CV  (on outer train split)</text>
+<text x="389.5" y="47.8" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">stratified · repeated per Optuna trial</text>
+<line x1="389.5" y1="55.0" x2="389.5" y2="63.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="272.0" y="68.0" width="235.0" height="24.0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6" rx="0"/>
+<text x="389.5" y="75.7" font-family="'Times New Roman', Georgia, serif" font-size="7.0" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Multi-objective HPO  ·  Optuna TPE</text>
+<text x="389.5" y="84.8" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">Obj 1: PR-AUC    Obj 2: Dice Global</text>
+<line x1="389.5" y1="92.0" x2="389.5" y2="100.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="272.0" y="105.0" width="235.0" height="24.0" fill="#D5F5E3" stroke="#2C3E50" stroke-width="0.6" rx="0"/>
+<text x="389.5" y="112.7" font-family="'Times New Roman', Georgia, serif" font-size="7.0" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Pareto Front Construction</text>
+<text x="389.5" y="121.8" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">retain non-dominated configurations</text>
+<line x1="389.5" y1="129.0" x2="389.5" y2="137.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="272.0" y="142.0" width="235.0" height="24.0" fill="#FAD7A0" stroke="#2C3E50" stroke-width="0.6" rx="0"/>
+<text x="389.5" y="149.7" font-family="'Times New Roman', Georgia, serif" font-size="7.0" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Best Configuration Selection</text>
+<text x="389.5" y="158.8" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">min. Euclidean distance to ideal (1, 1)</text>
+<polyline points="389.5,166.0 389.5,173.0 257.5,173.0 257.5,175.0" fill="none" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<rect x="8.0" y="180.0" width="499.0" height="26.0" fill="#F4ECF7" stroke="#2C3E50" stroke-width="0.6" rx="0"/>
+<text x="257.5" y="187.8" font-family="'Times New Roman', Georgia, serif" font-size="7.0" font-weight="bold" fill="#2C3E50" text-anchor="middle" dominant-baseline="middle">Retrain selected config on full outer train  →  evaluate on outer test fold</text>
+<text x="257.5" y="198.2" font-family="'Times New Roman', Georgia, serif" font-size="6.2" font-weight="normal" fill="#444444" text-anchor="middle" dominant-baseline="middle">Aggregate K=10 results  →  report mean ± std  (PR-AUC, Dice Global)</text>
+</svg>

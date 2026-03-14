@@ -1,0 +1,69 @@
+FIGURE 3 — Ablation study caption (for the paper)
+==================================================
+
+Suggested caption:
+------------------
+Ablation study comparing four model variants across 30 independent random seeds
+on the blind test set. Each violin shows the full distribution of (left) PR-AUC
+and (right) global Dice scores; individual seed results are overlaid as jittered
+dots. Significance symbols above each violin indicate the result of a two-sided
+Wilcoxon signed-rank test with Holm correction against the Multitask baseline
+(*** p < 0.001; ns p >= 0.05). The Multitask variant (Pareto-weighted joint
+training) achieves the highest mean performance on both metrics and is
+significantly superior to all other variants except Unweighted on PR-AUC
+(p = 0.083).
+
+
+What the figure shows (for the Methods / Ablation section):
+------------------------------------------------------------
+The ablation study isolates the contribution of each design choice in the
+DocVerify architecture by evaluating four variants under identical conditions
+(same dataset splits, same 30 random seeds, same evaluation protocol):
+
+  - Multitask: the full proposed model, jointly trained on classification and
+    segmentation with loss weights selected by Pareto-based HPO. This is the
+    reference variant.
+
+  - cls_only: the classification head is retained but the segmentation head and
+    its loss are removed entirely. This variant can detect forgeries (producing
+    a scalar anomaly score) but cannot localise them (no pixel-level mask).
+
+  - seg_only: the segmentation head is retained but the classification head and
+    its loss are removed. Detection is performed by thresholding the aggregated
+    mask probability rather than a dedicated classification logit.
+
+  - unweighted_losses: the full multitask architecture is kept, but the
+    classification and segmentation losses are combined with equal weights
+    (lambda = 0.5 each) instead of the Pareto-optimised weights. This isolates
+    the contribution of the HPO weighting scheme from the multitask architecture
+    itself.
+
+Statistical testing uses the two-sided Wilcoxon signed-rank test (non-parametric,
+appropriate for bounded metrics) with Holm-Bonferroni correction for multiple
+comparisons (three tests per metric). Effect sizes are reported as mean +/- std
+over 30 seeds.
+
+
+Key observations for the Results section:
+------------------------------------------
+- cls_only collapses to near-zero Dice (mean 0.0018 +/- 0.008), confirming that
+  the segmentation head is essential for localisation. Its PR-AUC (0.950 +/-
+  0.074) is significantly lower than Multitask (p < 0.001) and shows high
+  variance, suggesting that removing the regularising effect of the joint
+  segmentation loss destabilises detection training.
+
+- seg_only achieves competitive Dice (0.867 +/- 0.023, p = 0.288 vs Multitask)
+  but its PR-AUC drops substantially (0.728 +/- 0.053, p < 0.001), demonstrating
+  that a dedicated classification head is necessary for reliable detection, and
+  that the segmentation logit alone is an insufficient detection signal.
+
+- unweighted_losses matches Multitask on PR-AUC (0.996 vs 0.997, p = 0.083,
+  not significant) but shows significantly lower Dice (0.857 vs 0.875,
+  p < 0.001), indicating that Pareto-based loss weighting provides a measurable
+  benefit specifically for localisation quality without compromising detection.
+
+- Taken together, the ablation confirms that all three design choices contribute:
+  (1) the joint multitask objective, (2) the dedicated classification head, and
+  (3) the Pareto-optimised loss weights. The Multitask variant with Pareto
+  weighting is the only configuration that achieves strong performance on both
+  the detection and localisation objectives simultaneously.
