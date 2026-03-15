@@ -81,8 +81,9 @@ hyperparameter optimization framework. Our contributions are as follows:
 
   \item \textbf{Rigorous nested cross-validation protocol.}
     We evaluate DocVerify under a 10-fold outer $\times$ 5-fold inner nested
-    cross-validation scheme, running 50 Optuna MOTPE trials per outer fold
-    (500 model evaluations in total) entirely on the training data. The final
+    cross-validation scheme, running 50 Optuna MOTPE trials per outer fold.
+    Each trial trains one model per inner fold, yielding 2\,500 model evaluations
+    in total, all conducted entirely on the training data. The final
     performance is estimated on a blind holdout using 30 independent random seeds
     per variant, and statistical comparisons use the Wilcoxon signed-rank test with
     Holm--Bonferroni correction.
@@ -92,7 +93,8 @@ hyperparameter optimization framework. Our contributions are as follows:
     any external pre-training, DocVerify achieves a detection F1@0.5 of
     $0.969 \pm 0.014$ (Track~1) and a localization F1 of $0.807 \pm 0.096$
     (Track~2), surpassing all FantasyID-only baselines and exceeding the challenge
-    winner on Track~2.
+    winner on Track~2 (evaluated on an internal holdout; see Section~\ref{sec:discussion}
+    for the caveat on comparability).
 \end{enumerate}
 
 The source code, training scripts, and experimental artifacts are publicly

@@ -14,12 +14,17 @@ expected by construction: without a segmentation head, no pixel-level prediction
 are produced. However, the reciprocal comparison reveals a more nuanced
 picture: \textbf{seg\_only} achieves a Dice score of $0.867 \pm 0.023$ that is
 not significantly lower than Multitask ($p = 0.288$), yet its PR-AUC drops to
-$0.728 \pm 0.053$ ($p = 1.5 \times 10^{-8}$). This asymmetry shows that the
-segmentation task benefits strongly from the joint objective (the encoder
-receives gradient signal from both tasks), while the segmentation logit alone
-is insufficient for document-level detection. The binary detection of an
+$0.728 \pm 0.053$ ($p = 1.5 \times 10^{-8}$). This asymmetry reveals that
+\emph{it is the classification task that benefits most strongly from joint
+training}: the shared encoder, regularized by the segmentation loss, learns
+spatially-aware features that improve document-level detection far beyond what
+a classification-only or threshold-on-mask approach achieves. Conversely,
+the segmentation head performs almost equally well whether or not a dedicated
+classification head is present, confirming that the U-Net decoder captures
+sufficient forgery evidence on its own. The binary detection of an
 identity document forgery requires aggregated global evidence that the
-segmentation branch, trained to produce spatial maps, cannot reliably provide.
+segmentation branch, trained to produce spatial maps, cannot reliably provide
+without the explicit classification objective.
 
 The comparison between Multitask and \textbf{unweighted\_losses} isolates the
 contribution of HPO loss weighting. These two variants share the same architecture

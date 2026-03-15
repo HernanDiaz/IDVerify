@@ -83,7 +83,8 @@ Y.~Wu, W.~AbdAlmageed, and P.~Natarajan, ``{ManTra-Net}: Manipulation tracing
 
 \bibitem{cozzolino2020noiseprint}
 D.~Cozzolino and L.~Verdoliva, ``Noiseprint: A {CNN}-based camera model
-  fingerprint,'' vol.~15, 2020, pp. 144--159.
+  fingerprint,'' \emph{{IEEE} Transactions on Information Forensics and
+  Security}, vol.~15, pp. 144--159, 2020.
 
 \bibitem{mmfusion2024}
 \BIBentryALTinterwordspacing
@@ -257,6 +258,11 @@ S.~Ioffe and C.~Szegedy, ``Batch normalization: Accelerating deep network
 \bibitem{dice1945}
 L.~R. Dice, ``Measures of the amount of ecologic association between species,''
   \emph{Ecology}, vol.~26, no.~3, pp. 297--302, 1945.
+
+\bibitem{milletari2016vnet}
+F.~Milletari, N.~Navab, and S.-A. Ahmadi, ``{V-Net}: Fully convolutional neural
+  networks for volumetric medical image segmentation,'' in \emph{Proceedings of
+  the 4th International Conference on 3D Vision (3DV)}, 2016, pp. 565--571.
 
 \bibitem{adamw2019}
 I.~Loshchilov and F.~Hutter, ``Decoupled weight decay regularization,'' in
