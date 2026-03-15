@@ -214,20 +214,22 @@ our challenge evaluation script over our internal holdout test split
 
 \begin{table*}[htbp]
   \centering
-  \caption{Comparison with DeepID 2025 Challenge participants.
-           $\dagger$: challenge systems evaluated on the official test set;
+  \caption{Comparison with DeepID 2025 Challenge participants and related work.
+           $\dagger$: evaluated on the official challenge test set;
+           $\ddagger$: reported on FantasyID validation set (Dice coefficient);
            DocVerify evaluated on an internal 15\% holdout (see text).
-           ``—'' indicates the system did not participate in that track.}
+           ``—'' indicates metric not reported or track not entered.}
   \label{tab:challenge}
   \begin{tabular}{lcccc}
     \toprule
     System & F1 det (thr=0.5) & F1 loc (per-image) & Training Data \\
     \midrule
-    Sunlight (1st)$^\dagger$        & 0.991 & 0.784 & 60K+ external images \\
-    Incode (2nd)$^\dagger$          & 0.868 & —     & 100K proprietary images \\
-    AG / EdgeDoc (3rd)$^\dagger$    & 0.958 & 0.686 & FantasyID only \\
-    UAM-Biometrics (4th)$^\dagger$  & 0.712 & 0.620 & FantasyID only \\
-    TruFor baseline$^\dagger$       & 0.807 & 0.590 & 876K pre-training images \\
+    Sunlight~\cite{remtkd2025} (1st)$^\dagger$       & 0.991 & 0.784 & 60K+ external images \\
+    Incode (2nd)$^\dagger$                            & 0.868 & —     & 100K proprietary images \\
+    AG / EdgeDoc~\cite{edgedoc2025} (3rd)$^\dagger$  & 0.958 & 0.686 & FantasyID only \\
+    UAM-Biometrics (4th)$^\dagger$                    & 0.712 & 0.620 & FantasyID only \\
+    TruFor~\cite{trufor2023} baseline$^\dagger$       & 0.807 & 0.590 & 876K pre-training images \\
+    TwoHead-SwinFPN~\cite{twoheadswin2026}$^\ddagger$ & —     & 0.572 & FantasyID only \\
     \midrule
     \textbf{DocVerify (ours)}       & $\mathbf{0.969 \pm 0.014}$ & $\mathbf{0.807 \pm 0.096}$ & FantasyID only \\
     \bottomrule
@@ -261,3 +263,38 @@ therefore indicative rather than strictly controlled. This limitation is
 discussed further in Section~\ref{sec:discussion}.
 
 The results are summarized in Table~\ref{tab:challenge} above.
+
+\subsection{Qualitative Analysis}
+\label{subsec:qualitative}
+
+Figure~\ref{fig:qualitative} shows representative outputs for a bonafide document
+and a forged document with five altered regions. For the bonafide sample the model
+correctly returns an empty mask, producing no false alarms. For the attack sample
+the predicted mask successfully localises all five tampered fields --- photograph,
+given name, date of birth, document number, and expiry date --- and the red overlay
+confirms tight spatial alignment between the predicted regions and the visible
+ground-truth alterations.
+
+\begin{figure*}[!t]
+  \centering
+  \begin{tabular}{@{}ccc@{}}
+    \small\textbf{Input document} &
+    \small\textbf{Predicted mask} &
+    \small\textbf{Overlay} \\[2pt]
+    % --- Bonafide row ---
+    \includegraphics[width=0.318\textwidth]{figures/fig_qual_bonafide_input} &
+    \includegraphics[width=0.318\textwidth]{figures/fig_qual_bonafide_mask}  &
+    \includegraphics[width=0.318\textwidth]{figures/fig_qual_bonafide_overlay} \\[1pt]
+    \multicolumn{3}{c}{\small (a) Bonafide document --- no alterations detected} \\[6pt]
+    % --- Attack row ---
+    \includegraphics[width=0.318\textwidth]{figures/fig_qual_attack_input} &
+    \includegraphics[width=0.318\textwidth]{figures/fig_qual_attack_mask}   &
+    \includegraphics[width=0.318\textwidth]{figures/fig_qual_attack_overlay} \\[1pt]
+    \multicolumn{3}{c}{\small (b) Forged document --- five altered regions localised} \\
+  \end{tabular}
+  \caption{Qualitative results on two FantasyID samples. \textbf{Left:} input
+  document (forged regions framed in the attack sample). \textbf{Centre:} binary
+  mask predicted by DocVerify. \textbf{Right:} input document with predicted mask
+  overlaid in red.}
+  \label{fig:qualitative}
+\end{figure*}

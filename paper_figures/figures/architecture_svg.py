@@ -6,6 +6,11 @@ Two-row layout: encoder (left→right, top), decoder (right→left, bottom).
 Skip connections drawn as vertical dashed arrows between rows.
 Segmentation head to the LEFT of decoder block 5.
 Classification head to the RIGHT of enc6/bottleneck.
+
+NOTE: arrows use explicit inline <polygon> arrowheads (svglib does not
+support SVG <marker> elements, so marker-end="url(#ah)" produces invisible
+arrowheads when converted via svglib/reportlab).
+
 Run standalone:  python architecture_svg.py
 """
 
@@ -32,6 +37,12 @@ ROW_GAP = 90     # vertical gap between encoder and decoder rows
 MX      = 18     # left margin
 MY      = 22     # top margin
 FONT    = "'Times New Roman', Georgia, serif"
+
+# ── Arrowhead dimensions (px) ─────────────────────────────────────────────────
+AH_LEN   = 7.0   # arrowhead length (main arrows, matches original 7px stop)
+AH_HW    = 3.0   # arrowhead half-width (main arrows)
+AH_LEN_S = 7.0   # skip-connection arrowhead length
+AH_HW_S  = 3.0   # skip-connection arrowhead half-width
 
 # ── Architecture definition ───────────────────────────────────────────────────
 ENCODER = [
@@ -197,21 +208,53 @@ def _text(x, y, s, size=7.5, weight="normal", fill="#111111", anchor="middle"):
             f'font-family="{FONT}">{s}</text>')
 
 
-def _arrow_h(x1, y, x2, color=C_ARR, lw=1.1):
-    """Horizontal arrow with arrowhead at x2. Works for both left and right directions."""
-    if x2 >= x1:
-        x_end = x2 - 7   # right-pointing: stop before tip
+def _arrowhead(x, y, direction, color=C_ARR, ln=AH_LEN, hw=AH_HW):
+    """Inline filled triangle arrowhead at tip (x, y).
+
+    direction: 'r'=pointing right, 'l'=pointing left,
+               'u'=pointing up,    'd'=pointing down.
+    The triangle base sits ln px behind the tip, hw px on each side.
+    """
+    if direction == 'r':
+        pts = f"{x-ln:.1f},{y-hw:.1f} {x:.1f},{y:.1f} {x-ln:.1f},{y+hw:.1f}"
+    elif direction == 'l':
+        pts = f"{x+ln:.1f},{y-hw:.1f} {x:.1f},{y:.1f} {x+ln:.1f},{y+hw:.1f}"
+    elif direction == 'd':
+        pts = f"{x-hw:.1f},{y-ln:.1f} {x:.1f},{y:.1f} {x+hw:.1f},{y-ln:.1f}"
+    elif direction == 'u':
+        pts = f"{x-hw:.1f},{y+ln:.1f} {x:.1f},{y:.1f} {x+hw:.1f},{y+ln:.1f}"
     else:
-        x_end = x2 + 7   # left-pointing: stop before tip
-    return (f'<line x1="{x1:.1f}" y1="{y:.1f}" x2="{x_end:.1f}" y2="{y:.1f}" '
-            f'stroke="{color}" stroke-width="{lw}" marker-end="url(#ah)"/>')
+        raise ValueError(f"Unknown direction: {direction!r}")
+    return f'<polygon points="{pts}" fill="{color}"/>'
+
+
+def _arrow_h(x1, y, x2, color=C_ARR, lw=1.1):
+    """Horizontal arrow with inline arrowhead at x2. Works L→R and R→L."""
+    if x2 >= x1:
+        direction = 'r'
+        x_end = x2 - AH_LEN
+    else:
+        direction = 'l'
+        x_end = x2 + AH_LEN
+    line = (f'<line x1="{x1:.1f}" y1="{y:.1f}" x2="{x_end:.1f}" y2="{y:.1f}" '
+            f'stroke="{color}" stroke-width="{lw}"/>')
+    ah = _arrowhead(x2, y, direction, color)
+    return line + "\n" + ah
 
 
 def _arrow_v(x, y1, y2, color=C_ARR, lw=1.0, dashed=False):
+    """Vertical arrow with inline arrowhead at y2. Works up and down."""
     dash = ' stroke-dasharray="5,3"' if dashed else ''
-    direction = 1 if y2 > y1 else -1
-    return (f'<line x1="{x:.1f}" y1="{y1:.1f}" x2="{x:.1f}" y2="{y2 - direction * 7:.1f}" '
-            f'stroke="{color}" stroke-width="{lw}"{dash} marker-end="url(#ah)"/>')
+    if y2 > y1:
+        direction = 'd'
+        y_end = y2 - AH_LEN
+    else:
+        direction = 'u'
+        y_end = y2 + AH_LEN
+    line = (f'<line x1="{x:.1f}" y1="{y1:.1f}" x2="{x:.1f}" y2="{y_end:.1f}" '
+            f'stroke="{color}" stroke-width="{lw}"{dash}/>')
+    ah = _arrowhead(x, y2, direction, color)
+    return line + "\n" + ah
 
 
 def _dim_label(x, y, s, size=6.8):
@@ -252,16 +295,12 @@ def build_svg() -> str:
     parts = []
 
     # ── X positions ────────────────────────────────────────────────────────
-    # Encoder blocks start at MX (input box now sits below enc1, not to its left)
     enc_x = [MX + i * (BW + HGAP) for i in range(6)]
-    # dec[i] is below enc[5-i]:  dec[0]↔enc[5], ..., dec[4]↔enc[1]
     dec_x  = [enc_x[5 - i] for i in range(5)]
 
-    # Bottleneck & classification head: to the RIGHT of enc6
     CLS_X   = enc_x[5] + BW + HGAP + 10
     CANVAS_W = CLS_X + BW + 30
 
-    # Segmentation head: to the LEFT of dec[4] (= enc_x[1] column)
     SEG_X = dec_x[4] - (BW + HGAP)   # = enc_x[0]
 
     # ── Row heights ─────────────────────────────────────────────────────────
@@ -277,55 +316,41 @@ def build_svg() -> str:
     max_dec_h    = max(dec_heights)
     min_dec_h    = min(dec_heights)
 
-    # Bottom-align all decoder blocks: tallest starts at R2_TOP, shorter ones lower
-    dec_bot_y    = R2_TOP + min_dec_h                    # shared bottom y
-    dec_y_starts = [dec_bot_y - h for h in dec_heights]  # per-block top y
+    dec_bot_y    = R2_TOP + min_dec_h
+    dec_y_starts = [dec_bot_y - h for h in dec_heights]
     R2_BOT       = dec_bot_y + 10
 
-    # ── Bottleneck arrow y (used for ALL encoder horizontal arrows) ─────────
     BN_Y    = R1_TOP
-    bn_arr_y = BN_Y + (20 + len(BOTTLENECK_OPS) * BH) / 2   # centre of bottleneck
+    bn_arr_y = BN_Y + (20 + len(BOTTLENECK_OPS) * BH) / 2
 
-    # ── Classification head vertical positions ──────────────────────────────
     bn_h    = stage_h(BOTTLENECK_OPS, title=True)
     CLS_TOP = BN_Y + bn_h + 20
     cls_h   = stage_h(CLS_HEAD_OPS, title=True)
     CLS_BOT = CLS_TOP + cls_h
     SCORE_Y = CLS_BOT + 15
 
-    # ── Segmentation head vertical positions ────────────────────────────────
     seg_h_px = stage_h(SEG_HEAD_OPS, title=True)
-    seg_arr_y = R2_TOP + seg_h_px / 2    # y for horizontal arrow dec[4]→seg head
+    seg_arr_y = R2_TOP + seg_h_px / 2
     SEG_BOT   = R2_TOP + seg_h_px
     MASK_Y    = SEG_BOT + 15
 
-    # Canvas bottom flush with decoder/legend bottom + one top-margin worth of padding
     CANVAS_H = dec_bot_y + MY
 
-    # ── SVG header ──────────────────────────────────────────────────────────
+    # ── SVG header (no <defs> — arrowheads are inline polygons) ─────────────
     parts.append(f'''<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      width="{CANVAS_W}" height="{CANVAS_H}"
      viewBox="0 0 {CANVAS_W} {CANVAS_H}">
-  <defs>
-    <marker id="ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="{C_ARR}"/>
-    </marker>
-    <marker id="ahs" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="{C_SKIP}"/>
-    </marker>
-  </defs>
   <rect width="{CANVAS_W}" height="{CANVAS_H}" fill="white"/>
 ''')
 
     # ── INPUT box — placed below Encoder Block 1, upward arrow ────────────
-    enc1_bot = R1_TOP + enc_heights[0]          # bottom of enc1 (no pool)
-    inp_y    = enc1_bot + 50                    # 50 px gap below enc1
-    inp_x    = enc_x[0]                         # same column as enc1
+    enc1_bot = R1_TOP + enc_heights[0]
+    inp_y    = enc1_bot + 50
+    inp_x    = enc_x[0]
     parts.append(_rect(inp_x, inp_y, BW, 28, C_IO))
     parts.append(_text(inp_x + BW / 2, inp_y + 14,
                        "Input  224×224×3", size=7.5, weight="bold"))
-    # Upward arrow from input top → enc1 bottom
     parts.append(_arrow_v(inp_x + BW / 2, inp_y, enc1_bot))
     parts.append(_dim_label(inp_x + BW / 2 + 34, (inp_y + enc1_bot) / 2, "224×224×3"))
 
@@ -340,7 +365,6 @@ def build_svg() -> str:
         parts.extend(stg)
         enc_box_bottoms.append(bottom_y)
 
-        # Horizontal arrow to next stage (all at bn_arr_y level)
         if i < 5:
             x_end = enc_x[i + 1]
             parts.append(_arrow_h(x + BW, bn_arr_y, x_end))
@@ -352,7 +376,6 @@ def build_svg() -> str:
                                     fill=C_BN_BOX, title="Bottleneck")
     parts.extend(bn_parts)
 
-    # Arrow enc6 → bottleneck (at bn_arr_y, same level as all encoder arrows)
     parts.append(_arrow_h(enc_x[5] + BW, bn_arr_y, bn_x))
     parts.append(_dim_label((enc_x[5] + BW + bn_x) / 2, bn_arr_y - 8,
                               ENCODER[5]["out"]))
@@ -365,14 +388,12 @@ def build_svg() -> str:
                                       fill=C_CLS, title="Classification Head")
     parts.extend(cls_parts)
 
-    # Score output box
     parts.append(_arrow_v(bn_x + BW / 2, cls_bot, SCORE_Y))
     parts.append(_rect(bn_x, SCORE_Y, BW, 28, C_IO))
     parts.append(_text(bn_x + BW / 2, SCORE_Y + 14,
                         "Score  (sigmoid)", size=7.5, weight="bold", fill="#8B0000"))
 
     # ── DECODER STAGES (flow: right → left) ────────────────────────────────
-    # Vertical arrow from enc6 column bottom → dec[0] top (bottom-aligned position)
     dec_arr_x0 = dec_x[0] + BW / 2
     parts.append(_arrow_v(dec_arr_x0, R1_BOT, dec_y_starts[0], color=C_ARR, lw=1.1))
     parts.append(_dim_label(dec_arr_x0 + 32, (R1_BOT + dec_y_starts[0]) / 2, "7×7×256"))
@@ -382,16 +403,13 @@ def build_svg() -> str:
         stg, _ = _draw_stage(dec["ops"], x, dec_y_starts[i], fill=C_DEC, title=dec["title"])
         parts.extend(stg)
 
-        # Arrow to next decoder block — goes RIGHT-TO-LEFT
-        # Use centre of the shared bottom-aligned zone (same for all inter-block arrows)
         if i < 4:
-            arr_y2 = dec_bot_y - min_dec_h / 2  # centre of all bottom-aligned blocks
+            arr_y2 = dec_bot_y - min_dec_h / 2
             parts.append(_arrow_h(dec_x[i], arr_y2, dec_x[i + 1] + BW))
             mid_x = (dec_x[i] + dec_x[i + 1] + BW) / 2
             parts.append(_dim_label(mid_x, arr_y2 - 8, dec["out"]))
 
     # ── SEGMENTATION HEAD (left of dec[4]) ─────────────────────────────────
-    # Horizontal arrow from dec[4] left side → seg head right side
     parts.append(_arrow_h(dec_x[4], seg_arr_y, SEG_X + BW))
     parts.append(_dim_label((dec_x[4] + SEG_X + BW) / 2, seg_arr_y - 8,
                               DECODER[4]["out"]))
@@ -400,7 +418,6 @@ def build_svg() -> str:
                                       fill=C_CLS, title="Segmentation Head")
     parts.extend(seg_parts)
 
-    # Mask output box below segmentation head
     mask_xc = SEG_X + BW / 2
     parts.append(_arrow_v(mask_xc, seg_bot, MASK_Y))
     parts.append(_rect(SEG_X, MASK_Y, BW, 28, C_IO))
@@ -408,18 +425,18 @@ def build_svg() -> str:
                         "Mask  224×224×1", size=7.5, weight="bold", fill="#00008B"))
 
     # ── SKIP CONNECTIONS (enc → dec, dashed vertical arrows) ───────────────
-    # enc[1]→dec[4], enc[2]→dec[3], enc[3]→dec[2], enc[4]→dec[1], enc[5]→dec[0]
     skip_pairs = [(1, 4), (2, 3), (3, 2), (4, 1), (5, 0)]
     for ei, di in skip_pairs:
         sx = enc_x[ei] + BW / 2
         y_enc_bot = enc_box_bottoms[ei]
-        y_dec_top = dec_y_starts[di]   # use each block's actual (bottom-aligned) top
+        y_dec_top = dec_y_starts[di]
+        # shaft stops AH_LEN_S px before the tip
         parts.append(
             f'<line x1="{sx:.1f}" y1="{y_enc_bot:.1f}" '
-            f'x2="{sx:.1f}" y2="{y_dec_top - 7:.1f}" '
-            f'stroke="{C_SKIP}" stroke-width="1.0" stroke-dasharray="5,3" '
-            f'marker-end="url(#ahs)"/>'
+            f'x2="{sx:.1f}" y2="{y_dec_top - AH_LEN_S:.1f}" '
+            f'stroke="{C_SKIP}" stroke-width="1.0" stroke-dasharray="5,3"/>'
         )
+        parts.append(_arrowhead(sx, y_dec_top, 'd', C_SKIP, ln=AH_LEN_S, hw=AH_HW_S))
         lbl = ENCODER[ei]["skip_label"]
         if lbl:
             parts.append(_dim_label(sx + 32, (y_enc_bot + y_dec_top) / 2, lbl, size=6.3))
@@ -428,7 +445,6 @@ def build_svg() -> str:
     enc_label_x = enc_x[0] + 3 * (BW + HGAP)
     parts.append(_text(enc_label_x, R1_TOP - 12,
                         "PATEL CNN ENCODER", size=9, weight="bold", fill="#1A5276"))
-    # Same x as PATEL CNN ENCODER, at decoder row level
     parts.append(_text(enc_label_x, R2_TOP - 12,
                         "U-NET DECODER", size=9, weight="bold", fill="#784212"))
     parts.append(_text(bn_x + BW / 2, BN_Y - 12,
@@ -443,22 +459,21 @@ def build_svg() -> str:
         (C_POOL,   "Pool / Upsample"),
         (None,     "Skip connection"),
     ]
-    leg_rows   = 3                              # items per column (ceil(6/2))
+    leg_rows   = 3
     leg_item_h = 19
     leg_pad    = 8
-    leg_col_w  = 78                             # width of one column (icon + label)
+    leg_col_w  = 78
     leg_w      = 2 * leg_col_w + 2 * leg_pad + 2
     leg_h      = leg_pad + 16 + leg_rows * leg_item_h + leg_pad
     leg_x      = CANVAS_W - leg_w - 12
-    leg_y      = dec_bot_y - leg_h              # bottom of legend aligns with decoder bottom
+    leg_y      = dec_bot_y - leg_h
 
-    # Outer box + title
     parts.append(_rect(leg_x, leg_y, leg_w, leg_h, "white", stroke=C_EDGE, sw=0.8))
     parts.append(_text(leg_x + leg_w / 2, leg_y + leg_pad + 7,
                         "Legend", size=7.5, weight="bold"))
 
     for k, (c, lbl) in enumerate(leg_items):
-        col = k // leg_rows          # 0 = left column, 1 = right column
+        col = k // leg_rows
         row = k % leg_rows
         ix  = leg_x + leg_pad + col * leg_col_w
         iy  = leg_y + leg_pad + 16 + row * leg_item_h
@@ -484,12 +499,11 @@ if __name__ == "__main__":
     svg = build_svg()
     out.write_text(svg, encoding="utf-8")
     print(f"[saved] {out}")
-    # Quick sanity check
     import re
-    boxes = len(re.findall(r'<rect ', svg))
-    arrows = len(re.findall(r'marker-end', svg))
-    print(f"  boxes={boxes}  arrows={arrows}  canvas size: ", end="")
+    boxes    = len(re.findall(r'<rect ', svg))
+    polygons = len(re.findall(r'<polygon ', svg))
     w = re.search(r'width="(\d+)"', svg)
     h = re.search(r'height="(\d+)"', svg)
+    print(f"  boxes={boxes}  arrowhead-polygons={polygons}  canvas size: ", end="")
     if w and h:
         print(f"{w.group(1)} × {h.group(1)} px")

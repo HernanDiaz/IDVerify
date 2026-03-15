@@ -2,14 +2,6 @@
 <svg xmlns="http://www.w3.org/2000/svg"
      width="5.361in" height="2.361in"
      viewBox="0 0 386.0 170.0">
-  <defs>
-    <marker id="ah" markerWidth="6" markerHeight="5" refX="5.5" refY="2.5" orient="auto">
-      <path d="M0,0 L0,5 L6,2.5 z" fill="#2C3E50"/>
-    </marker>
-    <marker id="ahs" markerWidth="6" markerHeight="5" refX="5.5" refY="2.5" orient="auto">
-      <path d="M0,0 L0,5 L6,2.5 z" fill="#7F8C8D"/>
-    </marker>
-  </defs>
   <rect width="386.0" height="170.0" fill="white"/>
 
 <rect x="2.0" y="18.0" width="49.0" height="13.0" rx="0" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.6"/>
@@ -18,7 +10,8 @@
 <text x="26.5" y="37.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv 8ch, k3</text>
 <rect x="2.0" y="43.0" width="49.0" height="12.0" rx="0" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="26.5" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 224×224×8</text>
-<line x1="51.0" y1="36.5" x2="56.0" y2="36.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="51.0" y1="36.5" x2="52.2" y2="36.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="52.2,34.5 57.0,36.5 52.2,38.5" fill="#2C3E50"/>
 <rect x="57.0" y="18.0" width="49.0" height="13.0" rx="0" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="81.5" y="24.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Enc Block 2</text>
 <rect x="57.0" y="31.0" width="49.0" height="12.0" rx="0" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.6"/>
@@ -27,7 +20,8 @@
 <text x="81.5" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 224×224×16</text>
 <rect x="57.0" y="55.0" width="49.0" height="10.0" rx="0" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="81.5" y="60.0" text-anchor="middle" dominant-baseline="middle" font-size="5.8" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AvgPool 2×2</text>
-<line x1="106.0" y1="36.5" x2="111.0" y2="36.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="106.0" y1="36.5" x2="107.2" y2="36.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="107.2,34.5 112.0,36.5 107.2,38.5" fill="#2C3E50"/>
 <rect x="112.0" y="18.0" width="49.0" height="13.0" rx="0" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="136.5" y="24.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Enc Block 3</text>
 <rect x="112.0" y="31.0" width="49.0" height="12.0" rx="0" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.6"/>
@@ -36,7 +30,8 @@
 <text x="136.5" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 112×112×32</text>
 <rect x="112.0" y="55.0" width="49.0" height="10.0" rx="0" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="136.5" y="60.0" text-anchor="middle" dominant-baseline="middle" font-size="5.8" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AvgPool 2×2</text>
-<line x1="161.0" y1="36.5" x2="166.0" y2="36.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="161.0" y1="36.5" x2="162.2" y2="36.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="162.2,34.5 167.0,36.5 162.2,38.5" fill="#2C3E50"/>
 <rect x="167.0" y="18.0" width="49.0" height="13.0" rx="0" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="191.5" y="24.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Enc Block 4</text>
 <rect x="167.0" y="31.0" width="49.0" height="12.0" rx="0" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.6"/>
@@ -45,7 +40,8 @@
 <text x="191.5" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 56×56×64</text>
 <rect x="167.0" y="55.0" width="49.0" height="10.0" rx="0" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="191.5" y="60.0" text-anchor="middle" dominant-baseline="middle" font-size="5.8" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AvgPool 2×2</text>
-<line x1="216.0" y1="36.5" x2="221.0" y2="36.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="216.0" y1="36.5" x2="217.2" y2="36.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="217.2,34.5 222.0,36.5 217.2,38.5" fill="#2C3E50"/>
 <rect x="222.0" y="18.0" width="49.0" height="13.0" rx="0" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="246.5" y="24.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Enc Block 5</text>
 <rect x="222.0" y="31.0" width="49.0" height="12.0" rx="0" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.6"/>
@@ -54,7 +50,8 @@
 <text x="246.5" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 28×28×128</text>
 <rect x="222.0" y="55.0" width="49.0" height="10.0" rx="0" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="246.5" y="60.0" text-anchor="middle" dominant-baseline="middle" font-size="5.8" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">MaxPool 2×2</text>
-<line x1="271.0" y1="36.5" x2="276.0" y2="36.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="271.0" y1="36.5" x2="272.2" y2="36.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="272.2,34.5 277.0,36.5 272.2,38.5" fill="#2C3E50"/>
 <rect x="277.0" y="18.0" width="49.0" height="13.0" rx="0" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="301.5" y="24.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Enc Block 6</text>
 <rect x="277.0" y="31.0" width="49.0" height="12.0" rx="0" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.6"/>
@@ -63,14 +60,16 @@
 <text x="301.5" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 14×14×256</text>
 <rect x="277.0" y="55.0" width="49.0" height="10.0" rx="0" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="301.5" y="60.0" text-anchor="middle" dominant-baseline="middle" font-size="5.8" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">MaxPool 2×2</text>
-<line x1="326.0" y1="36.5" x2="334.0" y2="36.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="326.0" y1="36.5" x2="330.2" y2="36.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="330.2,34.5 335.0,36.5 330.2,38.5" fill="#2C3E50"/>
 <rect x="335.0" y="18.0" width="49.0" height="13.0" rx="0" fill="#C9E8C5" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="359.5" y="24.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Bottleneck</text>
 <rect x="335.0" y="31.0" width="49.0" height="12.0" rx="0" fill="#D5F5E3" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="359.5" y="37.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AdaptAvgPool</text>
 <rect x="335.0" y="43.0" width="49.0" height="12.0" rx="0" fill="#D5F5E3" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="359.5" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 7×7×256</text>
-<line x1="366.9" y1="55.0" x2="366.9" y2="102.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="366.9" y1="55.0" x2="366.9" y2="102.2" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="364.9,102.2 366.9,107.0 368.9,102.2" fill="#2C3E50"/>
 <rect x="335.0" y="107.0" width="49.0" height="13.0" rx="0" fill="#E8C5C5" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="359.5" y="113.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Cls Head</text>
 <rect x="335.0" y="120.0" width="49.0" height="12.0" rx="0" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.6"/>
@@ -83,54 +82,66 @@
 <text x="301.5" y="126.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">↑ + s14  (384ch)</text>
 <rect x="277.0" y="132.0" width="49.0" height="12.0" rx="0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="301.5" y="138.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 14×14×128</text>
-<line x1="277.0" y1="125.5" x2="272.0" y2="125.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="277.0" y1="125.5" x2="275.8" y2="125.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="275.8,123.5 271.0,125.5 275.8,127.5" fill="#2C3E50"/>
 <rect x="222.0" y="107.0" width="49.0" height="13.0" rx="0" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="246.5" y="113.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Dec Block 2</text>
 <rect x="222.0" y="120.0" width="49.0" height="12.0" rx="0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="246.5" y="126.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">↑ + s28  (256ch)</text>
 <rect x="222.0" y="132.0" width="49.0" height="12.0" rx="0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="246.5" y="138.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 28×28×64</text>
-<line x1="222.0" y1="125.5" x2="217.0" y2="125.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="222.0" y1="125.5" x2="220.8" y2="125.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="220.8,123.5 216.0,125.5 220.8,127.5" fill="#2C3E50"/>
 <rect x="167.0" y="107.0" width="49.0" height="13.0" rx="0" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="191.5" y="113.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Dec Block 3</text>
 <rect x="167.0" y="120.0" width="49.0" height="12.0" rx="0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="191.5" y="126.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">↑ + s56  (128ch)</text>
 <rect x="167.0" y="132.0" width="49.0" height="12.0" rx="0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="191.5" y="138.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 56×56×32</text>
-<line x1="167.0" y1="125.5" x2="162.0" y2="125.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="167.0" y1="125.5" x2="165.8" y2="125.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="165.8,123.5 161.0,125.5 165.8,127.5" fill="#2C3E50"/>
 <rect x="112.0" y="107.0" width="49.0" height="13.0" rx="0" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="136.5" y="113.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Dec Block 4</text>
 <rect x="112.0" y="120.0" width="49.0" height="12.0" rx="0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="136.5" y="126.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">↑ + s112 (64ch)</text>
 <rect x="112.0" y="132.0" width="49.0" height="12.0" rx="0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="136.5" y="138.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 112×112×16</text>
-<line x1="112.0" y1="125.5" x2="107.0" y2="125.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="112.0" y1="125.5" x2="110.8" y2="125.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="110.8,123.5 106.0,125.5 110.8,127.5" fill="#2C3E50"/>
 <rect x="57.0" y="107.0" width="49.0" height="13.0" rx="0" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="81.5" y="113.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Dec Block 5</text>
 <rect x="57.0" y="120.0" width="49.0" height="12.0" rx="0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="81.5" y="126.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">↑ + s224 (32ch)</text>
 <rect x="57.0" y="132.0" width="49.0" height="12.0" rx="0" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="81.5" y="138.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ 224×224×8</text>
-<line x1="57.0" y1="125.5" x2="52.0" y2="125.5" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<line x1="57.0" y1="125.5" x2="55.8" y2="125.5" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="55.8,123.5 51.0,125.5 55.8,127.5" fill="#2C3E50"/>
 <rect x="2.0" y="107.0" width="49.0" height="13.0" rx="0" fill="#E8C5C5" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="26.5" y="113.5" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Seg Head</text>
 <rect x="2.0" y="120.0" width="49.0" height="12.0" rx="0" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="26.5" y="126.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv 1ch, k1×1</text>
 <rect x="2.0" y="132.0" width="49.0" height="12.0" rx="0" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="26.5" y="138.0" text-anchor="middle" dominant-baseline="middle" font-size="6.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">→ Mask 224×224</text>
-<polyline points="349.7,55.0 349.7,81.0 332.6,81.0 332.6,125.5 327.0,125.5" fill="none" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
+<polyline points="349.7,55.0 349.7,81.0 332.6,81.0 332.6,125.5 331.8,125.5" fill="none" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="331.8,123.5 327.0,125.5 331.8,127.5" fill="#2C3E50"/>
 <rect x="2.0" y="73.0" width="49.0" height="14.0" rx="0" fill="#F2F3F4" stroke="#2C3E50" stroke-width="0.6"/>
 <text x="26.5" y="80.0" text-anchor="middle" dominant-baseline="middle" font-size="7.0" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Input 224×224×3</text>
-<line x1="26.5" y1="73.0" x2="26.5" y2="60.0" stroke="#2C3E50" stroke-width="0.8" marker-end="url(#ah)"/>
-<line x1="81.5" y1="65.0" x2="81.5" y2="102.0" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2" marker-end="url(#ahs)"/>
+<line x1="26.5" y1="73.0" x2="26.5" y2="59.8" stroke="#2C3E50" stroke-width="0.8"/>
+<polygon points="24.5,59.8 26.5,55.0 28.5,59.8" fill="#2C3E50"/>
+<line x1="81.5" y1="65.0" x2="81.5" y2="103.5" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2"/>
+<polygon points="80.0,103.5 81.5,107.0 83.0,103.5" fill="#7F8C8D"/>
 <text x="86.5" y="86.0" text-anchor="start" dominant-baseline="middle" font-size="5.4" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s224</text>
-<line x1="136.5" y1="65.0" x2="136.5" y2="102.0" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2" marker-end="url(#ahs)"/>
+<line x1="136.5" y1="65.0" x2="136.5" y2="103.5" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2"/>
+<polygon points="135.0,103.5 136.5,107.0 138.0,103.5" fill="#7F8C8D"/>
 <text x="141.5" y="86.0" text-anchor="start" dominant-baseline="middle" font-size="5.4" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s112</text>
-<line x1="191.5" y1="65.0" x2="191.5" y2="102.0" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2" marker-end="url(#ahs)"/>
+<line x1="191.5" y1="65.0" x2="191.5" y2="103.5" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2"/>
+<polygon points="190.0,103.5 191.5,107.0 193.0,103.5" fill="#7F8C8D"/>
 <text x="196.5" y="86.0" text-anchor="start" dominant-baseline="middle" font-size="5.4" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s56</text>
-<line x1="246.5" y1="65.0" x2="246.5" y2="102.0" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2" marker-end="url(#ahs)"/>
+<line x1="246.5" y1="65.0" x2="246.5" y2="103.5" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2"/>
+<polygon points="245.0,103.5 246.5,107.0 248.0,103.5" fill="#7F8C8D"/>
 <text x="251.5" y="86.0" text-anchor="start" dominant-baseline="middle" font-size="5.4" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s28</text>
-<line x1="301.5" y1="65.0" x2="301.5" y2="102.0" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2" marker-end="url(#ahs)"/>
+<line x1="301.5" y1="65.0" x2="301.5" y2="103.5" stroke="#7F8C8D" stroke-width="0.8" stroke-dasharray="3.5,2"/>
+<polygon points="300.0,103.5 301.5,107.0 303.0,103.5" fill="#7F8C8D"/>
 <text x="306.5" y="86.0" text-anchor="start" dominant-baseline="middle" font-size="5.4" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s14</text>
 <text x="193.0" y="7.0" text-anchor="middle" dominant-baseline="middle" font-size="8.5" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">PATEL CNN ENCODER</text>
 <text x="200.0" y="94.0" text-anchor="middle" dominant-baseline="middle" font-size="8.5" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">U-NET DECODER</text>

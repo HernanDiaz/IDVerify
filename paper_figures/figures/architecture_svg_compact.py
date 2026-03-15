@@ -8,6 +8,10 @@ when the figure is placed at its specified physical width.
 Each encoder / decoder block is a single compact box (title + ops summary +
 output resolution), suitable for the main body of a Q1 journal paper.
 
+NOTE: arrows use explicit inline <polygon> arrowheads (svglib does not
+support SVG <marker> elements, so marker-end="url(#ah)" produces invisible
+arrowheads when converted via svglib/reportlab).
+
 Run standalone:
     python architecture_svg_compact.py
 Output:
@@ -39,6 +43,12 @@ FS_IO = 7.0    # I/O box text
 C_ENC  = "#D6EAF8"; C_DEC  = "#FDEBD0"; C_CLS  = "#FADBD8"; C_BN   = "#D5F5E3"
 C_POOL = "#EAECEE"; C_IO   = "#F2F3F4"; C_EDGE = "#2C3E50"
 C_SKIP = "#7F8C8D"; C_ARR  = "#2C3E50"; C_DIM  = "#555555"
+
+# ── Arrowhead dimensions (pt) ─────────────────────────────────────────────────
+AH_LEN   = 4.8   # length of arrowhead along shaft
+AH_HW    = 2.0   # half-width of arrowhead base
+AH_LEN_S = 3.5   # skip-connection arrowhead (smaller)
+AH_HW_S  = 1.5
 
 # ── Architecture data ──────────────────────────────────────────────────────────
 ENC = [
@@ -85,45 +95,90 @@ def _t(x, y, s, size=FS_B, weight="normal", fill="#111111", anchor="middle"):
             f'fill="{fill}" font-family="{FONT}">{s}</text>')
 
 
+def _arrowhead(x, y, direction, color=C_ARR, ln=AH_LEN, hw=AH_HW):
+    """Inline filled triangle arrowhead at tip (x,y).
+
+    direction: 'r'=pointing right, 'l'=pointing left,
+               'u'=pointing up,    'd'=pointing down.
+    The triangle base is ln pt behind the tip, hw pt on each side.
+    """
+    if direction == 'r':
+        pts = f"{x-ln:.1f},{y-hw:.1f} {x:.1f},{y:.1f} {x-ln:.1f},{y+hw:.1f}"
+    elif direction == 'l':
+        pts = f"{x+ln:.1f},{y-hw:.1f} {x:.1f},{y:.1f} {x+ln:.1f},{y+hw:.1f}"
+    elif direction == 'd':
+        pts = f"{x-hw:.1f},{y-ln:.1f} {x:.1f},{y:.1f} {x+hw:.1f},{y-ln:.1f}"
+    elif direction == 'u':
+        pts = f"{x-hw:.1f},{y+ln:.1f} {x:.1f},{y:.1f} {x+hw:.1f},{y+ln:.1f}"
+    else:
+        raise ValueError(f"Unknown direction: {direction!r}")
+    return f'<polygon points="{pts}" fill="{color}"/>'
+
+
 def _ah(x1, y, x2, color=C_ARR, lw=0.8):
-    """Horizontal arrow (handles both L→R and R→L)."""
-    xe = x2 - 1 if x2 >= x1 else x2 + 1
-    return (f'<line x1="{x1:.1f}" y1="{y:.1f}" x2="{xe:.1f}" y2="{y:.1f}" '
-            f'stroke="{color}" stroke-width="{lw}" marker-end="url(#ah)"/>')
+    """Horizontal arrow (handles both L→R and R→L).
+
+    Returns a string with the shaft line + inline arrowhead polygon.
+    """
+    if x2 >= x1:
+        direction = 'r'
+        xe = x2 - AH_LEN          # shaft stops AH_LEN pt before tip
+    else:
+        direction = 'l'
+        xe = x2 + AH_LEN
+    line = (f'<line x1="{x1:.1f}" y1="{y:.1f}" x2="{xe:.1f}" y2="{y:.1f}" '
+            f'stroke="{color}" stroke-width="{lw}"/>')
+    ah = _arrowhead(x2, y, direction, color)
+    return line + "\n" + ah
 
 
 def _av(x, y1, y2, color=C_ARR, lw=0.8, dashed=False):
-    """Vertical arrow (handles both up and down)."""
+    """Vertical arrow (handles both up and down).
+
+    Returns a string with the shaft line + inline arrowhead polygon.
+    """
     d = ' stroke-dasharray="4,2.5"' if dashed else ''
-    dy = 1 if y2 > y1 else -1
-    return (f'<line x1="{x:.1f}" y1="{y1:.1f}" x2="{x:.1f}" y2="{y2 - dy*5:.1f}" '
-            f'stroke="{color}" stroke-width="{lw}"{d} marker-end="url(#ah)"/>')
+    if y2 > y1:
+        direction = 'd'
+        ye = y2 - AH_LEN
+    else:
+        direction = 'u'
+        ye = y2 + AH_LEN
+    line = (f'<line x1="{x:.1f}" y1="{y1:.1f}" x2="{x:.1f}" y2="{ye:.1f}" '
+            f'stroke="{color}" stroke-width="{lw}"{d}/>')
+    ah = _arrowhead(x, y2, direction, color)
+    return line + "\n" + ah
 
 
-def _seg3(x1, y1,  x2, y2,  x3, y3, color=C_ARR, lw=0.8):
-    """3-segment path (two elbows) with arrowhead at the final point.
-    Drawn as (x1,y1) → (x2,y2) → just-before (x3,y3).
-    The segment (x2,y2)→(x3,y3) must be axis-aligned for the arrowhead to point right."""
+def _seg3(x1, y1, x2, y2, x3, y3, color=C_ARR, lw=0.8):
+    """3-segment path (two elbows) with arrowhead at (x3,y3).
+    The final segment (x2,y2)→(x3,y3) must be axis-aligned.
+    """
     dy = 1 if y3 > y2 else (-1 if y3 < y2 else 0)
     dx = 1 if x3 > x2 else (-1 if x3 < x2 else 0)
-    xe = x3 - dx * 5
-    ye = y3 - dy * 5
-    return (f'<polyline points="{x1:.1f},{y1:.1f} {x2:.1f},{y2:.1f} {xe:.1f},{ye:.1f}" '
-            f'fill="none" stroke="{color}" stroke-width="{lw}" '
-            f'marker-end="url(#ah)"/>')
+    direction = {(1, 0): 'r', (-1, 0): 'l', (0, 1): 'd', (0, -1): 'u'}[(dx, dy)]
+    xe = x3 - dx * AH_LEN
+    ye = y3 - dy * AH_LEN
+    polyline = (f'<polyline points="{x1:.1f},{y1:.1f} {x2:.1f},{y2:.1f} '
+                f'{xe:.1f},{ye:.1f}" '
+                f'fill="none" stroke="{color}" stroke-width="{lw}"/>')
+    ah = _arrowhead(x3, y3, direction, color)
+    return polyline + "\n" + ah
 
 
-def _seg4(x1,y1, x2,y2, x3,y3, x4,y4, color=C_ARR, lw=0.8):
+def _seg4(x1, y1, x2, y2, x3, y3, x4, y4, color=C_ARR, lw=0.8):
     """4-point path with arrowhead at (x4,y4). Last segment must be axis-aligned."""
     dy = 1 if y4 > y3 else (-1 if y4 < y3 else 0)
     dx = 1 if x4 > x3 else (-1 if x4 < x3 else 0)
-    xe = x4 - dx * 5
-    ye = y4 - dy * 5
-    return (f'<polyline '
-            f'points="{x1:.1f},{y1:.1f} {x2:.1f},{y2:.1f} '
-            f'{x3:.1f},{y3:.1f} {xe:.1f},{ye:.1f}" '
-            f'fill="none" stroke="{color}" stroke-width="{lw}" '
-            f'marker-end="url(#ah)"/>')
+    direction = {(1, 0): 'r', (-1, 0): 'l', (0, 1): 'd', (0, -1): 'u'}[(dx, dy)]
+    xe = x4 - dx * AH_LEN
+    ye = y4 - dy * AH_LEN
+    polyline = (f'<polyline '
+                f'points="{x1:.1f},{y1:.1f} {x2:.1f},{y2:.1f} '
+                f'{x3:.1f},{y3:.1f} {xe:.1f},{ye:.1f}" '
+                f'fill="none" stroke="{color}" stroke-width="{lw}"/>')
+    ah = _arrowhead(x4, y4, direction, color)
+    return polyline + "\n" + ah
 
 
 # ── Block drawing ─────────────────────────────────────────────────────────────
@@ -191,19 +246,11 @@ def build_svg() -> str:
     CW_IN = f"{CW / 72:.3f}in"
     CH_IN = f"{CH / 72:.3f}in"
 
-    # ── SVG header ──────────────────────────────────────────────────────────
+    # ── SVG header (no <defs> needed — arrowheads are inline polygons) ───────
     parts.append(f'''<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      width="{CW_IN}" height="{CH_IN}"
      viewBox="0 0 {CW:.1f} {CH:.1f}">
-  <defs>
-    <marker id="ah" markerWidth="6" markerHeight="5" refX="5.5" refY="2.5" orient="auto">
-      <path d="M0,0 L0,5 L6,2.5 z" fill="{C_ARR}"/>
-    </marker>
-    <marker id="ahs" markerWidth="6" markerHeight="5" refX="5.5" refY="2.5" orient="auto">
-      <path d="M0,0 L0,5 L6,2.5 z" fill="{C_SKIP}"/>
-    </marker>
-  </defs>
   <rect width="{CW:.1f}" height="{CH:.1f}" fill="white"/>
 ''')
 
@@ -239,27 +286,29 @@ def build_svg() -> str:
     parts.extend(seg_parts)
 
     # ── Bottleneck → Dec[0]: drawn LAST so arrowhead renders on top ──────────
-    # Route (4 segments, arrives HORIZONTALLY at right edge of dec[0]):
+    # Route (5 segments, arrives HORIZONTALLY at right edge of dec[0]):
     #   1. Drop 26 pt from bottleneck bottom  → y_jog
-    #   2. Turn left, horizontal (stops 5 pt earlier than x_slip) → x_turn
+    #   2. Turn left (horizontal) → x_turn
     #   3. Continue down to dec_arr_y
     #   4. Final horizontal left into right edge of dec[0]  ← arriving segment
     bn_dec_x  = CLS_X + BW * 0.3             # departure x, left of cls_arr_x
     y_jog     = bn_bot + 26                  # drop 26 pt before first turn
-    old_h_len = bn_dec_x - (CLS_X - 2)      # previous horizontal length
+    old_h_len = bn_dec_x - (CLS_X - 2)
     x_slip    = bn_dec_x - old_h_len * 1.5  # 1.5× longer horizontal
-    x_turn    = x_slip + 8                  # turn down 8 pt earlier on horizontal
-    xe_dec    = dec_x[0] + BW + 1           # arrowhead placed 1 pt past block edge (matches _ah leftward)
+    x_turn    = x_slip + 8
+    # arrowhead tip sits AH_LEN pt past the right edge of dec[0]
+    tip_x = dec_x[0] + BW + 1               # arrowhead tip x (pointing left)
+    shaft_xe = tip_x + AH_LEN               # polyline ends here (just before tip)
     parts.append(
         f'<polyline points="'
         f'{bn_dec_x:.1f},{bn_bot:.1f} '
         f'{bn_dec_x:.1f},{y_jog:.1f} '
         f'{x_turn:.1f},{y_jog:.1f} '
         f'{x_turn:.1f},{dec_arr_y:.1f} '
-        f'{xe_dec:.1f},{dec_arr_y:.1f}" '
-        f'fill="none" stroke="{C_ARR}" stroke-width="0.8" '
-        f'marker-end="url(#ah)"/>'
+        f'{shaft_xe:.1f},{dec_arr_y:.1f}" '
+        f'fill="none" stroke="{C_ARR}" stroke-width="0.8"/>'
     )
+    parts.append(_arrowhead(tip_x, dec_arr_y, 'l', C_ARR))
 
     # ── INPUT box — below Enc Block 1, vertical upward arrow ───────────────
     inp_y = enc_bot[0] + 18
@@ -272,11 +321,13 @@ def build_svg() -> str:
         sx = enc_x[ei] + BW / 2
         y1 = enc_bot[ei]
         y2 = R2_TOP
+        # shaft stops AH_LEN_S pt before tip; arrowhead polygon draws the rest
         parts.append(
-            f'<line x1="{sx:.1f}" y1="{y1:.1f}" x2="{sx:.1f}" y2="{y2 - 5:.1f}" '
-            f'stroke="{C_SKIP}" stroke-width="0.8" stroke-dasharray="3.5,2" '
-            f'marker-end="url(#ahs)"/>'
+            f'<line x1="{sx:.1f}" y1="{y1:.1f}" '
+            f'x2="{sx:.1f}" y2="{y2 - AH_LEN_S:.1f}" '
+            f'stroke="{C_SKIP}" stroke-width="0.8" stroke-dasharray="3.5,2"/>'
         )
+        parts.append(_arrowhead(sx, y2, 'd', C_SKIP, ln=AH_LEN_S, hw=AH_HW_S))
         lbl = ENC[ei][4]
         if lbl:
             parts.append(_t(sx + 5, (y1 + y2) / 2, lbl,
@@ -329,10 +380,10 @@ if __name__ == "__main__":
     print(f"[saved] {out}")
 
     import re
-    boxes  = len(re.findall(r"<rect ", svg))
-    arrows = len(re.findall(r"marker-end", svg))
+    boxes     = len(re.findall(r"<rect ", svg))
+    polygons  = len(re.findall(r"<polygon ", svg))
     m_w = re.search(r'width="([\d.]+in)"', svg)
     m_h = re.search(r'height="([\d.]+in)"', svg)
     if m_w and m_h:
-        print(f"  boxes={boxes}  arrows={arrows}  "
+        print(f"  boxes={boxes}  arrowhead-polygons={polygons}  "
               f"physical size: {m_w.group(1)} × {m_h.group(1)}")

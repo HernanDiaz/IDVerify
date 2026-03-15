@@ -2,19 +2,12 @@
 <svg xmlns="http://www.w3.org/2000/svg"
      width="1312" height="586"
      viewBox="0 0 1312 586">
-  <defs>
-    <marker id="ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#2C3E50"/>
-    </marker>
-    <marker id="ahs" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#7F8C8D"/>
-    </marker>
-  </defs>
   <rect width="1312" height="586" fill="white"/>
 
 <rect x="18.0" y="167.0" width="138.0" height="28.0" rx="2" fill="#F2F3F4" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="87.0" y="181.0" text-anchor="middle" dominant-baseline="middle" font-size="7.5" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Input  224×224×3</text>
-<line x1="87.0" y1="167.0" x2="87.0" y2="124.0" stroke="#2C3E50" stroke-width="1.0" marker-end="url(#ah)"/>
+<line x1="87.0" y1="167.0" x2="87.0" y2="124.0" stroke="#2C3E50" stroke-width="1.0"/>
+<polygon points="84.0,124.0 87.0,117.0 90.0,124.0" fill="#2C3E50"/>
 <text x="121.0" y="142.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">224×224×3</text>
 <rect x="18.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="87.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 1</text>
@@ -24,7 +17,8 @@
 <text x="87.0" y="79.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
 <rect x="18.0" y="92.0" width="138.0" height="25.0" rx="2" fill="#D6EAF8" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="87.0" y="104.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
-<line x1="156.0" y1="57.0" x2="197.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="156.0" y1="57.0" x2="197.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="197.0,54.0 204.0,57.0 197.0,60.0" fill="#2C3E50"/>
 <text x="180.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">224×224×8</text>
 <rect x="204.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="273.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 2</text>
@@ -40,7 +34,8 @@
 <text x="273.0" y="154.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
 <rect x="204.0" y="167.0" width="138.0" height="27.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="273.0" y="180.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AvgPool2D (2×2)</text>
-<line x1="342.0" y1="57.0" x2="383.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="342.0" y1="57.0" x2="383.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="383.0,54.0 390.0,57.0 383.0,60.0" fill="#2C3E50"/>
 <text x="366.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">112×112×16</text>
 <rect x="390.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="459.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 3</text>
@@ -60,7 +55,8 @@
 <text x="459.0" y="204.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
 <rect x="390.0" y="217.0" width="138.0" height="27.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="459.0" y="230.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AvgPool2D (2×2)</text>
-<line x1="528.0" y1="57.0" x2="569.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="528.0" y1="57.0" x2="569.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="569.0,54.0 576.0,57.0 569.0,60.0" fill="#2C3E50"/>
 <text x="552.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">56×56×32</text>
 <rect x="576.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="645.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 4</text>
@@ -84,7 +80,8 @@
 <text x="645.0" y="254.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
 <rect x="576.0" y="267.0" width="138.0" height="27.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="645.0" y="280.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AvgPool2D (2×2)</text>
-<line x1="714.0" y1="57.0" x2="755.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="714.0" y1="57.0" x2="755.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="755.0,54.0 762.0,57.0 755.0,60.0" fill="#2C3E50"/>
 <text x="738.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">28×28×64</text>
 <rect x="762.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="831.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 5</text>
@@ -96,7 +93,8 @@
 <text x="831.0" y="104.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">BatchNorm2D</text>
 <rect x="762.0" y="117.0" width="138.0" height="27.0" rx="2" fill="#EAECEE" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="831.0" y="130.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">MaxPool2D (2×2)</text>
-<line x1="900.0" y1="57.0" x2="941.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="900.0" y1="57.0" x2="941.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="941.0,54.0 948.0,57.0 941.0,60.0" fill="#2C3E50"/>
 <text x="924.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">14×14×128</text>
 <rect x="948.0" y="22.0" width="138.0" height="20.0" rx="2" fill="#C5D9E8" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="1017.0" y="32.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Encoder Block 6</text>
@@ -114,9 +112,11 @@
 <text x="1213.0" y="54.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">AdaptiveAvgPool2D(1)</text>
 <rect x="1144.0" y="67.0" width="138.0" height="25.0" rx="2" fill="#D5F5E3" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="1213.0" y="79.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Bottleneck  7×7×256</text>
-<line x1="1086.0" y1="57.0" x2="1137.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="1086.0" y1="57.0" x2="1137.0" y2="57.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="1137.0,54.0 1144.0,57.0 1137.0,60.0" fill="#2C3E50"/>
 <text x="1115.0" y="49.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">7×7×256</text>
-<line x1="1213.0" y1="92.0" x2="1213.0" y2="105.0" stroke="#2C3E50" stroke-width="1.0" marker-end="url(#ah)"/>
+<line x1="1213.0" y1="92.0" x2="1213.0" y2="105.0" stroke="#2C3E50" stroke-width="1.0"/>
+<polygon points="1210.0,105.0 1213.0,112.0 1216.0,105.0" fill="#2C3E50"/>
 <text x="1245.0" y="102.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">256-d vector</text>
 <rect x="1144.0" y="112.0" width="138.0" height="20.0" rx="2" fill="#E8C5C5" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="1213.0" y="122.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Classification Head</text>
@@ -142,10 +142,12 @@
 <text x="1213.0" y="369.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Dropout</text>
 <rect x="1144.0" y="382.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="1213.0" y="394.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Linear (16 → 1)</text>
-<line x1="1213.0" y1="407.0" x2="1213.0" y2="415.0" stroke="#2C3E50" stroke-width="1.0" marker-end="url(#ah)"/>
+<line x1="1213.0" y1="407.0" x2="1213.0" y2="415.0" stroke="#2C3E50" stroke-width="1.0"/>
+<polygon points="1210.0,415.0 1213.0,422.0 1216.0,415.0" fill="#2C3E50"/>
 <rect x="1144.0" y="422.0" width="138.0" height="28.0" rx="2" fill="#F2F3F4" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="1213.0" y="436.0" text-anchor="middle" dominant-baseline="middle" font-size="7.5" font-weight="bold" fill="#8B0000" font-family="'Times New Roman', Georgia, serif">Score  (sigmoid)</text>
-<line x1="1017.0" y1="304.0" x2="1017.0" y2="337.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="1017.0" y1="304.0" x2="1017.0" y2="337.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="1014.0,337.0 1017.0,344.0 1020.0,337.0" fill="#2C3E50"/>
 <text x="1049.0" y="324.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">7×7×256</text>
 <rect x="948.0" y="344.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="1017.0" y="354.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 1  (7→14)</text>
@@ -165,7 +167,8 @@
 <text x="1017.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 128 filt. (3×3)</text>
 <rect x="948.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="1017.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
-<line x1="948.0" y1="479.0" x2="907.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="948.0" y1="479.0" x2="907.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="907.0,476.0 900.0,479.0 907.0,482.0" fill="#2C3E50"/>
 <text x="924.0" y="471.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">14×14×128</text>
 <rect x="762.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="831.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 2  (14→28)</text>
@@ -181,7 +184,8 @@
 <text x="831.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  64 filt. (3×3)</text>
 <rect x="762.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="831.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
-<line x1="762.0" y1="479.0" x2="721.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="762.0" y1="479.0" x2="721.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="721.0,476.0 714.0,479.0 721.0,482.0" fill="#2C3E50"/>
 <text x="738.0" y="471.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">28×28×64</text>
 <rect x="576.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="645.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 3  (28→56)</text>
@@ -197,7 +201,8 @@
 <text x="645.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  32 filt. (3×3)</text>
 <rect x="576.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="645.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
-<line x1="576.0" y1="479.0" x2="535.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="576.0" y1="479.0" x2="535.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="535.0,476.0 528.0,479.0 535.0,482.0" fill="#2C3E50"/>
 <text x="552.0" y="471.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">56×56×32</text>
 <rect x="390.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="459.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 4  (56→112)</text>
@@ -213,7 +218,8 @@
 <text x="459.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D  16 filt. (3×3)</text>
 <rect x="390.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="459.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
-<line x1="390.0" y1="479.0" x2="349.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="390.0" y1="479.0" x2="349.0" y2="479.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="349.0,476.0 342.0,479.0 349.0,482.0" fill="#2C3E50"/>
 <text x="366.0" y="471.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">112×112×16</text>
 <rect x="204.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#F0C9A0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="273.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Decoder Block 5  (112→224)</text>
@@ -229,7 +235,8 @@
 <text x="273.0" y="526.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D   8 filt. (3×3)</text>
 <rect x="204.0" y="539.0" width="138.0" height="25.0" rx="2" fill="#FDEBD0" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="273.0" y="551.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">LeakyReLU (α=0.2)</text>
-<line x1="204.0" y1="429.0" x2="163.0" y2="429.0" stroke="#2C3E50" stroke-width="1.1" marker-end="url(#ah)"/>
+<line x1="204.0" y1="429.0" x2="163.0" y2="429.0" stroke="#2C3E50" stroke-width="1.1"/>
+<polygon points="163.0,426.0 156.0,429.0 163.0,432.0" fill="#2C3E50"/>
 <text x="180.0" y="421.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">224×224×8</text>
 <rect x="18.0" y="394.0" width="138.0" height="20.0" rx="2" fill="#E8C5C5" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="87.0" y="404.0" text-anchor="middle" dominant-baseline="middle" font-size="6.8" font-weight="bold" fill="#111111" font-family="'Times New Roman', Georgia, serif">Segmentation Head</text>
@@ -237,18 +244,24 @@
 <text x="87.0" y="426.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Conv2D 1 filt. (1×1)</text>
 <rect x="18.0" y="439.0" width="138.0" height="25.0" rx="2" fill="#FADBD8" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="87.0" y="451.5" text-anchor="middle" dominant-baseline="middle" font-size="7.2" font-weight="normal" fill="#111111" font-family="'Times New Roman', Georgia, serif">Interpolate (bilinear)</text>
-<line x1="87.0" y1="464.0" x2="87.0" y2="472.0" stroke="#2C3E50" stroke-width="1.0" marker-end="url(#ah)"/>
+<line x1="87.0" y1="464.0" x2="87.0" y2="472.0" stroke="#2C3E50" stroke-width="1.0"/>
+<polygon points="84.0,472.0 87.0,479.0 90.0,472.0" fill="#2C3E50"/>
 <rect x="18.0" y="479.0" width="138.0" height="28.0" rx="2" fill="#F2F3F4" stroke="#2C3E50" stroke-width="0.9"/>
 <text x="87.0" y="493.0" text-anchor="middle" dominant-baseline="middle" font-size="7.5" font-weight="bold" fill="#00008B" font-family="'Times New Roman', Georgia, serif">Mask  224×224×1</text>
-<line x1="273.0" y1="194.0" x2="273.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<line x1="273.0" y1="194.0" x2="273.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3"/>
+<polygon points="270.0,387.0 273.0,394.0 276.0,387.0" fill="#7F8C8D"/>
 <text x="305.0" y="294.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s224: 224×224×16</text>
-<line x1="459.0" y1="244.0" x2="459.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<line x1="459.0" y1="244.0" x2="459.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3"/>
+<polygon points="456.0,387.0 459.0,394.0 462.0,387.0" fill="#7F8C8D"/>
 <text x="491.0" y="319.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s112: 112×112×32</text>
-<line x1="645.0" y1="294.0" x2="645.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<line x1="645.0" y1="294.0" x2="645.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3"/>
+<polygon points="642.0,387.0 645.0,394.0 648.0,387.0" fill="#7F8C8D"/>
 <text x="677.0" y="344.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s56: 56×56×64</text>
-<line x1="831.0" y1="144.0" x2="831.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<line x1="831.0" y1="144.0" x2="831.0" y2="387.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3"/>
+<polygon points="828.0,387.0 831.0,394.0 834.0,387.0" fill="#7F8C8D"/>
 <text x="863.0" y="269.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s28: 28×28×128</text>
-<line x1="1017.0" y1="144.0" x2="1017.0" y2="337.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3" marker-end="url(#ahs)"/>
+<line x1="1017.0" y1="144.0" x2="1017.0" y2="337.0" stroke="#7F8C8D" stroke-width="1.0" stroke-dasharray="5,3"/>
+<polygon points="1014.0,337.0 1017.0,344.0 1020.0,337.0" fill="#7F8C8D"/>
 <text x="1049.0" y="244.0" text-anchor="middle" dominant-baseline="middle" font-size="6.3" font-weight="normal" fill="#555555" font-family="'Times New Roman', Georgia, serif">s14: 14×14×256</text>
 <text x="576.0" y="10.0" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="bold" fill="#1A5276" font-family="'Times New Roman', Georgia, serif">PATEL CNN ENCODER</text>
 <text x="576.0" y="382.0" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="bold" fill="#784212" font-family="'Times New Roman', Georgia, serif">U-NET DECODER</text>

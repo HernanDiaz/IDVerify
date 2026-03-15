@@ -15,25 +15,67 @@ subtle statistical fingerprints left by image-processing operations, often
 outperforming engineered pipelines on standard benchmarks~\cite{bappy2019hybrid,
 mantranet2019}.
 
-Recent large-scale foundations have further advanced the state of the art.
-\textsc{TruFor}~\cite{trufor2023} pre-trains on over 876\,000 images and learns to
-extract high-level semantic inconsistencies as well as low-level noise-pattern
-anomalies, achieving strong performance on general image forensics benchmarks.
-However, such general-purpose models are optimized for natural image manipulation
-and do not account for the structured layout, typography, and holographic elements
-specific to identity documents. Applying them to the identity-document domain
-requires fine-tuning and does not exploit document-specific priors.
+A complementary research thread exploits camera-model fingerprints embedded in
+image noise. Noiseprint~\cite{cozzolino2020noiseprint} trains a CNN via Siamese
+contrastive learning to extract camera-model-specific noise residuals; forgeries
+appear as anomalies in this residual and can be localized without semantic
+understanding. \textsc{TruFor}~\cite{trufor2023} generalizes this idea with a
+transformer fusion network (NoisePrint++) that jointly models RGB semantics and
+noise-pattern anomalies, achieving strong performance on general image forensics
+benchmarks with over 876\,000 pre-training images. General-purpose detectors such
+as MMFusion~\cite{mmfusion2024}, which combines complementary forensic filters
+(SRM, Bayar convolution) through an early-and-late fusion decoder, and
+FatFormer~\cite{fatformer2024}, which adapts a CLIP-ViT backbone with
+forgery-aware spatial and frequency adapters, further advance the state of the art
+for natural-image manipulation. UniFD~\cite{unifd2023} demonstrates that
+nearest-neighbor classification in a frozen CLIP feature space, without any
+discriminative fine-tuning, already achieves competitive detection rates across
+diverse generative models.
 
-Identity document forgery introduces unique challenges compared to natural-image
-manipulation: (i)~the forged regions are often small (a single text field or a
-face) relative to the full document, (ii)~the background texture is highly
-structured (guilloch\'e patterns, UV-reactive ink), which creates strong false
-negatives for general-purpose noise detectors, and (iii)~the diversity of
+Identity document forgery, however, introduces unique challenges compared to
+natural-image manipulation: (i)~the forged regions are often small (a single
+text field or a face) relative to the full document, (ii)~the background texture
+is highly structured (guilloché patterns, UV-reactive ink), which creates strong
+false negatives for general-purpose noise detectors, and (iii)~the diversity of
 document types across countries and issuers demands generalization beyond what
-natural-image pre-training provides. The DeepID 2025 Challenge~\cite{deepid2025challenge}
-was specifically designed to benchmark progress on this task using the
-FantasyID dataset~\cite{fantasyid2024}, which contains synthetic attack types
-including face swaps and text inpainting on fantasy identity documents.
+natural-image pre-training provides.
+The SIDTD dataset~\cite{TODO_sidtd} provides a first large-scale benchmark for
+this domain and shows that models trained on one set of nationalities degrade
+severely on unseen ones, motivating few-shot and domain-generalization approaches.
+The FakeIDet line of work~\cite{fakeidet2025} further explores patch-based
+DINOv2~\cite{TODO_vit} representations with multi-head self-attention fusion for
+privacy-preserving fake-ID detection. The DeepID 2025 Challenge~\cite{deepid2025challenge}
+was specifically designed to benchmark progress on joint detection and localization
+using the FantasyID dataset~\cite{fantasyid2024}, which covers face-swap and
+text-inpainting attacks on fantasy identity documents. Official evaluations on
+FantasyID show that the general-purpose baselines (TruFor, MMFusion, FatFormer,
+UniFD) all achieve false-negative rates above 50\% at a 10\% false-positive rate
+threshold~\cite{fantasyid2024}, confirming that document-agnostic forensic models
+require domain-specific adaptation.
+
+Among systems trained exclusively on FantasyID, George and
+Marcel~\cite{edgedoc2025} propose EdgeDoc, a lightweight hybrid
+CNN-Transformer encoder (EdgeNeXt~\cite{edgenext2022}) that takes both the
+green channel of the document image and a NoisePrint residual as input, feeding
+a U-Net decoder optimized jointly for classification and pixel-level
+localization. Naseeb~\textit{et~al.}~\cite{twoheadswin2026} propose
+TwoHead-SwinFPN, a Swin Transformer backbone with a feature pyramid network
+decoder, CBAM attention modules, and dual-output heads for joint classification
+and segmentation, reporting 88.61\% F1 and 57.24\% Dice on FantasyID.
+Yu~\textit{et~al.}~\cite{remtkd2025} introduce Re-MTKD, a reinforcement-learning
+multi-teacher knowledge distillation framework using a ConvNeXt~v2 encoder
+and UPerNet decoder that leverages specialist teachers for copy-move, splicing,
+and inpainting; the winning Sunlight team adapted this framework to identity
+documents using over 60\,000 additional external training images, achieving the
+best results in both tracks of the DeepID 2025 Challenge.
+
+DocVerify differs from all prior document-forensics systems in three respects:
+(i)~it systematically searches the task-weight $\lambda_{\text{mask}}$ via
+multi-objective HPO rather than fixing it heuristically; (ii)~it selects the
+final configuration via a Pareto-optimal criterion that treats detection and
+localization as explicitly competing objectives; and (iii)~it reports
+uncertainty through nested cross-validation, providing statistically rigorous
+performance estimates rather than single-split results.
 
 \subsection{Multi-Task Learning for Detection and Localization}
 

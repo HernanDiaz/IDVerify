@@ -21,6 +21,25 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
+\bibitem{TODO_idfraud_report}
+\BIBentryALTinterwordspacing
+{Europol Innovation Lab}, ``Facing reality? {Law} enforcement and the challenge
+  of deepfakes,'' Europol, The Hague, Netherlands, Observatory Report, Apr.
+  2022. [Online]. Available:
+  \url{https://www.europol.europa.eu/publications-events/publications/facing-reality-law-enforcement-and-challenge-of-deepfakes}
+\BIBentrySTDinterwordspacing
+
+\bibitem{TODO_euaiact}
+\BIBentryALTinterwordspacing
+{European Parliament} and {Council of the European Union}, ``Regulation ({EU})
+  2024/1689 of the {European Parliament} and of the {Council} of 13 {June} 2024
+  laying down harmonised rules on artificial intelligence ({Artificial
+  Intelligence Act}),'' Official Journal of the European Union, OJ L 2024/1689,
+  2024, published 12 July 2024; entered into force 1 August 2024. Article~13:
+  Transparency and provision of information to deployers. [Online]. Available:
+  \url{https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng}
+\BIBentrySTDinterwordspacing
+
 \bibitem{trufor2023}
 F.~Guillaro, D.~Cozzolino, A.~Sud, N.~Dufour, and L.~Verdoliva, ``{TruFor}:
   Leveraging all-round clues for trustworthy image forgery detection and
@@ -38,9 +57,13 @@ A.~Kendall, Y.~Gal, and R.~Cipolla, ``Multi-task learning using uncertainty to
   2018, pp. 7482--7491.
 
 \bibitem{fantasyid2024}
-T.~Authors, ``Todo: Fantasyid: A benchmark dataset for identity document
-  forgery detection and localization,'' \emph{TODO: journal or arXiv}, 2024,
-  available at \url{https://www.idiap.ch/paper/fantasyid/}.
+\BIBentryALTinterwordspacing
+P.~Korshunov, A.~Mohammadi, V.~Vidit, C.~Ecabert, and S.~Marcel, ``{FantasyID}:
+  A dataset for detecting digital manipulations of {ID}-documents,'' in
+  \emph{Proceedings of the IEEE International Joint Conference on Biometrics
+  (IJCB)}, Osaka, Japan, 2025. [Online]. Available:
+  \url{https://arxiv.org/abs/2507.20808}
+\BIBentrySTDinterwordspacing
 
 \bibitem{huh2018fighting}
 M.~Huh, A.~Liu, A.~Owens, and A.~A. Efros, ``Fighting fake news: Image splice
@@ -58,9 +81,104 @@ Y.~Wu, W.~AbdAlmageed, and P.~Natarajan, ``{ManTra-Net}: Manipulation tracing
   features,'' in \emph{Proceedings of the {IEEE/CVF} Conference on Computer
   Vision and Pattern Recognition (CVPR)}, 2019, pp. 9543--9552.
 
+\bibitem{cozzolino2020noiseprint}
+D.~Cozzolino and L.~Verdoliva, ``Noiseprint: A {CNN}-based camera model
+  fingerprint,'' vol.~15, 2020, pp. 144--159.
+
+\bibitem{mmfusion2024}
+\BIBentryALTinterwordspacing
+K.~Triaridis, K.~Tsigos, and V.~Mezaris, ``{MMFusion}: Combining image forensic
+  filters for visual manipulation detection and localization,'' in
+  \emph{Proceedings of the 30th International Conference on MultiMedia Modeling
+  (MMM)}, 2024. [Online]. Available: \url{https://arxiv.org/abs/2312.01790}
+\BIBentrySTDinterwordspacing
+
+\bibitem{fatformer2024}
+\BIBentryALTinterwordspacing
+H.~Liu, Z.~Tan, C.~Tan, Y.~Wei, Y.~Zhao, and J.~Wang, ``Forgery-aware adaptive
+  transformer for generalizable synthetic image detection,'' in
+  \emph{Proceedings of the {IEEE/CVF} Conference on Computer Vision and Pattern
+  Recognition (CVPR)}, 2024, pp. 10\,770--10\,780. [Online]. Available:
+  \url{https://arxiv.org/abs/2312.16649}
+\BIBentrySTDinterwordspacing
+
+\bibitem{unifd2023}
+\BIBentryALTinterwordspacing
+U.~Ojha, Y.~Li, and Y.~J. Lee, ``Towards universal fake image detectors that
+  generalize across generative models,'' in \emph{Proceedings of the {IEEE/CVF}
+  Conference on Computer Vision and Pattern Recognition (CVPR)}, 2023, pp.
+  24\,480--24\,489. [Online]. Available: \url{https://arxiv.org/abs/2302.10174}
+\BIBentrySTDinterwordspacing
+
+\bibitem{TODO_sidtd}
+\BIBentryALTinterwordspacing
+C.~Boned, M.~Talarmain, N.~Ghanmi, G.~Chiron, S.~Biswas, A.~M. Awal, and
+  O.~Ramos~Terrades, ``Synthetic dataset of {ID} and travel documents,''
+  \emph{Scientific Data}, vol.~11, no.~1, p. 1356, 2024. [Online]. Available:
+  \url{https://www.nature.com/articles/s41597-024-04160-9}
+\BIBentrySTDinterwordspacing
+
+\bibitem{fakeidet2025}
+\BIBentryALTinterwordspacing
+J.~Mu{\~n}oz-Haro, R.~Tolosana, R.~Vera-Rodriguez, A.~Morales, and J.~Fierrez,
+  ``{FakeIDet}: Exploring patches for privacy-preserving fake {ID} detection,''
+  in \emph{Proceedings of the IEEE International Joint Conference on Biometrics
+  (IJCB)}, 2025. [Online]. Available: \url{https://arxiv.org/abs/2504.07761}
+\BIBentrySTDinterwordspacing
+
+\bibitem{TODO_vit}
+\BIBentryALTinterwordspacing
+A.~Dosovitskiy, L.~Beyer, A.~Kolesnikov, D.~Weissenborn, X.~Zhai,
+  T.~Unterthiner, M.~Dehghani, M.~Minderer, G.~Heigold, S.~Gelly, J.~Uszkoreit,
+  and N.~Houlsby, ``An image is worth 16x16 words: Transformers for image
+  recognition at scale,'' in \emph{International Conference on Learning
+  Representations ({ICLR})}, 2021. [Online]. Available:
+  \url{https://openreview.net/forum?id=YicbFdNTTy}
+\BIBentrySTDinterwordspacing
+
 \bibitem{deepid2025challenge}
-``{DeepID} challenge: Identity document forgery detection and localization,
-  {ICCV} 2025,'' \url{https://deepid-iccv.github.io/}, 2025.
+\BIBentryALTinterwordspacing
+P.~Korshunov, V.~Vidit, A.~Mohammadi, C.~Ecabert, N.~Shamoska, S.~Marcel
+  \emph{et~al.}, ``{DeepID}: Challenge of detecting synthetic manipulations in
+  {ID} documents,'' in \emph{Proceedings of the {IEEE/CVF} International
+  Conference on Computer Vision Workshops ({ICCVW})}, 2025, pp. 510--519.
+  [Online]. Available:
+  \url{https://openaccess.thecvf.com/content/ICCV2025W/DeepID/html/Korshunov_DeepID_Challenge_of_Detecting_Synthetic_Manipulations_in_ID_Documents_ICCVW_2025_paper.html}
+\BIBentrySTDinterwordspacing
+
+\bibitem{edgedoc2025}
+\BIBentryALTinterwordspacing
+A.~George and S.~Marcel, ``{EdgeDoc}: Hybrid {CNN}-transformer model for
+  accurate forgery detection and localization in {ID} documents,'' 2025, idiap
+  Research Report RR-08-2025; 3rd place DeepID 2025 Challenge. [Online].
+  Available: \url{https://arxiv.org/abs/2508.16284}
+\BIBentrySTDinterwordspacing
+
+\bibitem{edgenext2022}
+\BIBentryALTinterwordspacing
+M.~Maaz, A.~Shaker, H.~Cholakkal, S.~Khan, S.~W. Zamir, R.~M. Anwer, and F.~S.
+  Khan, ``{EdgeNeXt}: Efficiently amalgamated {CNN}-transformer architecture
+  for mobile vision applications,'' in \emph{European Conference on Computer
+  Vision Workshops (ECCVW)}, 2022, pp. 3--20. [Online]. Available:
+  \url{https://arxiv.org/abs/2206.10589}
+\BIBentrySTDinterwordspacing
+
+\bibitem{twoheadswin2026}
+\BIBentryALTinterwordspacing
+C.~Naseeb, A.~A. Cheema, H.~Sami, T.~Afzal, M.~Omair, and U.~Habib,
+  ``{TwoHead-SwinFPN}: A unified {DL} architecture for synthetic manipulation
+  detection and localization in identity documents,'' 2026. [Online].
+  Available: \url{https://arxiv.org/abs/2601.12895}
+\BIBentrySTDinterwordspacing
+
+\bibitem{remtkd2025}
+\BIBentryALTinterwordspacing
+Z.~Yu, J.~Ni, J.~Zhang, H.~Deng, and Y.~Lin, ``Reinforced multi-teacher
+  knowledge distillation for efficient general image forgery detection and
+  localization,'' in \emph{Proceedings of the AAAI Conference on Artificial
+  Intelligence}, 2025, oral presentation; base method of Sunlight (1st place,
+  DeepID 2025). [Online]. Available: \url{https://arxiv.org/abs/2504.05224}
+\BIBentrySTDinterwordspacing
 
 \bibitem{ruder2017overview}
 S.~Ruder, ``An overview of multi-task learning in deep neural networks,''
@@ -118,6 +236,12 @@ K.~Deb, A.~Pratap, S.~Agarwal, and T.~Meyarivan, ``A fast and elitist
 \bibitem{motpe2022}
 S.~Watanabe and F.~Hutter, ``Multiobjective tree-structured parzen estimator,''
   vol.~73, 2022, pp. 1--31.
+
+\bibitem{patel2023dcnn}
+Y.~Patel, S.~Tanwar, P.~Bhattacharya, R.~Gupta, T.~Alsuwian, I.~E. Davidson,
+  and T.~F. Mazibuko, ``An improved dense {CNN} architecture for deepfake image
+  detection,'' \emph{{IEEE} Access}, vol.~11, pp. 22\,081--22\,095, 2023, open
+  access, CC BY-NC-ND 4.0.
 
 \bibitem{leakyrelu2015}
 B.~Xu, N.~Wang, T.~Chen, and M.~Li, ``Empirical evaluation of rectified

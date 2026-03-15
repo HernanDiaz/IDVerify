@@ -3,14 +3,30 @@
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \citation{TODO_idfraud_report}
+\citation{TODO_euaiact}
 \citation{trufor2023}
 \citation{caruana1997multitask,kendall2018multi}
 \citation{fantasyid2024}
 \citation{huh2018fighting}
 \citation{bappy2019hybrid,mantranet2019}
+\citation{cozzolino2020noiseprint}
 \citation{trufor2023}
+\citation{mmfusion2024}
+\citation{fatformer2024}
+\citation{unifd2023}
+\citation{TODO_sidtd}
+\citation{fakeidet2025}
+\citation{TODO_vit}
 \citation{deepid2025challenge}
 \citation{fantasyid2024}
+\citation{fantasyid2024}
+\citation{edgedoc2025}
+\citation{edgenext2022}
+\citation{twoheadswin2026}
+\citation{remtkd2025}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Related Work}{2}{section.1}\protected@file@percent }
+\newlabel{sec:related}{{I}{2}{Related Work}{section.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-A}}Document and Image Forgery Detection}{2}{subsection.1.1}\protected@file@percent }
 \citation{caruana1997multitask,ruder2017overview}
 \citation{crawshaw2020multi}
 \citation{marler2004survey}
@@ -24,128 +40,148 @@
 \citation{miettinen1999nonlinear}
 \citation{nsga2_2002}
 \citation{motpe2022}
-\@writefile{toc}{\contentsline {section}{\numberline {I}Related Work}{2}{section.1}\protected@file@percent }
-\newlabel{sec:related}{{I}{2}{Related Work}{section.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-A}}Document and Image Forgery Detection}{2}{subsection.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-B}}Multi-Task Learning for Detection and Localization}{2}{subsection.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-C}}Hyperparameter Optimization and Multi-Objective Search}{2}{subsection.1.3}\protected@file@percent }
 \citation{fantasyid2024}
 \citation{deepid2025challenge}
+\citation{patel2023dcnn}
 \citation{leakyrelu2015}
 \citation{batchnorm2015}
-\citation{unet2015}
-\citation{dice1945}
-\citation{unet2015}
-\citation{adamw2019}
-\citation{micikevicius2018mixed,pytorch2019}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-B}}Multi-Task Learning for Detection and Localization}{3}{subsection.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-C}}Hyperparameter Optimization and Multi-Objective Search}{3}{subsection.1.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {II}Methodology}{3}{section.2}\protected@file@percent }
 \newlabel{sec:method}{{II}{3}{Methodology}{section.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Dataset}{3}{subsection.2.1}\protected@file@percent }
 \newlabel{subsec:dataset}{{\mbox  {II-A}}{3}{Dataset}{subsection.2.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Architecture}{3}{subsection.2.2}\protected@file@percent }
 \newlabel{subsec:arch}{{\mbox  {II-B}}{3}{Architecture}{subsection.2.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}1}Encoder}{3}{subsubsection.2.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}2}Classification Head}{3}{subsubsection.2.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}3}Segmentation Head (U-Net Decoder)}{3}{subsubsection.2.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Loss Functions}{3}{subsection.2.3}\protected@file@percent }
-\newlabel{subsec:loss}{{\mbox  {II-C}}{3}{Loss Functions}{subsection.2.3}{}}
-\newlabel{eq:total_loss}{{1}{3}{Loss Functions}{equation.1}{}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-C}0a}Classification loss.}{3}{paragraph.2.3.0.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-C}0b}Segmentation loss.}{3}{paragraph.2.3.0.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-C}0c}Training details.}{3}{paragraph.2.3.0.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Multi-Objective HPO}{3}{subsection.2.4}\protected@file@percent }
-\newlabel{subsec:hpo}{{\mbox  {II-D}}{3}{Multi-Objective HPO}{subsection.2.4}{}}
-\newlabel{eq:moopt}{{3}{3}{Multi-Objective HPO}{equation.3}{}}
+\citation{unet2015}
+\citation{dice1945}
+\citation{unet2015}
+\citation{adamw2019}
+\citation{micikevicius2018mixed,pytorch2019}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces DocVerify architecture. The encoder maps a $3{\times }224{\times }224$ input to a $256{\times }7{\times }7$ bottleneck through six convolutional blocks ($8\!\to \!256$ channels). The U-Net decoder reconstructs the forgery mask via skip connections; the classification head outputs a document-level tampered/genuine score.}}{4}{figure.1}\protected@file@percent }
+\newlabel{fig:architecture}{{1}{4}{DocVerify architecture. The encoder maps a $3{\times }224{\times }224$ input to a $256{\times }7{\times }7$ bottleneck through six convolutional blocks ($8\!\to \!256$ channels). The U-Net decoder reconstructs the forgery mask via skip connections; the classification head outputs a document-level tampered/genuine score}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}1}Encoder}{4}{subsubsection.2.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}2}Classification Head}{4}{subsubsection.2.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-B}3}Segmentation Head (U-Net Decoder)}{4}{subsubsection.2.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Loss Functions}{4}{subsection.2.3}\protected@file@percent }
+\newlabel{subsec:loss}{{\mbox  {II-C}}{4}{Loss Functions}{subsection.2.3}{}}
+\newlabel{eq:total_loss}{{1}{4}{Loss Functions}{equation.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-C}0a}Classification loss.}{4}{paragraph.2.3.0.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-C}0b}Segmentation loss.}{4}{paragraph.2.3.0.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-C}0c}Training details.}{4}{paragraph.2.3.0.3}\protected@file@percent }
 \citation{motpe2022}
 \citation{optuna2019}
 \citation{nsga2_2002}
 \citation{varma2006bias}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces DocVerify architecture. The encoder maps a $3{\times }224{\times }224$ input to a $256{\times }7{\times }7$ bottleneck through six convolutional blocks ($8\!\to \!256$ channels). The U-Net decoder reconstructs the forgery mask via skip connections; the classification head outputs a document-level tampered/genuine score.}}{4}{figure.1}\protected@file@percent }
-\newlabel{fig:architecture}{{1}{4}{DocVerify architecture. The encoder maps a $3{\times }224{\times }224$ input to a $256{\times }7{\times }7$ bottleneck through six convolutional blocks ($8\!\to \!256$ channels). The U-Net decoder reconstructs the forgery mask via skip connections; the classification head outputs a document-level tampered/genuine score}{figure.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-D}1}MOTPE Sampler}{4}{subsubsection.2.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-D}2}Pareto-Based Model Selection}{4}{subsubsection.2.4.2}\protected@file@percent }
-\newlabel{eq:ideal_point}{{4}{4}{Pareto-Based Model Selection}{equation.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-E}}Nested Cross-Validation}{4}{subsection.2.5}\protected@file@percent }
-\newlabel{subsec:ncv}{{\mbox  {II-E}}{4}{Nested Cross-Validation}{subsection.2.5}{}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-E}0a}Outer loop (10 folds).}{4}{paragraph.2.5.0.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-E}0b}Inner loop (5 folds, HPO).}{4}{paragraph.2.5.0.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-E}0c}Final model training.}{4}{paragraph.2.5.0.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {III}Experiments and Results}{4}{section.3}\protected@file@percent }
-\newlabel{sec:experiments}{{III}{4}{Experiments and Results}{section.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Experimental Setup}{4}{subsection.3.1}\protected@file@percent }
-\newlabel{subsec:setup}{{\mbox  {III-A}}{4}{Experimental Setup}{subsection.3.1}{}}
-\citation{cohen1988statistical}
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces HPO search space}}{5}{table.1}\protected@file@percent }
-\newlabel{tab:hpo_space}{{I}{5}{HPO search space}{table.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Validation objective space across all 500 HPO trials (10 outer folds $\times $ 50 Optuna MOTPE trials per fold). Grey points: evaluated configurations; blue points: Pareto-optimal (non-dominated) trials; dashed line: global Pareto frontier. The red diamond at $(1,~1)$ marks the ideal point; the annotated point is the selected configuration (minimum Euclidean distance $d = 0.316$).}}{5}{figure.2}\protected@file@percent }
-\newlabel{fig:pareto}{{2}{5}{Validation objective space across all 500 HPO trials (10 outer folds $\times $ 50 Optuna MOTPE trials per fold). Grey points: evaluated configurations; blue points: Pareto-optimal (non-dominated) trials; dashed line: global Pareto frontier. The red diamond at $(1,~1)$ marks the ideal point; the annotated point is the selected configuration (minimum Euclidean distance $d = 0.316$)}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}Multi-Objective HPO}{5}{subsection.2.4}\protected@file@percent }
+\newlabel{subsec:hpo}{{\mbox  {II-D}}{5}{Multi-Objective HPO}{subsection.2.4}{}}
+\newlabel{eq:moopt}{{3}{5}{Multi-Objective HPO}{equation.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-D}1}MOTPE Sampler}{5}{subsubsection.2.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {II-D}2}Pareto-Based Model Selection}{5}{subsubsection.2.4.2}\protected@file@percent }
+\newlabel{eq:ideal_point}{{4}{5}{Pareto-Based Model Selection}{equation.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-E}}Nested Cross-Validation}{5}{subsection.2.5}\protected@file@percent }
+\newlabel{subsec:ncv}{{\mbox  {II-E}}{5}{Nested Cross-Validation}{subsection.2.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-E}0a}Outer loop (10 folds).}{5}{paragraph.2.5.0.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-E}0b}Inner loop (5 folds, HPO).}{5}{paragraph.2.5.0.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {II-E}0c}Final model training.}{5}{paragraph.2.5.0.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {III}Experiments and Results}{5}{section.3}\protected@file@percent }
+\newlabel{sec:experiments}{{III}{5}{Experiments and Results}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Experimental Setup}{5}{subsection.3.1}\protected@file@percent }
+\newlabel{subsec:setup}{{\mbox  {III-A}}{5}{Experimental Setup}{subsection.3.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Nested Cross-Validation Results}{5}{subsection.3.2}\protected@file@percent }
 \newlabel{subsec:ncv_results}{{\mbox  {III-B}}{5}{Nested Cross-Validation Results}{subsection.3.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Ablation Study}{5}{subsection.3.3}\protected@file@percent }
 \newlabel{subsec:ablation}{{\mbox  {III-C}}{5}{Ablation Study}{subsection.3.3}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}1}Variants}{5}{subsubsection.3.3.1}\protected@file@percent }
-\newlabel{sec:blindtest}{{\mbox  {III-C}2}{5}{Results}{subsubsection.3.3.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}2}Results}{5}{subsubsection.3.3.2}\protected@file@percent }
+\citation{cohen1988statistical}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces HPO search space}}{6}{table.1}\protected@file@percent }
+\newlabel{tab:hpo_space}{{I}{6}{HPO search space}{table.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Validation objective space across all 500 HPO trials (10 outer folds $\times $ 50 Optuna MOTPE trials per fold). Grey points: evaluated configurations; blue points: Pareto-optimal (non-dominated) trials; dashed line: global Pareto frontier. The red diamond at $(1,~1)$ marks the ideal point; the annotated point is the selected configuration (minimum Euclidean distance $d = 0.316$).}}{6}{figure.2}\protected@file@percent }
+\newlabel{fig:pareto}{{2}{6}{Validation objective space across all 500 HPO trials (10 outer folds $\times $ 50 Optuna MOTPE trials per fold). Grey points: evaluated configurations; blue points: Pareto-optimal (non-dominated) trials; dashed line: global Pareto frontier. The red diamond at $(1,~1)$ marks the ideal point; the annotated point is the selected configuration (minimum Euclidean distance $d = 0.316$)}{figure.2}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Per-fold test results from 10-fold nested cross-validation. $\overline  {w}_{\text  {mask}}$: Pareto-selected mask loss weight.}}{6}{table.2}\protected@file@percent }
 \newlabel{tab:nested_cv}{{II}{6}{Per-fold test results from 10-fold nested cross-validation. $\overline {w}_{\text {mask}}$: Pareto-selected mask loss weight}{table.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Per-fold test metrics from 10-fold nested cross-validation. Blue bars: PR-AUC; orange bars: Dice. Dashed lines indicate cross-fold means (PR-AUC $= 0.9921 \pm 0.0060$; Dice $= 0.8555 \pm 0.0345$). The $y$-axis is truncated at $0.75$ to emphasize fold-to-fold variation.}}{6}{figure.3}\protected@file@percent }
-\newlabel{fig:nested_cv}{{3}{6}{Per-fold test metrics from 10-fold nested cross-validation. Blue bars: PR-AUC; orange bars: Dice. Dashed lines indicate cross-fold means (PR-AUC $= 0.9921 \pm 0.0060$; Dice $= 0.8555 \pm 0.0345$). The $y$-axis is truncated at $0.75$ to emphasize fold-to-fold variation}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Pareto HPO vs.\ Scalar Baselines}{6}{subsection.3.4}\protected@file@percent }
-\newlabel{subsec:scalar}{{\mbox  {III-D}}{6}{Pareto HPO vs.\ Scalar Baselines}{subsection.3.4}{}}
+\newlabel{sec:blindtest}{{\mbox  {III-C}2}{6}{Results}{subsubsection.3.3.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}2}Results}{6}{subsubsection.3.3.2}\protected@file@percent }
+\citation{remtkd2025}
+\citation{edgedoc2025}
+\citation{trufor2023}
+\citation{twoheadswin2026}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Per-fold test metrics from 10-fold nested cross-validation. Blue bars: PR-AUC; orange bars: Dice. Dashed lines indicate cross-fold means (PR-AUC $= 0.9921 \pm 0.0060$; Dice $= 0.8555 \pm 0.0345$). The $y$-axis is truncated at $0.75$ to emphasize fold-to-fold variation.}}{7}{figure.3}\protected@file@percent }
+\newlabel{fig:nested_cv}{{3}{7}{Per-fold test metrics from 10-fold nested cross-validation. Blue bars: PR-AUC; orange bars: Dice. Dashed lines indicate cross-fold means (PR-AUC $= 0.9921 \pm 0.0060$; Dice $= 0.8555 \pm 0.0345$). The $y$-axis is truncated at $0.75$ to emphasize fold-to-fold variation}{figure.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Ablation study results (blind test, 30 seeds). $p$: Wilcoxon signed-rank with Holm correction; $d$: Cohen's $d$. Significance: *** $p < 0.001$; ns $p \geq 0.05$.}}{7}{table.3}\protected@file@percent }
 \newlabel{tab:ablation}{{III}{7}{Ablation study results (blind test, 30 seeds). $p$: Wilcoxon signed-rank with Holm correction; $d$: Cohen's $d$. Significance: *** $p < 0.001$; ns $p \geq 0.05$}{table.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Ablation study: violin plots of PR-AUC (left) and Dice (right) for four variants over 30 seeds on the blind test set. Significance symbols above each violin denote Wilcoxon + Holm vs.\ Multitask (*** $p < 0.001$; ns $p \geq 0.05$).}}{7}{figure.4}\protected@file@percent }
-\newlabel{fig:ablation}{{4}{7}{Ablation study: violin plots of PR-AUC (left) and Dice (right) for four variants over 30 seeds on the blind test set. Significance symbols above each violin denote Wilcoxon + Holm vs.\ Multitask (*** $p < 0.001$; ns $p \geq 0.05$)}{figure.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Comparison of HPO selection criteria on nested CV (10 folds). Wilcoxon + Holm vs.\ Pareto baseline; ns $p \geq 0.05$.}}{7}{table.4}\protected@file@percent }
-\newlabel{tab:scalar}{{IV}{7}{Comparison of HPO selection criteria on nested CV (10 folds). Wilcoxon + Holm vs.\ Pareto baseline; ns $p \geq 0.05$}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Pareto HPO vs.\ Scalar Baselines}{7}{subsection.3.4}\protected@file@percent }
+\newlabel{subsec:scalar}{{\mbox  {III-D}}{7}{Pareto HPO vs.\ Scalar Baselines}{subsection.3.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Comparison with DeepID 2025 Challenge Participants}{7}{subsection.3.5}\protected@file@percent }
 \newlabel{subsec:challenge}{{\mbox  {III-E}}{7}{Comparison with DeepID 2025 Challenge Participants}{subsection.3.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Ablation study: violin plots of PR-AUC (left) and Dice (right) for four variants over 30 seeds on the blind test set. Significance symbols above each violin denote Wilcoxon + Holm vs.\ Multitask (*** $p < 0.001$; ns $p \geq 0.05$).}}{8}{figure.4}\protected@file@percent }
+\newlabel{fig:ablation}{{4}{8}{Ablation study: violin plots of PR-AUC (left) and Dice (right) for four variants over 30 seeds on the blind test set. Significance symbols above each violin denote Wilcoxon + Holm vs.\ Multitask (*** $p < 0.001$; ns $p \geq 0.05$)}{figure.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Comparison of HPO selection criteria on nested CV (10 folds). Wilcoxon + Holm vs.\ Pareto baseline; ns $p \geq 0.05$.}}{8}{table.4}\protected@file@percent }
+\newlabel{tab:scalar}{{IV}{8}{Comparison of HPO selection criteria on nested CV (10 folds). Wilcoxon + Holm vs.\ Pareto baseline; ns $p \geq 0.05$}{table.4}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Pareto HPO vs.\ scalar selection on nested CV (10 folds). Box plots of PR-AUC (left) and Dice (right); jittered dots show individual fold results. Significance vs.\ Pareto: ns $p \geq 0.05$ (Wilcoxon + Holm, $n = 10$).}}{8}{figure.5}\protected@file@percent }
 \newlabel{fig:scalar}{{5}{8}{Pareto HPO vs.\ scalar selection on nested CV (10 folds). Box plots of PR-AUC (left) and Dice (right); jittered dots show individual fold results. Significance vs.\ Pareto: ns $p \geq 0.05$ (Wilcoxon + Holm, $n = 10$)}{figure.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Comparison with DeepID 2025 Challenge participants. $\dagger $: challenge systems evaluated on the official test set; DocVerify evaluated on an internal 15\% holdout (see text). ``—'' indicates the system did not participate in that track.}}{8}{table.5}\protected@file@percent }
-\newlabel{tab:challenge}{{V}{8}{Comparison with DeepID 2025 Challenge participants. $\dagger $: challenge systems evaluated on the official test set; DocVerify evaluated on an internal 15\% holdout (see text). ``—'' indicates the system did not participate in that track}{table.5}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Discussion}{8}{section.4}\protected@file@percent }
-\newlabel{sec:discussion}{{IV}{8}{Discussion}{section.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Why Multitask Outperforms cls\_only on Localization}{8}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}On the Pareto Advantage}{8}{subsection.4.2}\protected@file@percent }
 \citation{TODO_sidtd}
-\citation{TODO_vit}
-\bibstyle{IEEEtran}
-\bibdata{references}
-\bibcite{trufor2023}{1}
-\bibcite{caruana1997multitask}{2}
-\bibcite{kendall2018multi}{3}
-\bibcite{fantasyid2024}{4}
-\bibcite{huh2018fighting}{5}
-\bibcite{bappy2019hybrid}{6}
-\bibcite{mantranet2019}{7}
-\bibcite{deepid2025challenge}{8}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Comparison with DeepID 2025 Challenge participants and related work. $\dagger $: evaluated on the official challenge test set; $\ddagger $: reported on FantasyID validation set (Dice coefficient); DocVerify evaluated on an internal 15\% holdout (see text). ``—'' indicates metric not reported or track not entered.}}{9}{table.5}\protected@file@percent }
+\newlabel{tab:challenge}{{V}{9}{Comparison with DeepID 2025 Challenge participants and related work. $\dagger $: evaluated on the official challenge test set; $\ddagger $: reported on FantasyID validation set (Dice coefficient); DocVerify evaluated on an internal 15\% holdout (see text). ``—'' indicates metric not reported or track not entered}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-F}}Qualitative Analysis}{9}{subsection.3.6}\protected@file@percent }
+\newlabel{subsec:qualitative}{{\mbox  {III-F}}{9}{Qualitative Analysis}{subsection.3.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Discussion}{9}{section.4}\protected@file@percent }
+\newlabel{sec:discussion}{{IV}{9}{Discussion}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Why Multitask Outperforms cls\_only on Localization}{9}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}On the Pareto Advantage}{9}{subsection.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Limitations and Future Work}{9}{subsection.4.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {IV-C}0a}Single dataset.}{9}{paragraph.4.3.0.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {IV-C}0b}Architecture.}{9}{paragraph.4.3.0.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {IV-C}0c}Challenge evaluation gap.}{9}{paragraph.4.3.0.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {IV-C}0d}Variance on Track~2.}{9}{paragraph.4.3.0.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {V}Conclusion}{9}{section.5}\protected@file@percent }
-\newlabel{sec:conclusion}{{V}{9}{Conclusion}{section.5}{}}
-\@writefile{toc}{\contentsline {section}{References}{9}{section*.4}\protected@file@percent }
-\bibcite{ruder2017overview}{9}
-\bibcite{crawshaw2020multi}{10}
-\bibcite{marler2004survey}{11}
-\bibcite{liu2019end}{12}
-\bibcite{unet2015}{13}
-\bibcite{wu2022robust}{14}
-\bibcite{tpe2011}{15}
-\bibcite{randomsearch2012}{16}
-\bibcite{optuna2019}{17}
-\bibcite{miettinen1999nonlinear}{18}
-\bibcite{nsga2_2002}{19}
-\bibcite{motpe2022}{20}
-\bibcite{leakyrelu2015}{21}
-\bibcite{batchnorm2015}{22}
-\bibcite{dice1945}{23}
-\bibcite{adamw2019}{24}
-\bibcite{micikevicius2018mixed}{25}
-\bibcite{pytorch2019}{26}
-\bibcite{varma2006bias}{27}
-\bibcite{cohen1988statistical}{28}
-\gdef \@abspage@last{10}
+\citation{TODO_vit}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Qualitative results on two FantasyID samples. \textbf  {Left:} input document (forged regions framed in the attack sample). \textbf  {Centre:} binary mask predicted by DocVerify. \textbf  {Right:} input document with predicted mask overlaid in red.}}{10}{figure.6}\protected@file@percent }
+\newlabel{fig:qualitative}{{6}{10}{Qualitative results on two FantasyID samples. \textbf {Left:} input document (forged regions framed in the attack sample). \textbf {Centre:} binary mask predicted by DocVerify. \textbf {Right:} input document with predicted mask overlaid in red}{figure.6}{}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {IV-C}0b}Architecture.}{10}{paragraph.4.3.0.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {IV-C}0c}Challenge evaluation gap.}{10}{paragraph.4.3.0.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {IV-C}0d}Variance on Track~2.}{10}{paragraph.4.3.0.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {V}Conclusion}{10}{section.5}\protected@file@percent }
+\newlabel{sec:conclusion}{{V}{10}{Conclusion}{section.5}{}}
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{TODO_idfraud_report}{1}
+\bibcite{TODO_euaiact}{2}
+\bibcite{trufor2023}{3}
+\bibcite{caruana1997multitask}{4}
+\bibcite{kendall2018multi}{5}
+\bibcite{fantasyid2024}{6}
+\bibcite{huh2018fighting}{7}
+\bibcite{bappy2019hybrid}{8}
+\bibcite{mantranet2019}{9}
+\bibcite{cozzolino2020noiseprint}{10}
+\bibcite{mmfusion2024}{11}
+\bibcite{fatformer2024}{12}
+\bibcite{unifd2023}{13}
+\bibcite{TODO_sidtd}{14}
+\bibcite{fakeidet2025}{15}
+\bibcite{TODO_vit}{16}
+\bibcite{deepid2025challenge}{17}
+\bibcite{edgedoc2025}{18}
+\bibcite{edgenext2022}{19}
+\bibcite{twoheadswin2026}{20}
+\bibcite{remtkd2025}{21}
+\bibcite{ruder2017overview}{22}
+\bibcite{crawshaw2020multi}{23}
+\bibcite{marler2004survey}{24}
+\bibcite{liu2019end}{25}
+\bibcite{unet2015}{26}
+\bibcite{wu2022robust}{27}
+\bibcite{tpe2011}{28}
+\bibcite{randomsearch2012}{29}
+\bibcite{optuna2019}{30}
+\bibcite{miettinen1999nonlinear}{31}
+\bibcite{nsga2_2002}{32}
+\bibcite{motpe2022}{33}
+\bibcite{patel2023dcnn}{34}
+\bibcite{leakyrelu2015}{35}
+\bibcite{batchnorm2015}{36}
+\@writefile{toc}{\contentsline {section}{References}{11}{section*.4}\protected@file@percent }
+\bibcite{dice1945}{37}
+\bibcite{adamw2019}{38}
+\bibcite{micikevicius2018mixed}{39}
+\bibcite{pytorch2019}{40}
+\bibcite{varma2006bias}{41}
+\bibcite{cohen1988statistical}{42}
+\gdef \@abspage@last{12}

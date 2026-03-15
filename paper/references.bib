@@ -1,22 +1,50 @@
 % ============================================================
 % references.bib  —  DocVerify paper bibliography
-% TODO: verify all keys and check year/pages/DOI before submission
 % ============================================================
+
+% ── Regulatory & Fraud Reports ──────────────────────────────
+
+@techreport{TODO_idfraud_report,
+  author      = {{Europol Innovation Lab}},
+  title       = {Facing Reality? {Law} Enforcement and the Challenge of Deepfakes},
+  institution = {Europol},
+  type        = {Observatory Report},
+  address     = {The Hague, Netherlands},
+  year        = {2022},
+  month       = apr,
+  url         = {https://www.europol.europa.eu/publications-events/publications/facing-reality-law-enforcement-and-challenge-of-deepfakes}
+}
+
+@misc{TODO_euaiact,
+  author       = {{European Parliament} and {Council of the European Union}},
+  title        = {Regulation ({EU}) 2024/1689 of the {European Parliament} and of the {Council} of 13 {June} 2024 Laying Down Harmonised Rules on Artificial Intelligence ({Artificial Intelligence Act})},
+  year         = {2024},
+  howpublished = {Official Journal of the European Union, OJ L 2024/1689},
+  note         = {Published 12 July 2024; entered into force 1 August 2024. Article~13: Transparency and provision of information to deployers},
+  url          = {https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng}
+}
 
 % ── Dataset & Challenge ─────────────────────────────────────
 
-@article{fantasyid2024,
-  author    = {TODO: Authors},
-  title     = {TODO: FantasyID: A Benchmark Dataset for Identity Document Forgery Detection and Localization},
-  journal   = {TODO: journal or arXiv},
-  year      = {2024},
-  note      = {Available at \url{https://www.idiap.ch/paper/fantasyid/}}
+@inproceedings{fantasyid2024,
+  author        = {Korshunov, Pavel and Mohammadi, Amir and Vidit, Vidit and Ecabert, Christophe and Marcel, S{\'e}bastien},
+  title         = {{FantasyID}: A Dataset for Detecting Digital Manipulations of {ID}-Documents},
+  booktitle     = {Proceedings of the IEEE International Joint Conference on Biometrics (IJCB)},
+  year          = {2025},
+  address       = {Osaka, Japan},
+  eprint        = {2507.20808},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2507.20808}
 }
 
-@misc{deepid2025challenge,
-  title     = {{DeepID} Challenge: Identity Document Forgery Detection and Localization, {ICCV} 2025},
-  howpublished = {\url{https://deepid-iccv.github.io/}},
-  year      = {2025}
+@inproceedings{deepid2025challenge,
+  author    = {Korshunov, Pavel and Vidit, Vidit and Mohammadi, Amir and Ecabert, Christophe and Shamoska, Nevena and Marcel, S{\'e}bastien and others},
+  title     = {{DeepID}: Challenge of Detecting Synthetic Manipulations in {ID} Documents},
+  booktitle = {Proceedings of the {IEEE/CVF} International Conference on Computer Vision Workshops ({ICCVW})},
+  year      = {2025},
+  pages     = {510--519},
+  url       = {https://openaccess.thecvf.com/content/ICCV2025W/DeepID/html/Korshunov_DeepID_Challenge_of_Detecting_Synthetic_Manipulations_in_ID_Documents_ICCVW_2025_paper.html}
 }
 
 % ── Document Forgery Detection ──────────────────────────────
@@ -75,12 +103,16 @@
   pages     = {13440--13449}
 }
 
-@article{dokforensics2023,
-  author    = {TODO: Authors},
-  title     = {TODO: Identity Document Forgery Detection -- fill in with actual EdgeDoc/AG paper},
-  journal   = {TODO},
-  year      = {2023},
-  note      = {AG/EdgeDoc team reference from DeepID Challenge}
+@misc{edgedoc2025,
+  author        = {George, Anjith and Marcel, S{\'e}bastien},
+  title         = {{EdgeDoc}: Hybrid {CNN}-Transformer Model for Accurate Forgery Detection
+                   and Localization in {ID} Documents},
+  year          = {2025},
+  eprint        = {2508.16284},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  note          = {Idiap Research Report RR-08-2025; 3rd place DeepID 2025 Challenge},
+  url           = {https://arxiv.org/abs/2508.16284}
 }
 
 @inproceedings{bappy2019hybrid,
@@ -140,6 +172,19 @@
 }
 
 % ── Architecture Blocks ──────────────────────────────────────
+
+@article{patel2023dcnn,
+  author    = {Patel, Yogesh and Tanwar, Sudeep and Bhattacharya, Pronaya and
+               Gupta, Rajesh and Alsuwian, Turki and Davidson, Innocent Ewean
+               and Mazibuko, Thokozile F.},
+  title     = {An Improved Dense {CNN} Architecture for Deepfake Image Detection},
+  journal   = {{IEEE} Access},
+  volume    = {11},
+  pages     = {22081--22095},
+  year      = {2023},
+  doi       = {10.1109/ACCESS.2023.3251394},
+  note      = {Open access, CC BY-NC-ND 4.0}
+}
 
 @inproceedings{unet2015,
   author    = {Ronneberger, Olaf and Fischer, Philipp and Brox, Thomas},
@@ -344,4 +389,123 @@
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
   year      = {2019},
   volume    = {32}
+}
+
+% ── Challenge Participant Methods ────────────────────────────
+
+@inproceedings{remtkd2025,
+  author    = {Yu, Zeqin and Ni, Jiangqun and Zhang, Jian and Deng, Haoyi and Lin, Yuzhen},
+  title     = {Reinforced Multi-Teacher Knowledge Distillation for Efficient General
+               Image Forgery Detection and Localization},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  year      = {2025},
+  note      = {Oral presentation; base method of Sunlight (1st place, DeepID 2025)},
+  eprint    = {2504.05224},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url       = {https://arxiv.org/abs/2504.05224}
+}
+
+@misc{twoheadswin2026,
+  author        = {Naseeb, Chan and Cheema, Adeel Ashraf and Sami, Hassan and
+                   Afzal, Tayyab and Omair, Muhammad and Habib, Usman},
+  title         = {{TwoHead-SwinFPN}: A Unified {DL} Architecture for Synthetic
+                   Manipulation Detection and Localization in Identity Documents},
+  year          = {2026},
+  eprint        = {2601.12895},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://arxiv.org/abs/2601.12895}
+}
+
+@inproceedings{mmfusion2024,
+  author    = {Triaridis, Kostas and Tsigos, Konstantinos and Mezaris, Vasileios},
+  title     = {{MMFusion}: Combining Image Forensic Filters for Visual Manipulation
+               Detection and Localization},
+  booktitle = {Proceedings of the 30th International Conference on MultiMedia Modeling (MMM)},
+  year      = {2024},
+  eprint    = {2312.01790},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url       = {https://arxiv.org/abs/2312.01790}
+}
+
+@inproceedings{fatformer2024,
+  author    = {Liu, Huan and Tan, Zichang and Tan, Chuangchuang and Wei, Yunchao
+               and Zhao, Yao and Wang, Jingdong},
+  title     = {Forgery-Aware Adaptive Transformer for Generalizable Synthetic Image Detection},
+  booktitle = {Proceedings of the {IEEE/CVF} Conference on Computer Vision and Pattern
+               Recognition (CVPR)},
+  year      = {2024},
+  pages     = {10770--10780},
+  eprint    = {2312.16649},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url       = {https://arxiv.org/abs/2312.16649}
+}
+
+@inproceedings{unifd2023,
+  author    = {Ojha, Utkarsh and Li, Yuheng and Lee, Yong Jae},
+  title     = {Towards Universal Fake Image Detectors that Generalize Across
+               Generative Models},
+  booktitle = {Proceedings of the {IEEE/CVF} Conference on Computer Vision and Pattern
+               Recognition (CVPR)},
+  year      = {2023},
+  pages     = {24480--24489},
+  eprint    = {2302.10174},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url       = {https://arxiv.org/abs/2302.10174}
+}
+
+@inproceedings{fakeidet2025,
+  author    = {Mu{\~n}oz-Haro, Javier and Tolosana, Ruben and Vera-Rodriguez, Ruben
+               and Morales, Aythami and Fierrez, Julian},
+  title     = {{FakeIDet}: Exploring Patches for Privacy-Preserving Fake {ID} Detection},
+  booktitle = {Proceedings of the IEEE International Joint Conference on Biometrics (IJCB)},
+  year      = {2025},
+  eprint    = {2504.07761},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url       = {https://arxiv.org/abs/2504.07761}
+}
+
+@inproceedings{edgenext2022,
+  author    = {Maaz, Muhammad and Shaker, Abdelrahman and Cholakkal, Hisham and
+               Khan, Salman and Zamir, Syed Waqas and Anwer, Rao Muhammad and
+               Khan, Fahad Shahbaz},
+  title     = {{EdgeNeXt}: Efficiently Amalgamated {CNN}-Transformer Architecture
+               for Mobile Vision Applications},
+  booktitle = {European Conference on Computer Vision Workshops (ECCVW)},
+  year      = {2022},
+  pages     = {3--20},
+  eprint    = {2206.10589},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url       = {https://arxiv.org/abs/2206.10589}
+}
+
+% ── Future Work References ────────────────────────────────────
+
+@article{TODO_sidtd,
+  author    = {Boned, Carlos and Talarmain, Maxime and Ghanmi, Nabil and Chiron, Guillaume and Biswas, Sanket and Awal, Ahmad Montaser and Ramos Terrades, Oriol},
+  title     = {Synthetic Dataset of {ID} and Travel Documents},
+  journal   = {Scientific Data},
+  year      = {2024},
+  volume    = {11},
+  number    = {1},
+  pages     = {1356},
+  doi       = {10.1038/s41597-024-04160-9},
+  url       = {https://www.nature.com/articles/s41597-024-04160-9}
+}
+
+@inproceedings{TODO_vit,
+  author        = {Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and Uszkoreit, Jakob and Houlsby, Neil},
+  title         = {An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale},
+  booktitle     = {International Conference on Learning Representations ({ICLR})},
+  year          = {2021},
+  eprint        = {2010.11929},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  url           = {https://openreview.net/forum?id=YicbFdNTTy}
 }

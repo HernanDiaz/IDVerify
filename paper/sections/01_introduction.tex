@@ -14,10 +14,23 @@ Detection of forged identity documents is inherently a two-level problem. At the
 \emph{document level}, a system must decide whether a presented document is genuine
 or has been tampered with (binary detection). At the \emph{pixel level}, it must
 also identify and delineate which specific regions have been altered (forgery
-localization). These two objectives are complementary: detection alone cannot
-provide the evidence required for forensic audit, while localization alone is
-insufficient as a security gate that must handle the entire document with a binary
-decision. A practical forensic system must address both simultaneously.
+localization). These two objectives are complementary and both are operationally
+necessary.
+
+Binary detection alone is insufficient for real-world forensic deployments for two
+reasons. First, a positive detection decision provides no \emph{actionable
+information} to the investigator: it does not reveal whether the fraudster altered
+the holder's portrait photograph, falsified textual fields such as name, date of
+birth, or document number, or combined multiple manipulations. Without spatial
+evidence, a human expert cannot determine the nature of the fraud, reconstruct
+the original document, or build a legal case. Second, detection systems are
+increasingly subject to \emph{explainability requirements} under emerging AI
+regulations~\cite{TODO_euaiact}: a binary ``tampered'' label cannot satisfy the
+obligation to provide a meaningful explanation of the automated decision.
+Conversely, localization alone is insufficient as a security gate because
+producing a pixel-level mask does not yield a reliable document-level confidence
+score suitable for automated accept/reject decisions. A practical forensic
+system must address both tasks simultaneously.
 
 \subsection*{Challenges}
 
@@ -81,6 +94,9 @@ hyperparameter optimization framework. Our contributions are as follows:
     (Track~2), surpassing all FantasyID-only baselines and exceeding the challenge
     winner on Track~2.
 \end{enumerate}
+
+The source code, training scripts, and experimental artifacts are publicly
+available at \url{https://github.com/HernanDiaz/IDVerify/}.
 
 The remainder of the paper is organized as follows. Section~\ref{sec:related}
 reviews related work on document forgery detection, multi-task learning, and HPO.

@@ -10,57 +10,55 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Reallocating 'wiz_functions' (item size: 4) to 6000 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 Database file #1: references.bib
-Warning--I didn't find a database entry for "TODO_idfraud_report"
-Warning--I didn't find a database entry for "TODO_sidtd"
-Warning--I didn't find a database entry for "TODO_vit"
 -- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
 Warning--empty booktitle in bappy2019hybrid
+Warning--empty booktitle in cozzolino2020noiseprint
 Warning--empty booktitle in randomsearch2012
 Warning--empty booktitle in motpe2022
 Warning--empty journal in pytorch2019
 
 Done.
-You've used 28 entries,
+You've used 42 entries,
             4087 wiz_defined-function locations,
-            975 strings with 12115 characters,
-and the built_in function-call counts, 20892 in all, are:
-= -- 1619
-> -- 476
-< -- 177
-+ -- 274
-- -- 90
-* -- 974
-:= -- 3007
-add.period$ -- 56
-call.type$ -- 28
-change.case$ -- 28
-chr.to.int$ -- 432
-cite$ -- 32
-duplicate$ -- 1498
-empty$ -- 1808
-format.name$ -- 98
-if$ -- 4915
+            1056 strings with 16635 characters,
+and the built_in function-call counts, 32900 in all, are:
+= -- 2531
+> -- 862
+< -- 245
++ -- 488
+- -- 187
+* -- 1597
+:= -- 4777
+add.period$ -- 84
+call.type$ -- 42
+change.case$ -- 45
+chr.to.int$ -- 603
+cite$ -- 47
+duplicate$ -- 2317
+empty$ -- 2800
+format.name$ -- 192
+if$ -- 7694
 int.to.chr$ -- 0
-int.to.str$ -- 28
-missing$ -- 253
-newline$ -- 107
-num.names$ -- 27
-pop$ -- 634
+int.to.str$ -- 42
+missing$ -- 429
+newline$ -- 177
+num.names$ -- 42
+pop$ -- 1091
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1636
+skip$ -- 2537
 stack$ -- 0
-substring$ -- 1058
-swap$ -- 1168
-text.length$ -- 33
+substring$ -- 1532
+swap$ -- 1822
+text.length$ -- 44
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 28
-warning$ -- 4
-while$ -- 93
-width$ -- 30
-write$ -- 273
-(There were 7 warnings)
+type$ -- 42
+warning$ -- 5
+while$ -- 133
+width$ -- 44
+write$ -- 441
+(There were 5 warnings)
