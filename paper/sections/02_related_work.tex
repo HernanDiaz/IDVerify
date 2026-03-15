@@ -1,0 +1,89 @@
+% ============================================================
+% Section 2: Related Work
+% ============================================================
+
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Document and Image Forgery Detection}
+
+Early work on image forensics relied on hand-crafted features such as noise
+inconsistencies, JPEG compression artifacts, and chromatic aberration patterns to
+detect copy-move and splicing manipulations~\cite{huh2018fighting}. Deep learning
+substantially shifted the field: convolutional neural networks can learn to detect
+subtle statistical fingerprints left by image-processing operations, often
+outperforming engineered pipelines on standard benchmarks~\cite{bappy2019hybrid,
+mantranet2019}.
+
+Recent large-scale foundations have further advanced the state of the art.
+\textsc{TruFor}~\cite{trufor2023} pre-trains on over 876\,000 images and learns to
+extract high-level semantic inconsistencies as well as low-level noise-pattern
+anomalies, achieving strong performance on general image forensics benchmarks.
+However, such general-purpose models are optimized for natural image manipulation
+and do not account for the structured layout, typography, and holographic elements
+specific to identity documents. Applying them to the identity-document domain
+requires fine-tuning and does not exploit document-specific priors.
+
+Identity document forgery introduces unique challenges compared to natural-image
+manipulation: (i)~the forged regions are often small (a single text field or a
+face) relative to the full document, (ii)~the background texture is highly
+structured (guilloch\'e patterns, UV-reactive ink), which creates strong false
+negatives for general-purpose noise detectors, and (iii)~the diversity of
+document types across countries and issuers demands generalization beyond what
+natural-image pre-training provides. The DeepID 2025 Challenge~\cite{deepid2025challenge}
+was specifically designed to benchmark progress on this task using the
+FantasyID dataset~\cite{fantasyid2024}, which contains synthetic attack types
+including face swaps and text inpainting on fantasy identity documents.
+
+\subsection{Multi-Task Learning for Detection and Localization}
+
+Joint detection and localization is a canonical instance of multi-task learning
+(MTL)~\cite{caruana1997multitask, ruder2017overview}. In MTL, shared representations
+learned for one task regularize learning for related tasks, typically yielding better
+generalization than independent training when tasks are correlated~\cite{crawshaw2020multi}.
+
+The dominant approach to combining task-specific losses is scalar
+scalarization~\cite{marler2004survey}: a single objective $\mathcal{L} = \sum_t
+\lambda_t \mathcal{L}_t$ is minimized, with fixed weights $\lambda_t$ set before
+training. Kendall \textit{et al.}~\cite{kendall2018multi} proposed learning $\lambda_t$
+jointly with the model weights via homoscedastic uncertainty, but this requires an
+additional learning-rate schedule and is sensitive to initialization. Liu \textit{et al.}~\cite{liu2019end}
+introduced gradient-normalization to dynamically balance task gradients, at the cost
+of additional computation per step. All scalar approaches share a common limitation:
+the optimal trade-off between tasks is not established before training, yet the
+weights implicitly commit to a fixed trade-off.
+
+In the image forensics domain, U-Net~\cite{unet2015} architectures have been widely
+adopted for pixel-level localization because their skip connections preserve spatial
+resolution while the encoder captures high-level semantic anomaly features. Several
+works combine classification and segmentation branches in a single network, but
+typically fix the task weights empirically without systematic
+optimization~\cite{wu2022robust}. Our work differs by including the task weight
+$\lambda_{\text{mask}}$ in the HPO search space and selecting it via a
+multi-objective criterion rather than a grid search.
+
+\subsection{Hyperparameter Optimization and Multi-Objective Search}
+
+Hyperparameter optimization (HPO) has evolved from manual search and grid search to
+sequential model-based methods. Tree-structured Parzen Estimator
+(TPE)~\cite{tpe2011} models the distribution of good and bad configurations
+separately and selects candidates that maximize the ratio of the two models, a
+strategy significantly more sample-efficient than random search~\cite{randomsearch2012}.
+The Optuna framework~\cite{optuna2019} implements TPE as its default sampler and
+has become a standard tool for HPO in deep learning.
+
+Multi-objective HPO extends single-objective search to the case where multiple
+metrics must be jointly optimized. The output is a Pareto-optimal set of
+configurations rather than a single best point, making the trade-off between
+objectives explicit~\cite{miettinen1999nonlinear}. Evolutionary algorithms such as
+NSGA-II~\cite{nsga2_2002} are the most established approach, but they require
+large population sizes to maintain Pareto-front diversity. The Multiobjective TPE
+(MOTPE) sampler~\cite{motpe2022} adapts the TPE surrogate model to the
+multi-objective setting, achieving competitive Pareto-front coverage with far fewer
+function evaluations than evolutionary methods—a critical advantage when each
+evaluation requires training a deep neural network.
+
+To our knowledge, this is the first work to apply Pareto-based multi-objective HPO
+to the problem of joint identity-document forgery detection and localization, and
+the first to use the resulting Pareto front as the primary model-selection criterion
+in a nested cross-validation framework.

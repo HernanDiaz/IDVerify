@@ -1,0 +1,229 @@
+% ============================================================
+% Section 3: Methodology
+% ============================================================
+
+\section{Methodology}
+\label{sec:method}
+
+\subsection{Dataset}
+\label{subsec:dataset}
+
+We train and evaluate DocVerify exclusively on \textbf{FantasyID}~\cite{fantasyid2024},
+a publicly released benchmark for identity document forgery detection and
+localization developed by Idiap Research Institute for the DeepID 2025
+Challenge~\cite{deepid2025challenge}. FantasyID comprises approximately 3\,284
+labeled images of synthetic fantasy identity documents in two classes: \textit{bonafide}
+(genuine, unmodified) and \textit{attack} (tampered). Attack images are produced
+via two representative manipulation types: (i)~\textbf{face swap}, replacing the
+portrait photograph with a different identity, and (ii)~\textbf{text inpainting},
+overwriting text fields (name, date of birth, document number) with forged content.
+
+Each image is accompanied by a JSON annotation file specifying bounding-box
+regions with a \texttt{region\allowbreak\_provenance:\allowbreak~altered} field that identifies the
+tampered areas. We convert these annotations to binary segmentation masks by
+rasterizing the altered bounding boxes at the training resolution
+($224 \times 224$ pixels). Bonafide images have all-zero masks. We adopt the
+official 85/15 train/test split provided by the challenge organizers, resulting in
+approximately 2\,791 training images and 493 test images. The test set is held out
+strictly and accessed only for the final blind evaluation (Section~\ref{sec:blindtest}).
+
+\subsection{Architecture}
+\label{subsec:arch}
+
+DocVerify is a multi-task encoder-decoder network designed for simultaneous
+document-level classification and pixel-level forgery localization.
+Figure~\ref{fig:architecture} shows the overall structure.
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{fig0_architecture_compact}
+  \caption{DocVerify architecture. The encoder maps a
+    $3{\times}224{\times}224$ input to a $256{\times}7{\times}7$ bottleneck through
+    six convolutional blocks ($8\!\to\!256$ channels). The U-Net decoder reconstructs
+    the forgery mask via skip connections; the classification head outputs a
+    document-level tampered/genuine score.}
+  \label{fig:architecture}
+\end{figure*}
+
+\subsubsection{Encoder}
+
+The encoder is a lightweight six-block convolutional network with an increasing
+channel progression of $8 \to 16 \to 32 \to 64 \to 128 \to 256$ filters.
+All convolutional layers use LeakyReLU activations (negative
+slope~$\alpha=0.2$)~\cite{leakyrelu2015} and batch normalization~\cite{batchnorm2015}.
+Blocks 1--4 use $3 \times 3$ convolutions; blocks 5 and~6 use $5 \times 5$
+convolutions to capture wider spatial context at lower feature-map resolutions.
+Spatial downsampling is applied after each block: average pooling after blocks 2
+and~3 (to preserve boundary information for localization), and max pooling after
+blocks 4 and~5 (to achieve stronger translation invariance for classification).
+The encoder maps a $3 \times 224 \times 224$ input to a bottleneck of $256 \times 7 \times 7$.
+
+Skip connections are extracted from each block prior to pooling, yielding feature
+maps at five resolutions: $224\times224$ (16~ch), $112\times112$ (32~ch),
+$56\times56$ (64~ch), $28\times28$ (128~ch), and $14\times14$ (256~ch).
+
+\subsubsection{Classification Head}
+
+The classification head applies global average pooling to the $7 \times 7$
+bottleneck, yielding a 256-dimensional feature vector. This is passed through
+four fully-connected layers (256\,$\to$\,32\,$\to$\,16\,$\to$\,16\,$\to$\,1)
+interleaved with dropout and LeakyReLU activations, producing a single
+classification logit $\hat{y}_{\text{cls}}$.
+
+\subsubsection{Segmentation Head (U-Net Decoder)}
+
+The segmentation head reconstructs the spatial mask through a five-stage U-Net
+decoder~\cite{unet2015}. A $1 \times 1$ projection convolution first maps the
+bottleneck to $C_{\text{dec}}$ channels (a tunable hyperparameter, see
+Section~\ref{subsec:hpo}). Each decoder block bilinearly upsamples by a factor of
+two, concatenates the corresponding encoder skip connection, and applies two
+$3 \times 3$ convolutions with LeakyReLU activations—mirroring the standard
+U-Net design. The channel width halves at each stage from $C_{\text{dec}}$ down
+to $C_{\text{dec}}/16$. A final $1 \times 1$ convolution produces the segmentation
+logit $\hat{Y}_{\text{mask}}$ at the original input resolution.
+
+Both output logits are kept raw (no sigmoid at inference time); sigmoid is applied
+numerically within the loss functions for numerical stability.
+
+\subsection{Loss Functions}
+\label{subsec:loss}
+
+The combined training loss is:
+\begin{equation}
+  \mathcal{L} = \mathcal{L}_{\text{cls}} + \lambda_{\text{mask}} \,
+                \mathcal{L}_{\text{seg}},
+  \label{eq:total_loss}
+\end{equation}
+where $\lambda_{\text{mask}} \in [0.5, 3.0]$ is a tunable weight included in the
+HPO search space (Section~\ref{subsec:hpo}).
+
+\paragraph{Classification loss.}
+$\mathcal{L}_{\text{cls}} = \text{BCEWithLogits}(\hat{y}_{\text{cls}},\, y_{\text{cls}})$,
+where $y_{\text{cls}} \in \{0, 1\}$ is the document-level label.
+
+\paragraph{Segmentation loss.}
+$\mathcal{L}_{\text{seg}} = \text{BCEWithLogits}(\hat{Y}_{\text{mask}},\, Y_{\text{mask}})
+  + \mathcal{L}_{\text{Dice}}(\sigma(\hat{Y}_{\text{mask}}),\, Y_{\text{mask}})$,
+where $\sigma(\cdot)$ denotes the sigmoid function and the Dice
+loss~\cite{dice1945} is computed per image and averaged over the batch:
+\begin{equation}
+  \mathcal{L}_{\text{Dice}} = 1 - \frac{2 \sum_i p_i g_i + \epsilon}
+                                        {\sum_i p_i + \sum_i g_i + \epsilon},
+  \quad \epsilon = 10^{-6}.
+\end{equation}
+The BCE--Dice combination is standard in medical image segmentation~\cite{unet2015}
+and addresses the class imbalance between foreground (altered) and background
+(intact) pixels, which is severe for small forgery regions such as a single altered
+text field.
+
+\paragraph{Training details.}
+All models are trained with AdamW~\cite{adamw2019} and ReduceLROnPlateau (factor
+$0.5$, patience~3). Gradient clipping with a maximum $\ell_2$ norm of~1.0 is
+applied at every step. Mixed-precision training (FP16 forward pass, FP32 gradient
+accumulation via the PyTorch AMP GradScaler~\cite{micikevicius2018mixed,pytorch2019})
+is used throughout, reducing memory usage without affecting convergence.
+Input images are normalized to $[0, 1]$ and resized to $224 \times 224$ pixels.
+
+\subsection{Multi-Objective HPO}
+\label{subsec:hpo}
+
+Our HPO formulation treats detection quality and localization quality as two
+independent objectives to be simultaneously maximized:
+\begin{equation}
+  \max_{\boldsymbol{\theta} \in \Theta}\; \bigl(\text{PR-AUC}(\boldsymbol{\theta}),\;
+  \text{Dice}(\boldsymbol{\theta})\bigr),
+  \label{eq:moopt}
+\end{equation}
+where $\boldsymbol{\theta}$ is a hyperparameter configuration and $\Theta$ is the
+search space defined in Table~\ref{tab:hpo_space}.
+
+\begin{table*}[!t]
+  \centering
+  \caption{HPO search space}
+  \label{tab:hpo_space}
+  \begin{tabular}{llcc}
+    \toprule
+    Parameter & Distribution & Range & Scale \\
+    \midrule
+    $\eta$ (learning rate) & log-uniform & $[5\times10^{-5},\; 9\times10^{-4}]$ & log \\
+    $\lambda_{\text{wd}}$ (weight decay) & log-uniform & $[10^{-7},\; 10^{-4}]$ & log \\
+    $p$ (dropout rate) & uniform & $[0.1,\; 0.4]$ & linear \\
+    $C_{\text{dec}}$ (decoder channels) & categorical & $\{96, 128, 192, 256\}$ & — \\
+    $\lambda_{\text{mask}}$ (mask loss weight) & uniform & $[0.5,\; 3.0]$ & linear \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+The LeakyReLU slope $\alpha$ was initially included in the search space but removed
+after a preliminary study of 250 trials showed no signal on validation performance
+across the range $[0.1, 0.4]$; it is fixed at $\alpha = 0.2$ throughout.
+
+\subsubsection{MOTPE Sampler}
+
+We use the Multiobjective Tree-structured Parzen Estimator
+(MOTPE)~\cite{motpe2022} as implemented in Optuna~\cite{optuna2019} with NSGA-II~\cite{nsga2_2002}
+as a fallback sampler. MOTPE extends the single-objective TPE by modeling
+the joint distribution of hyperparameter configurations in the objective space,
+efficiently focusing the search toward the Pareto-optimal frontier without
+requiring an explicit scalarization function. This is key for our setting, where
+neither objective should be privileged a priori.
+
+\subsubsection{Pareto-Based Model Selection}
+
+After running 50 Optuna trials on the inner validation split of each outer fold,
+we identify the set of Pareto-optimal trials (non-dominated solutions). From this
+set, we select the configuration $\boldsymbol{\theta}^*$ that minimizes the
+Euclidean distance to the ideal point $(1, 1)$ in the objective space:
+\begin{equation}
+  \boldsymbol{\theta}^* = \argmin_{\boldsymbol{\theta} \in \mathcal{P}}
+    \sqrt{(1 - \text{PR-AUC})^2 + (1 - \text{Dice})^2},
+  \label{eq:ideal_point}
+\end{equation}
+where $\mathcal{P}$ denotes the Pareto front. This criterion requires no
+user-specified weighting and is consistent with the DeepID 2025 Challenge
+evaluation protocol, which ranks systems independently on Track~1 (detection)
+and Track~2 (localization), assigning equal importance to both.
+
+Figure~\ref{fig:pareto} illustrates the objective space across all 500 HPO trials
+(10 folds $\times$ 50 trials), with the Pareto-optimal trials highlighted.
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{fig1_pareto_front}
+  \caption{Validation objective space across all 500 HPO trials (10 outer folds
+    $\times$ 50 Optuna MOTPE trials per fold). Grey points: evaluated configurations;
+    blue points: Pareto-optimal (non-dominated) trials; dashed line: global Pareto
+    frontier. The red diamond at $(1,~1)$ marks the ideal point; the annotated
+    point is the selected configuration (minimum Euclidean distance $d = 0.316$).}
+  \label{fig:pareto}
+\end{figure*}
+
+\subsection{Nested Cross-Validation}
+\label{subsec:ncv}
+
+To obtain unbiased performance estimates while keeping HPO blind to the test data,
+we adopt a three-level nested cross-validation (NCV) scheme illustrated in
+Figure~\ref{fig:nested_cv}.
+
+\paragraph{Outer loop (10 folds).}
+The FantasyID training set is partitioned into 10 stratified folds. Each fold
+serves once as the test set for a held-out performance estimate.
+
+\paragraph{Inner loop (5 folds, HPO).}
+For each outer fold, the remaining 9/10 of the data is further split into 5 inner
+folds. The 50 Optuna MOTPE trials are run on these inner splits, with each trial
+training for up to $E_{\text{trial}} = 15$ epochs with patience~$= 1$ on the inner
+validation loss. The optimal configuration $\boldsymbol{\theta}^*$ is selected via
+(\ref{eq:ideal_point}).
+
+\paragraph{Final model training.}
+The selected $\boldsymbol{\theta}^*$ is used to retrain the model from scratch on
+all 9/10 outer-fold training data for up to $E_{\text{final}} = 100$ epochs with
+early stopping (patience~$= 12$, monitoring the distance-to-ideal criterion on a
+held-out inner validation slice). The trained model is then evaluated on the
+held-out outer-fold test set to produce one unbiased performance estimate.
+
+This design ensures that neither the HPO process nor the final training sees the
+test fold, eliminating the optimistic bias that arises when hyperparameter selection
+and performance estimation share data~\cite{varma2006bias}. The total number of
+model trainings is $10 \times 5 \times 50 = 2\,500$ (HPO) plus $10$ final models.

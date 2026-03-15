@@ -1,0 +1,325 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/ieeetran\IEEEtran.cls
+Document Class: IEEEtran 2015/08/26 V1.8b by Michael Shell
+-- See the "IEEEtran_HOWTO" manual for usage information.
+-- http://www.michaelshell.org/tex/ieeetran/
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd)
+-- Using 8.5in x 11in (letter) paper.
+-- Using PDF output.
+-- This is a 10 point document.
+) (C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd))
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty))
+ (C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+ (C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+ (C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/cite\cite.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
+tex.def)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
+))
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty)))
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.s
+ty) (C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+) (C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty)))
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (main.aux)
+-- Lines per column: 58 (exact).
+
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg))
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-ptm.cfg)
+(main.out) (main.out)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg)
+(sections/01_introduction.tex
+
+LaTeX Warning: Citation `TODO_idfraud_report' on page 1 undefined on input line
+ 9.
+
+
+LaTeX Warning: Citation `trufor2023' on page 1 undefined on input line 30.
+
+
+LaTeX Warning: Citation `caruana1997multitask' on page 1 undefined on input lin
+e 33.
+
+
+LaTeX Warning: Citation `kendall2018multi' on page 1 undefined on input line 33
+.
+
+[1{C:/Users/herdi/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/he
+rdi/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}]
+
+LaTeX Warning: Citation `fantasyid2024' on page 2 undefined on input line 78.
+
+) (sections/02_related_work.tex
+
+LaTeX Warning: Citation `huh2018fighting' on page 2 undefined on input line 12.
+
+
+
+LaTeX Warning: Citation `bappy2019hybrid' on page 2 undefined on input line 16.
+
+
+
+LaTeX Warning: Citation `mantranet2019' on page 2 undefined on input line 16.
+
+
+LaTeX Warning: Citation `trufor2023' on page 2 undefined on input line 19.
+
+
+LaTeX Warning: Citation `deepid2025challenge' on page 2 undefined on input line
+ 33.
+
+
+LaTeX Warning: Citation `fantasyid2024' on page 2 undefined on input line 35.
+
+
+LaTeX Warning: Citation `caruana1997multitask' on page 2 undefined on input lin
+e 41.
+
+
+LaTeX Warning: Citation `ruder2017overview' on page 2 undefined on input line 4
+1.
+
+
+LaTeX Warning: Citation `crawshaw2020multi' on page 2 undefined on input line 4
+3.
+
+
+LaTeX Warning: Citation `marler2004survey' on page 2 undefined on input line 46
+.
+
+
+LaTeX Warning: Citation `kendall2018multi' on page 2 undefined on input line 48
+.
+
+
+LaTeX Warning: Citation `liu2019end' on page 2 undefined on input line 50.
+
+
+LaTeX Warning: Citation `unet2015' on page 2 undefined on input line 56.
+
+
+LaTeX Warning: Citation `wu2022robust' on page 2 undefined on input line 61.
+
+
+LaTeX Warning: Citation `tpe2011' on page 2 undefined on input line 69.
+
+
+LaTeX Warning: Citation `randomsearch2012' on page 2 undefined on input line 71
+.
+
+
+LaTeX Warning: Citation `optuna2019' on page 2 undefined on input line 72.
+
+
+LaTeX Warning: Citation `miettinen1999nonlinear' on page 2 undefined on input l
+ine 78.
+
+
+LaTeX Warning: Citation `nsga2_2002' on page 2 undefined on input line 79.
+
+
+LaTeX Warning: Citation `motpe2022' on page 2 undefined on input line 81.
+
+[2]) (sections/03_methodology.tex
+
+LaTeX Warning: Citation `fantasyid2024' on page 3 undefined on input line 11.
+
+
+LaTeX Warning: Citation `deepid2025challenge' on page 3 undefined on input line
+ 14.
+
+(C:\Users\herdi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1pcr.fd)
+
+LaTeX Warning: Citation `leakyrelu2015' on page 3 undefined on input line 42.
+
+
+LaTeX Warning: Citation `batchnorm2015' on page 3 undefined on input line 42.
+
+
+LaTeX Warning: Citation `unet2015' on page 3 undefined on input line 65.
+
+
+LaTeX Warning: Citation `dice1945' on page 3 undefined on input line 97.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 94--98
+ \T1/ptm/m/it/10 (+20) b) Seg-men-ta-tion loss.: [][] $\OMS/cmsy/m/n/10 L[] \OT
+1/cmr/m/n/10 =
+
+Underfull \hbox (badness 10000) in paragraph at lines 94--98
+[]\OT1/cmr/m/n/10 ([]\OML/cmm/m/it/10 ;  Y[]\OT1/cmr/m/n/10 ) + \OMS/cmsy/m/n/1
+0 L[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^[\OT1/cmr/m/n/10 ([])\OML/cmm/m/it/10 
+;  Y[]\OT1/cmr/m/n/10 )$\T1/ptm/m/n/10 (+20) ,
+
+LaTeX Warning: Citation `unet2015' on page 3 undefined on input line 103.
+
+
+LaTeX Warning: Citation `adamw2019' on page 3 undefined on input line 109.
+
+
+LaTeX Warning: Citation `micikevicius2018mixed' on page 3 undefined on input li
+ne 112.
+
+
+LaTeX Warning: Citation `pytorch2019' on page 3 undefined on input line 112.
+
+
+Underfull \hbox (badness 2644) in paragraph at lines 109--115
+ \T1/ptm/m/it/10 (+20) c) Train-ing de-tails.: [][] \T1/ptm/m/n/10 (+20) All mo
+d-els are trained with
+
+Overfull \hbox (12.87152pt too wide) in paragraph at lines 133--144
+ [][] 
+[3]
+
+LaTeX Warning: Citation `motpe2022' on page 4 undefined on input line 153.
+
+
+LaTeX Warning: Citation `optuna2019' on page 4 undefined on input line 153.
+
+
+LaTeX Warning: Citation `nsga2_2002' on page 4 undefined on input line 153.
+
+
+LaTeX Warning: Reference `fig:nestedcv' on page 4 undefined on input line 184.
+
+
+LaTeX Warning: Citation `varma2006bias' on page 4 undefined on input line 206.
+
+) (sections/04_experiments.tex
+Underfull \hbox (badness 1412) in paragraph at lines 11--16
+[]\T1/ptm/m/n/10 (+20) All ex-per-i-ments are con-ducted on a sin-gle NVIDIA
+[4]
+
+LaTeX Warning: Citation `cohen1988statistical' on page 5 undefined on input lin
+e 99.
+
+
+Overfull \hbox (44.59671pt too wide) in paragraph at lines 149--158
+ [][] 
+
+Underfull \hbox (badness 2735) in paragraph at lines 181--186
+\T1/ptm/m/n/10 (+20) tec-tion F1 at thresh-old 0.5) and Track 2 (per-image
+
+Underfull \hbox (badness 2150) in paragraph at lines 181--186
+\T1/ptm/m/n/10 (+20) pixel-level F1). Chal-lenge met-rics are com-puted us-ing
+) (sections/05_discussion.tex [5]
+Underfull \hbox (badness 3098) in paragraph at lines 64--70
+[]\T1/ptm/m/n/10 (+20) Numerically, the \T1/ptm/b/n/10 (+20) sig-nif-i-cant dif
+-fer-ence against un-
+
+LaTeX Warning: Citation `TODO_sidtd' on page 6 undefined on input line 79.
+
+
+LaTeX Warning: Citation `TODO_vit' on page 6 undefined on input line 84.
+
+) [6] (sections/06_conclusion.tex) (main.bbl [7] [8 <./figures/fig0_architectur
+e.pdf> <./figures/fig1_pareto_front.pdf> <./figures/fig2_nested_cv.pdf> <./figu
+res/fig3_ablation.pdf> <./figures/fig4_challenge.pdf>]) [9 <./figures/fig5_scal
+ar_vs_pareto.pdf>] (main.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)<C:/Users/herdi/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Users/herdi/App
+Data/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/
+herdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
+C:/Users/herdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmm
+i7.pfb><C:/Users/herdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
+s/cm/cmmi8.pfb><C:/Users/herdi/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/amsfonts/cm/cmmi9.pfb><C:/Users/herdi/AppData/Local/Programs/MiKTeX/fonts/type
+1/public/amsfonts/cm/cmmib10.pfb><C:/Users/herdi/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><C:/Users/herdi/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/herdi/AppData/
+Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/herdi/A
+ppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/
+herdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:
+/Users/herdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.
+pfb><C:/Users/herdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
+m/cmsy10.pfb><C:/Users/herdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/a
+msfonts/cm/cmsy6.pfb><C:/Users/herdi/AppData/Local/Programs/MiKTeX/fonts/type1/
+public/amsfonts/cm/cmsy7.pfb><C:/Users/herdi/AppData/Local/Programs/MiKTeX/font
+s/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/herdi/AppData/Local/Programs/MiK
+TeX/fonts/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/herdi/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/herdi/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/herdi/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/herdi/AppData/Local/P
+rograms/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/herdi/AppData/Local/P
+rograms/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (9 pages, 583751 bytes).
+Transcript written on main.log.
