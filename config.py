@@ -18,6 +18,11 @@ from pathlib import Path
 #   DATASET_ROOT = Path("/home/user/data/FantasyID")
 DATASET_ROOT = Path(os.getenv("DATASET_ROOT", "./FantasyID"))
 
+# Directorio raíz donde está descomprimido SIDTD.
+# Se descarga automáticamente desde http://datasets.cvc.uab.es/SIDTD/
+# si no existe y se invoca dataset_sidtd.download_sidtd().
+SIDTD_ROOT = Path(os.getenv("SIDTD_ROOT", "./SIDTD"))
+
 # ============================================================
 # DIRECTORIO DE EXPORTACIÓN DE RESULTADOS
 # ============================================================
@@ -26,8 +31,8 @@ EXPORT_DIR = Path(os.getenv("EXPORT_DIR", "./exports_hpo_pareto_nested"))
 # ============================================================
 # IMAGEN Y MODELO
 # ============================================================
-PATCH_SIZE = 224          # Resolución de entrada al modelo (alto y ancho)
-IMG_EXTS   = {".jpg"}     # Extensiones de imagen aceptadas
+PATCH_SIZE = 224              # Resolución de entrada al modelo (alto y ancho)
+IMG_EXTS   = {".jpg", ".png"} # Extensiones de imagen aceptadas
 
 # ============================================================
 # ARQUITECTURA

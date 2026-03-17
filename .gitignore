@@ -27,9 +27,11 @@ SIDTD/
 *.tar.gz
 
 # ============================================================
-# Resultados y exportaciones HPO
+# Resultados y exportaciones HPO (modelos entrenados, grande)
 # ============================================================
 exports_hpo_pareto_nested/
+experimento1/
+experimento2/
 *.sqlite3
 *.zip
 *.pt
