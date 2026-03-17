@@ -1,0 +1,48 @@
+% ============================================================
+% Section 5: Discussion
+% ============================================================
+
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Analysis of Key Findings}
+
+The ablation reveals an asymmetry between the two tasks. The
+\texttt{seg\_only} variant achieves competitive Dice ($0.867 \pm 0.023$, $p =
+0.288$ vs.\ Multitask) but its PR-AUC collapses to $0.728 \pm 0.053$:
+the U-Net decoder captures sufficient forgery evidence for pixel-level
+prediction yet cannot reliably aggregate it into a binary document-level
+decision. The result confirms that the shared encoder, regularized by the
+segmentation loss, learns spatially-aware features that strongly improve
+document-level detection.
+
+Comparing Multitask against \texttt{unweighted\_losses} isolates the
+contribution of HPO loss weighting. These variants differ only in whether
+$\lambda_{\text{mask}}$ is set by Pareto HPO (mean $2.39 \pm 0.43$) or fixed
+at $0.5$. Pareto-optimized weights yield significantly higher Dice ($p = 1.3
+\times 10^{-4}$, $d = 1.01$, large effect) while maintaining equivalent
+PR-AUC, confirming that $\lambda_{\text{mask}} \approx 2.4$ is broadly optimal
+and that MOTPE surfaces this value reliably across folds.
+
+\subsection{Limitations}
+
+\paragraph{Single dataset.}
+All results are obtained on FantasyID, a synthetic dataset from a single
+research institute. Generalization to real-world identity documents, unseen
+document designs, or physical tampering attacks remains an open question.
+
+\paragraph{Architecture.}
+The DocVerify encoder is a custom lightweight CNN trained from scratch.
+Transformer-based encoders~\citep{TODO_vit} pre-trained on large-scale vision
+datasets may provide richer representations for cross-domain deployment.
+
+\paragraph{Challenge evaluation gap.}
+The comparison in Table~\ref{tab:challenge} compares our system on an internal
+holdout against challenge participants on the official test set. Although both
+sets are drawn from FantasyID, the results are indicative rather than strictly
+controlled.
+
+\paragraph{Localization variance.}
+The high Track~2 standard deviation ($\pm 0.096$), driven by bonafide
+false-positive masks, represents a practical reliability concern. Targeted
+calibration strategies are a natural extension.

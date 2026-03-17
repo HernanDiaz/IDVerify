@@ -1,0 +1,68 @@
+% ============================================================
+% Section 6: Conclusion
+% ============================================================
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented DocVerify, a multi-task deep learning system for joint detection and
+localization of forged identity documents, and a multi-objective Pareto HPO
+framework that selects hyperparameter configurations by optimizing detection
+quality (PR-AUC) and localization quality (Dice) simultaneously, without fixing
+their relative importance in advance.
+
+Our main findings are:
+
+\begin{enumerate}
+  \item Joint multitask training with Pareto-optimized loss weights achieves
+  significantly higher Dice than both single-task variants and equal-weight
+  joint training (blind test, 30 seeds, $p = 1.3 \times 10^{-4}$, $d = 1.01$),
+  while maintaining competitive PR-AUC.
+
+  \item Under a rigorous 10-fold nested cross-validation protocol with 50 MOTPE
+  trials per fold, DocVerify achieves PR-AUC $= 0.9921 \pm 0.0058$ and
+  Dice $= 0.856 \pm 0.030$ on held-out folds, demonstrating consistent
+  generalization across data partitions.
+
+  \item Training exclusively on FantasyID and without any external pre-training,
+  DocVerify achieves results competitive with the top-3 entries of the
+  DeepID 2025 Challenge, surpassing the challenge winner on Track~2
+  localization ($0.807$ vs.\ $0.784$) and all FantasyID-only systems on
+  Track~1 detection.
+
+  \item Multi-objective Pareto HPO is statistically indistinguishable from
+  scalar selection on absolute metrics ($n = 10$, all $p \geq 0.05$), but
+  provides principled, objective-agnostic model selection and a richer
+  characterization of the HPO objective landscape.
+\end{enumerate}
+
+The source code, training scripts, and all experimental artifacts are publicly
+available at \url{https://github.com/HernanDiaz/IDVerify/}.
+
+Several directions remain open. The most pressing is improving
+cross-domain generalization: models trained on a single synthetic
+dataset cannot be assumed to transfer automatically to real-world document
+designs, and evaluating robustness across domains remains future work.
+Three complementary strategies are worth investigating:
+(i)~\emph{forgery-artifact-centric features} --- noise fingerprints,
+compression inconsistencies, and frequency-domain anomalies~\cite{noiseprint2020}
+that are independent of document appearance and thus naturally domain-invariant;
+(ii)~\emph{foundation model backbones} such as DINOv2 or CLIP, whose
+large-scale pre-training provides richer general-purpose representations
+that have already shown cross-domain benefits in concurrent
+work~\cite{fakeidet2025};
+(iii)~\emph{domain-adversarial training}~\cite{ganin2016dann}, where a
+domain discriminator forces the encoder to learn features that are
+invariant across document types.
+An official submission to the DeepID 2025 Challenge test server would also
+provide a directly controlled comparison with published baselines,
+eliminating the internal-holdout caveat noted in Section~\ref{sec:discussion}.
+
+% ── Acknowledgments ──────────────────────────────────────────
+\section*{Acknowledgments}
+This work was supported by the Instituto Nacional de Ciberseguridad
+(INCIBE, Spain's National Cybersecurity Institute) and the INCIBE Chair
+in Cybersecurity and Artificial Intelligence at the University of Oviedo, Spain. The author thanks Rafael Gonz\'{a}lez Quesada for his
+participation in the project, and the Idiap Research Institute for releasing the
+FantasyID dataset and the DeepID 2025 Challenge organizers for providing the
+evaluation framework.

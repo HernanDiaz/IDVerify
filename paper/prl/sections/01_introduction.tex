@@ -1,0 +1,75 @@
+% ============================================================
+% Section 1: Introduction
+% ============================================================
+
+\section{Introduction}
+\label{sec:intro}
+
+Identity document fraud poses a growing threat to national security, financial
+integrity, and border control worldwide. The widespread availability of
+image-editing software has made it possible to produce convincing forgeries of
+passports, national identity cards, and driver's licenses at low cost
+\citep{TODO_idfraud_report}. Automated forensic analysis of identity documents
+is therefore a critical component of modern digital identity verification
+pipelines.
+
+Detection of forged identity documents is inherently a two-level problem. At the
+\emph{document level}, a system must decide whether a presented document is
+genuine or has been tampered with (binary detection). At the \emph{pixel level},
+it must also identify and delineate which specific regions have been altered
+(forgery localization). Both objectives are operationally necessary.
+
+Binary detection alone is insufficient for real-world forensic deployments.
+A positive detection decision provides no \emph{actionable information} to the
+investigator: it does not reveal whether the fraudster altered the portrait
+photograph, falsified textual fields, or combined multiple manipulations. Without
+spatial evidence, a human expert cannot determine the nature of the fraud or
+build a legal case. Detection systems are also increasingly subject to
+\emph{explainability requirements} under emerging AI regulations
+\citep{TODO_euaiact}: a binary ``tampered'' label cannot satisfy the obligation
+to provide a meaningful explanation of the automated decision. Conversely,
+localization alone does not yield a reliable document-level confidence score
+suitable for automated accept/reject decisions. A practical forensic system must
+address both tasks simultaneously.
+
+The primary technical difficulty in joint detection and localization is that the
+two objectives are in \emph{structural tension}: the classification head
+benefits from global image features, while the segmentation head requires
+spatially precise, pixel-level representations. Prior work either treats the
+two tasks independently \citep{trufor2023} or collapses both losses into a
+scalar objective via a fixed weight $\lambda$~\citep{caruana1997multitask,
+kendall2018multi}. The choice of $\lambda$ is arbitrary and dataset-dependent.
+A second challenge is the risk of over-fitting the model-selection criterion:
+HPO that maximizes PR-AUC may sacrifice Dice, and vice versa.
+
+This paper introduces \textbf{DocVerify}, a multi-task forensic document
+analysis system that addresses both challenges. Our contributions are:
+
+\begin{enumerate}
+  \item \textit{Multi-objective Pareto HPO for multitask forensics.}
+    Both PR-AUC and Dice are treated as simultaneous optimization objectives.
+    The optimal configuration is selected from the Pareto front by minimizing
+    the Euclidean distance to the ideal point~$(1,~1)$, requiring no manual
+    task-weight tuning.
+
+  \item \textit{DocVerify architecture.}
+    An end-to-end multi-task CNN comprising a lightweight convolutional encoder
+    coupled to a U-Net decoder for pixel-level mask prediction and a
+    classification head for document-level detection, trained jointly with a
+    combined BCE+Dice segmentation loss.
+
+  \item \textit{Rigorous nested cross-validation.}
+    A 10-fold outer $\times$ 5-fold inner nested cross-validation scheme with
+    50 MOTPE trials per outer fold (2\,500 HPO evaluations total). Final
+    performance is estimated on a blind holdout using 30 independent seeds,
+    with Wilcoxon signed-rank tests and Holm--Bonferroni correction.
+\end{enumerate}
+
+The source code and experimental artifacts are publicly available at
+\url{https://github.com/HernanDiaz/IDVerify/}.
+
+The remainder of the paper is organized as follows. Section~\ref{sec:related}
+reviews related work. Section~\ref{sec:method} describes the DocVerify
+architecture and HPO framework. Section~\ref{sec:experiments} presents
+experimental results. Section~\ref{sec:discussion} discusses the findings and
+limitations. Section~\ref{sec:conclusion} concludes.

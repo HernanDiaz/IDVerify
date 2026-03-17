@@ -1,0 +1,106 @@
+% ============================================================
+% Section 5: Discussion
+% ============================================================
+
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Why Multitask Outperforms cls\_only on Localization}
+
+The most striking result in the ablation study is the collapse of Dice to near
+zero when the segmentation head is removed (\texttt{cls\_only}: $0.002 \pm 0.008$
+vs.\ $0.875 \pm 0.018$ for Multitask, $p = 1.3 \times 10^{-8}$). This is
+expected by construction: without a segmentation head, no pixel-level predictions
+are produced. However, the reciprocal comparison reveals a more nuanced
+picture: \texttt{seg\_only} achieves a Dice score of $0.867 \pm 0.023$ that is
+not significantly lower than Multitask ($p = 0.288$), yet its PR-AUC drops to
+$0.728 \pm 0.053$ ($p = 1.5 \times 10^{-8}$). This asymmetry reveals that
+\emph{it is the classification task that benefits most strongly from joint
+training}: the shared encoder, regularized by the segmentation loss, learns
+spatially-aware features that improve document-level detection far beyond what
+a classification-only or threshold-on-mask approach achieves. Conversely,
+the segmentation head performs almost equally well whether or not a dedicated
+classification head is present, confirming that the U-Net decoder captures
+sufficient forgery evidence on its own. The binary detection of an
+identity document forgery requires aggregated global evidence that the
+segmentation branch, trained to produce spatial maps, cannot reliably provide
+without the explicit classification objective.
+
+The comparison between Multitask and \texttt{unweighted\_losses} isolates the
+contribution of HPO loss weighting. These two variants share the same architecture
+and joint training objective; they differ only in whether $\lambda_{\text{mask}}$
+is set by Pareto HPO (mean $2.39 \pm 0.43$ across folds) or fixed at $0.5$. The
+Pareto-optimized weights yield a significantly higher Dice ($p = 1.3 \times 10^{-4}$,
+$d = 1.01$, large effect) while maintaining equivalent PR-AUC ($p = 0.083$).
+This finding confirms that the loss weighting is the principal driver of
+localization quality and that a value near $\lambda_{\text{mask}} \approx 2.4$
+is broadly optimal for this dataset.
+
+\subsection{On the Pareto Advantage}
+
+The scalar scalarization experiment (Section~\ref{subsec:scalar}) shows that
+Pareto HPO does not outperform scalar selection in absolute metric terms on this
+dataset ($n = 10$ folds, no significant differences). This result should be
+interpreted carefully. The primary claim of the paper is not that Pareto HPO
+produces higher numbers than scalar HPO, but that it provides a principled,
+objective-agnostic selection mechanism that:
+
+\begin{enumerate}
+  \item \textit{Eliminates the manual weight choice.} Scalar selection requires
+  the practitioner to declare a single performance criterion (PR-AUC or Dice)
+  as the optimization target. In a forensic deployment context, neither is
+  clearly dominant: detection accuracy determines the security gate reliability,
+  while localization accuracy determines the quality of forensic evidence.
+  Pareto HPO avoids this choice.
+
+  \item \textit{Reveals the trade-off landscape.} The 500-point objective space
+  in Figure~\ref{fig:pareto} provides a global picture of how PR-AUC and Dice
+  interact across hyperparameter configurations. In particular, it shows that
+  high-Dice configurations ($\geq 0.70$) consistently achieve PR-AUC $\geq 0.90$,
+  confirming that the two objectives are broadly complementary (not conflicting)
+  in this setting. This information is invisible to scalar HPO.
+
+  \item \textit{Is consistent with the evaluation protocol.} The DeepID 2025
+  Challenge ranks systems independently on Track~1 and Track~2, assigning no
+  implicit weighting. Minimizing the distance to the ideal point (Eq.~\ref{eq:ideal_point})
+  mirrors this evaluation semantics.
+\end{enumerate}
+
+Numerically, the significant difference against \texttt{unweighted\_losses} in the
+blind test ($d = 1.01$ on Dice) provides the empirical validation that HPO-based
+weighting matters. The scalar vs.\ Pareto comparison is best understood as
+demonstrating that, given a well-tuned $\lambda_{\text{mask}}$, the specific
+selection criterion (distance to ideal point vs.\ maximizing a single metric)
+has a second-order effect.
+
+\subsection{Limitations and Future Work}
+
+\paragraph{Single dataset and limited cross-domain generalization.}
+All results are obtained on FantasyID. While the dataset covers multiple document
+types and two attack categories, it is a synthetic dataset generated at a single
+research institute. Generalization to real-world identity documents, unseen
+document designs, or attacks not present in FantasyID (e.g., physical tampering,
+scanner artifacts) remains an open question and a known limitation of all systems
+trained on a single synthetic source. Extension to additional datasets such as
+SIDTD~\cite{TODO_sidtd} would substantially strengthen the external validity
+of the conclusions.
+
+\paragraph{Architecture.}
+The DocVerify encoder is a custom lightweight CNN trained from scratch. Transformer-based
+encoders~\cite{TODO_vit} and models pre-trained on large-scale vision datasets
+typically outperform scratch-trained CNNs when sufficient training data is
+available. Revisiting the architecture with a stronger encoder is a natural
+extension, particularly if cross-domain evaluation requires richer feature representations.
+
+\paragraph{Challenge evaluation gap.}
+The comparison in Table~\ref{tab:challenge} compares our system evaluated on an
+internal holdout against challenge participants evaluated on the official test set.
+Although the two sets are drawn from the same distribution (FantasyID), the results
+are not directly comparable. An official submission to the challenge would
+eliminate this caveat.
+
+\paragraph{Variance on Track~2.}
+The high variance in localization F1 ($\pm 0.096$) across seeds, driven by F1 on
+bonafide images, represents a practical reliability concern. Future work should
+investigate targeted training strategies (e.g., calibration of classification
+confidence to reduce false-positive mask activations on bonafide images).

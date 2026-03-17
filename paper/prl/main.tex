@@ -1,0 +1,108 @@
+%% ============================================================
+%% DocVerify — Pattern Recognition Letters (PRL) submission
+%%
+%% Format: elsarticle, 5p two-column, author-year (elsarticle-harv)
+%% Limit:  7 pages including references
+%%
+%% Build:
+%%   pdflatex main.tex
+%%   bibtex main
+%%   pdflatex main.tex
+%%   pdflatex main.tex
+%% ============================================================
+
+\documentclass[final,5p,times,twocolumn,authoryear]{elsarticle}
+
+%% ── Packages ─────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{microtype}
+
+%% ── hyperref ─────────────────────────────────────────────────
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+
+%% ── Convenience macros ───────────────────────────────────────
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+%% ── Graphics path ────────────────────────────────────────────
+\graphicspath{{figures/}}
+
+%% Journal declaration
+\journal{Pattern Recognition Letters}
+
+% ============================================================
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Multi-Objective Pareto Hyperparameter Optimization for Joint Detection and
+       Localization of Forged Identity Documents}
+
+\author[1]{Hern\'{a}n D\'{i}az Rodr\'{i}guez\corref{cor1}}
+\cortext[cor1]{Corresponding author.}
+\ead{diazhernan@uniovi.es}
+
+\address[1]{Department of Computer Science, University of Oviedo, Asturias, Spain}
+
+\begin{abstract}
+Automated forensic analysis of identity documents requires simultaneously
+detecting whether a document has been tampered with and identifying which
+regions were altered. These two objectives are structurally coupled but exist
+in tension: optimizing one with a fixed loss weight may degrade the other.
+We propose DocVerify, a multi-task convolutional network paired with a
+multi-objective hyperparameter optimization (HPO) framework that treats
+detection quality (PR-AUC) and localization quality (Dice) as simultaneous
+objectives. Using the Multiobjective Tree-structured Parzen Estimator (MOTPE)
+within a 10-fold nested cross-validation protocol (50 trials per outer fold,
+500 unique configurations evaluated across 5 inner splits — 2\,500 individual
+model trainings in total), DocVerify selects configurations from the
+Pareto-optimal front by minimizing Euclidean distance to the ideal point
+$(1,1)$, without any manual weighting. Evaluated on the FantasyID benchmark
+\citep{fantasyid2024}, DocVerify achieves PR-AUC $= 0.9921 \pm 0.0058$ and
+Dice $= 0.856 \pm 0.030$ under nested cross-validation, and detection
+F1@0.5 $= 0.969 \pm 0.014$ with localization F1 $= 0.807 \pm 0.096$ on the
+blind test set (30 seeds). An ablation confirms that Pareto-optimized loss
+weighting provides a statistically significant Dice improvement over
+equal-weight joint training ($p = 1.3 \times 10^{-4}$, $d = 1.01$, large
+effect) while maintaining equivalent detection accuracy.
+\end{abstract}
+
+\begin{keyword}
+identity document forensics \sep forgery detection \sep forgery localization \sep
+multi-task learning \sep multi-objective HPO \sep Pareto front \sep
+nested cross-validation \sep MOTPE
+\end{keyword}
+
+\end{frontmatter}
+
+% ============================================================
+% SECTIONS
+% ============================================================
+
+\input{sections/01_introduction}
+
+\input{sections/02_related_work}
+
+\input{sections/03_methodology}
+
+\input{sections/04_experiments}
+
+\input{sections/05_discussion}
+
+\input{sections/06_conclusion}
+
+% ============================================================
+% BIBLIOGRAPHY
+% ============================================================
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{references}
+
+\end{document}

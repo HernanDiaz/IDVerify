@@ -1,0 +1,63 @@
+% ============================================================
+% Section 2: Related Work
+% ============================================================
+
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Document and Image Forgery Detection}
+
+Deep learning has substantially advanced general-purpose image forensics:
+CNNs can detect subtle statistical fingerprints left by editing operations,
+often outperforming hand-crafted pipelines~\citep{bappy2019hybrid, mantranet2019}.
+\citet{cozzolino2020noiseprint} (Noiseprint) train a CNN via Siamese
+contrastive learning to extract camera-model noise residuals; forgeries appear
+as anomalies in this residual without requiring semantic understanding.
+\citet{trufor2023} (\textsc{TruFor}) generalize this with a transformer fusion
+network (NoisePrint++) that jointly models RGB semantics and noise-pattern
+anomalies, achieving strong performance on general image forensics benchmarks
+with over 876\,000 pre-training images.
+
+Identity document forgery introduces unique challenges: forged regions are
+often small (a single text field or portrait), the structured background
+(guilloché patterns, UV-reactive inks) creates strong false negatives for
+general-purpose noise detectors, and document type diversity demands
+generalization beyond natural-image pre-training. Official evaluations on
+FantasyID confirm that general-purpose baselines (TruFor, MMFusion, FatFormer,
+UniFD) all achieve false-negative rates above 50\% at a 10\% false-positive
+threshold~\citep{fantasyid2024}, motivating domain-specific approaches.
+
+Among systems trained exclusively on FantasyID, \citet{edgedoc2025} propose
+EdgeDoc, a lightweight CNN-Transformer encoder (EdgeNeXt) fed with the green
+channel and a NoisePrint residual, with a U-Net decoder optimized jointly for
+classification and localization. \citet{remtkd2025} introduce Re-MTKD, a
+reinforcement-learning multi-teacher knowledge distillation framework using a
+ConvNeXt~v2 encoder; the Sunlight team adapted this to identity documents using
+over 60\,000 additional external images, winning both tracks of the DeepID
+2025 Challenge~\citep{deepid2025challenge}.
+
+DocVerify differs from all prior document-forensics systems in three respects:
+(i) it systematically searches the task-weight $\lambda_{\text{mask}}$ via
+multi-objective HPO rather than fixing it heuristically; (ii) it selects the
+final configuration via a Pareto-optimal criterion; and (iii) it reports
+uncertainty through nested cross-validation, providing statistically rigorous
+performance estimates.
+
+\subsection{Multi-Task Learning and HPO}
+
+In multi-task learning~\citep{caruana1997multitask, ruder2017overview}, the
+dominant approach combines task losses via scalar scalarization~\citep{marler2004survey}
+with fixed weights set before training. \citet{kendall2018multi} propose
+learning these weights via homoscedastic uncertainty; \citet{liu2019end}
+introduce gradient normalization. All scalar approaches commit to a fixed
+trade-off before training begins.
+
+Multi-objective HPO extends single-objective search to jointly optimize multiple
+metrics~\citep{miettinen1999nonlinear}. The Multiobjective TPE
+(MOTPE)~\citep{motpe2022} adapts the TPE surrogate~\citep{tpe2011} to the
+multi-objective setting, achieving competitive Pareto-front coverage with far
+fewer function evaluations than evolutionary methods such as
+NSGA-II~\citep{nsga2_2002}---critical when each evaluation requires training a
+deep network. To our knowledge, this is the first work to apply Pareto-based
+multi-objective HPO to joint identity-document forgery detection and
+localization within a nested cross-validation framework.

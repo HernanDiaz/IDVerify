@@ -1,0 +1,27 @@
+\begin{table}[t]
+\centering
+\caption{Comparison with TruFor~\cite{trufor2023} on the FantasyID holdout set
+($N=493$). TruFor is evaluated zero-shot using publicly released weights;
+DocVerify is evaluated on the same images it was never trained on
+(mean\,$\pm$\,std over 30 random seeds).
+A direct comparison is possible only for the classification metrics;
+anomaly-map localization is included for completeness but the two models
+were optimized on different forgery types.}
+\label{tab:sota_comparison}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Method} & \textbf{PR-AUC} & \textbf{ROC-AUC} & \textbf{F1-macro} & \textbf{Dice\textsubscript{global}} \\
+\midrule
+TruFor (zero-shot)~\cite{trufor2023} & 0.791 & 0.611 & 0.590 & 0.056 \\
+\textbf{DocVerify} (ours) & \textbf{0.997} $\pm$ 0.002 & \textbf{0.991} $\pm$ 0.006 & \textbf{0.942} $\pm$ 0.023 & \textbf{0.875} $\pm$ 0.018 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item TruFor~\cite{trufor2023} was not trained on FantasyID; its weights are publicly
+available at \url{https://github.com/grip-unina/TruFor}. This comparison measures
+the ability of a general-purpose forgery detector to generalize to identity
+documents, relative to a domain-specific model trained on the same test distribution.
+\end{tablenotes}
+\end{table}

@@ -1,0 +1,82 @@
+# ============================================================
+# Entornos virtuales
+# ============================================================
+.venv/
+venv/
+venv_torch/
+env/
+
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# ============================================================
+# Dataset (no subir al repo por licencia y tamaño)
+# ============================================================
+FantasyID/
+FantasyID.tgz
+SIDTD/
+*.tgz
+*.tar.gz
+
+# ============================================================
+# Resultados y exportaciones HPO
+# ============================================================
+exports_hpo_pareto_nested/
+*.sqlite3
+*.zip
+*.pt
+
+# ============================================================
+# sota_comparison — datos grandes (reproducibles)
+# ============================================================
+sota_comparison/trufor_repo/
+sota_comparison/trufor_weights/
+sota_comparison/holdout_images/
+sota_comparison/holdout_masks/
+sota_comparison/fantasyid_masks/
+sota_comparison/trufor_output/
+sota_comparison/trufor_finetuned_output/
+sota_comparison/trufor_quick_output/
+sota_comparison/*.log
+sota_comparison/*.npy
+
+# ============================================================
+# LaTeX — artefactos de compilación (no los PDFs)
+# ============================================================
+*.aux
+*.bbl
+*.blg
+*.spl
+paper/**/*.log
+paper/**/*.out
+
+# ============================================================
+# Competition baseline (submódulo externo, no rastrear)
+# ============================================================
+baseline-docker/
+
+# ============================================================
+# PyCharm / IntelliJ
+# ============================================================
+.idea/
+*.iml
+
+# ============================================================
+# Sistema operativo
+# ============================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============================================================
+# Claude worktrees (uso interno)
+# ============================================================
+.claude/worktrees/

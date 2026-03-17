@@ -1,0 +1,35 @@
+% ============================================================
+% Section 6: Conclusion
+% ============================================================
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented DocVerify, a multi-task CNN for joint detection and localization of
+forged identity documents, paired with a multi-objective Pareto HPO framework
+that selects hyperparameter configurations by optimizing PR-AUC and Dice
+simultaneously without fixing their relative importance in advance.
+
+Our main findings are: (i) joint multitask training with Pareto-optimized loss
+weights achieves significantly higher Dice than single-task variants and
+equal-weight joint training (blind test, 30 seeds, $p = 1.3 \times 10^{-4}$,
+$d = 1.01$) while maintaining competitive PR-AUC; (ii) under a rigorous 10-fold
+nested cross-validation protocol, DocVerify achieves PR-AUC $= 0.9921 \pm
+0.0058$ and Dice $= 0.856 \pm 0.030$, demonstrating consistent generalization
+across data partitions; and (iii) training exclusively on FantasyID without any
+external pre-training, DocVerify achieves results competitive with the top-3
+entries of the DeepID 2025 Challenge, surpassing the winner on Track~2
+localization ($0.807$ vs.\ $0.784$) and all FantasyID-only systems on Track~1
+detection.
+
+Future work includes cross-domain evaluation on additional document datasets,
+integration of forgery-artifact-centric features (noise fingerprints, frequency
+anomalies~\citep{noiseprint2020}) for domain-invariant representations, and
+foundation model backbones~\citep{fakeidet2025} for richer pre-training.
+
+\section*{Acknowledgments}
+This work was supported by the Instituto Nacional de Ciberseguridad (INCIBE,
+Spain's National Cybersecurity Institute) and the INCIBE Chair in Cybersecurity
+and Artificial Intelligence at the University of Oviedo, Spain. The author
+thanks Rafael Gonz\'{a}lez Quesada for his participation in the project, and
+the Idiap Research Institute for releasing the FantasyID dataset.
