@@ -82,12 +82,12 @@ research institute. Generalization to real-world identity documents, unseen
 document designs, or attacks not present in FantasyID (e.g., physical tampering,
 scanner artifacts) remains an open question and a known limitation of all systems
 trained on a single synthetic source. Extension to additional datasets such as
-SIDTD~\cite{TODO_sidtd} would substantially strengthen the external validity
+SIDTD~\cite{sidtd2024} would substantially strengthen the external validity
 of the conclusions.
 
 \paragraph{Architecture.}
 The DocVerify encoder is a custom lightweight CNN trained from scratch. Transformer-based
-encoders~\cite{TODO_vit} and models pre-trained on large-scale vision datasets
+encoders~\cite{dosovitskiy2021vit} and models pre-trained on large-scale vision datasets
 typically outperform scratch-trained CNNs when sufficient training data is
 available. Revisiting the architecture with a stronger encoder is a natural
 extension, particularly if cross-domain evaluation requires richer feature representations.

@@ -9,9 +9,12 @@
 \label{subsec:setup}
 
 All experiments are conducted on a single NVIDIA RTX~5060\,Ti (16\,GB VRAM) under
-Windows~11, using PyTorch 2.10.0 with CUDA 13.0 and Optuna~3.x. The full nested
-cross-validation pipeline (including 2\,500 HPO trials and 10 final models) required
-approximately 59 hours of wall-clock time. The scalar experiment
+Windows~11, equipped with an AMD Ryzen~5 3400G (3.70\,GHz) and 32\,GB DDR4-3200 RAM,
+using PyTorch 2.10.0 with CUDA 13.0 and Optuna~3.x. Training uses a batch size of
+64; no data augmentation is applied --- images are resized to $224\!\times\!224$
+pixels and normalised to $[0,1]$ prior to caching. The full nested cross-validation
+pipeline (including 2\,500 HPO trials and 10 final models) required approximately
+59 hours of wall-clock time. The scalar experiment
 (Section~\ref{subsec:scalar}) required an additional 4.6 hours.
 
 Images are loaded into GPU memory at the start of each outer fold to eliminate

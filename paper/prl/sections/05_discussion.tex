@@ -32,15 +32,10 @@ research institute. Generalization to real-world identity documents, unseen
 document designs, or physical tampering attacks remains an open question.
 
 \paragraph{Architecture.}
-The DocVerify encoder is a custom lightweight CNN trained from scratch.
-Transformer-based encoders~\citep{TODO_vit} pre-trained on large-scale vision
-datasets may provide richer representations for cross-domain deployment.
-
-\paragraph{Challenge evaluation gap.}
-The comparison in Table~\ref{tab:challenge} compares our system on an internal
-holdout against challenge participants on the official test set. Although both
-sets are drawn from FantasyID, the results are indicative rather than strictly
-controlled.
+The lightweight encoder was chosen to make 2\,500-model nested CV tractable;
+richer pretrained backbones~\citep{dosovitskiy2021vit} are expected to improve
+cross-domain generalization but would preclude the rigorous HPO validation
+that is the paper's primary contribution.
 
 \paragraph{Localization variance.}
 The high Track~2 standard deviation ($\pm 0.096$), driven by bonafide

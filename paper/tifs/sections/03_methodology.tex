@@ -27,8 +27,12 @@ and \texttt{test} partitions into a single pool of 3\,284 images and apply a
 \texttt{GroupShuffleSplit} (grouping by document identity, $\text{test\_size}=0.15$,
 \texttt{random\_state}=42) to obtain approximately 2\,791 development images and
 493 blind holdout images, ensuring that all captures of the same document identity
-remain in the same partition and preventing any form of data leakage between splits. The holdout set is accessed only for the final blind
-evaluation (Section~\ref{sec:blindtest}).
+remain in the same partition and preventing any form of data leakage between splits.
+The dataset is class-imbalanced: 2\,351 attack images (71.6\%) and 933 bonafide
+images (28.4\%), reflecting realistic deployment conditions; this imbalance is
+preserved across all splits and not corrected via resampling or loss weighting.
+The holdout set is accessed only for the final blind evaluation
+(Section~\ref{sec:blindtest}).
 
 \subsection{Architecture}
 \label{subsec:arch}

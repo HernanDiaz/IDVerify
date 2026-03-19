@@ -11,10 +11,11 @@
 All experiments are conducted on a single workstation running Windows~11,
 equipped with an AMD Ryzen~5 3400G (3.70\,GHz), 32\,GB DDR4-3200 RAM, and an NVIDIA
 RTX~5060\,Ti (16\,GB VRAM), using PyTorch 2.10.0 with CUDA 13.0 and
-Optuna~3.x. The
-full NCV pipeline required approximately 59~hours; images are cached in GPU
-memory per outer fold, reducing per-trial training time from $\sim$12 to
-$\sim$3.5 minutes.
+Optuna~3.x. Training uses a batch size of 64 and no data augmentation:
+all images are resized to $224\!\times\!224$ pixels and normalised to
+$[0,1]$ prior to caching in GPU memory. The full NCV pipeline required
+approximately 59~hours; VRAM caching reduces per-trial training time from
+$\sim$12 to $\sim$3.5 minutes.
 
 \subsection{Nested Cross-Validation Results}
 \label{subsec:ncv_results}
@@ -64,16 +65,7 @@ localization with Pareto-optimized $\lambda_{\text{mask}}$);
 (segmentation head only, detection by thresholding mean mask probability);
 and \texttt{unweighted\_losses} (full multitask, $\lambda_{\text{cls}} =
 \lambda_{\text{mask}} = 0.5$, bypassing HPO).
-Table~\ref{tab:ablation} and Fig.~\ref{fig:ablation} summarize results.
-
-\begin{figure*}[!t]
-  \centering
-  \includegraphics[width=\textwidth]{fig3_ablation}
-  \caption{Ablation study: violin plots of PR-AUC (left) and Dice (right) for
-    four variants over 30 seeds. Significance vs.\ Multitask: *** $p < 0.001$;
-    ns $p \geq 0.05$ (Wilcoxon + Holm).}
-  \label{fig:ablation}
-\end{figure*}
+Table~\ref{tab:ablation} summarizes results.
 
 \begin{table*}[!t]
   \centering
@@ -105,6 +97,44 @@ Pareto-optimized weights outperform equal weights specifically on localization:
 shows significantly lower Dice ($p = 1.3 \times 10^{-4}$, $d = 1.01$, large
 effect), validating the HPO contribution.
 
+\subsection{Pareto HPO vs.\ Scalar Selection}
+\label{subsec:scalar}
+
+To assess whether multi-objective Pareto selection provides a measurable
+advantage over simpler single-objective alternatives, we compare three
+selection criteria applied to the \emph{same} 50 MOTPE trials per outer fold:
+\textbf{Pareto} (ours, distance to ideal point); \texttt{by\_prauc} (select
+trial maximizing inner-fold PR-AUC); and \texttt{by\_dice} (select trial
+maximizing inner-fold Dice). Results on the 10-fold NCV are shown in
+Table~\ref{tab:scalar}.
+
+\begin{table}[!t]
+  \centering
+  \caption{Pareto vs.\ scalar selection on 10-fold NCV (same 50 MOTPE trials).}
+  \label{tab:scalar}
+  \begin{tabular}{lcc}
+    \toprule
+    Method & PR-AUC & Dice \\
+    \midrule
+    \textbf{Pareto (ours)} & $0.9921 \pm 0.0060$ & $0.856 \pm 0.035$ \\
+    \texttt{by\_prauc}     & $0.9958 \pm 0.0015$ & $0.857 \pm 0.017$ \\
+    \texttt{by\_dice}      & $0.9936 \pm 0.0033$ & $0.863 \pm 0.015$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+No statistically significant differences are found between any pair of
+selection criteria (Wilcoxon + Holm, all $p \geq 0.05$, $n = 10$).
+Absolute differences are below $0.004$ on PR-AUC and $0.008$ on Dice. The advantage of Pareto
+selection is therefore methodological rather than numerical: it requires no
+a priori declaration of a primary objective, makes the full
+detection-localization trade-off landscape observable (Fig.~\ref{fig:pareto}),
+and is consistent with the challenge evaluation protocol that ranks both
+tracks independently. Notably, Pareto selection exhibits higher Dice variance
+(std $0.035$ vs.\ $0.015$--$0.017$) in folds where the Pareto-optimal
+$\lambda_{\text{mask}}$ departs from the cluster mode (F5, F9), a
+sensitivity that scalar criteria avoid by collapsing to a single statistic.
+
 \subsection{Comparison with Related Systems}
 \label{subsec:challenge}
 
@@ -112,41 +142,57 @@ Table~\ref{tab:challenge} compares DocVerify against the top participants of
 the DeepID 2025 Challenge on Track~1 (detection F1@0.5) and Track~2
 (per-image localization F1), computed on our 15\% holdout using 30 seeds.
 
-\begin{table*}[!t]
+\begin{table}[!t]
   \centering
-  \caption{Comparison with related systems. $\dagger$: official challenge test
-    set; DocVerify evaluated on internal holdout (see text).}
+  \small
+  \caption{Comparison with DeepID 2025 Challenge systems on Track~1
+    (detection F1@0.5) and Track~2 (per-image localization F1).
+    $\dagger$: official challenge test set;
+    DocVerify on internal holdout (see text).
+    Dashes: result not reported.}
   \label{tab:challenge}
-  \begin{tabular}{lccc}
+  \begin{tabular}{p{3.6cm}cc}
     \toprule
-    System & F1 det (thr=0.5) & F1 loc & Training Data \\
+    System & F1@0.5 & F1$_{\text{loc}}$ \\
     \midrule
-    Sunlight~\citep{remtkd2025} (1st)$^\dagger$      & 0.991 & 0.784 & 60K+ external images \\
-    Incode (2nd)$^\dagger$                            & 0.868 & —     & 100K proprietary \\
-    AG/EdgeDoc~\citep{edgedoc2025} (3rd)$^\dagger$   & 0.958 & 0.686 & FantasyID only \\
-    UAM-Biometrics (4th)$^\dagger$                   & 0.712 & 0.620 & FantasyID only \\
-    TruFor~\citep{trufor2023} baseline$^\dagger$     & 0.807 & 0.590 & 876K pre-training \\
+    Sunlight~\citep{remtkd2025} (1st)$^\dagger$    & 0.991 & 0.784 \\
+    Incode (2nd)$^\dagger$                          & 0.868 & —     \\
+    AG/EdgeDoc~\citep{edgedoc2025} (3rd)$^\dagger$ & 0.958 & 0.621 \\
+    UAM-Biometrics (4th)$^\dagger$                  & 0.712 & —     \\
+    TruFor~\citep{trufor2023} baseline$^\dagger$   & 0.807 & 0.590 \\
     \midrule
-    \textbf{DocVerify (ours)} & $\mathbf{0.969 \pm 0.014}$ & $\mathbf{0.807 \pm 0.096}$ & FantasyID only \\
+    \textbf{DocVerify (ours)} & $\mathbf{0.969 \pm 0.014}$ & $\mathbf{0.807 \pm 0.096}$ \\
     \bottomrule
   \end{tabular}
-\end{table*}
+\end{table}
 
-DocVerify achieves F1@0.5 $= 0.969 \pm 0.014$ on Track~1, surpassing all
-FantasyID-only systems including AG/EdgeDoc ($+1.1$~pp) and outperforming
-Incode despite its use of 100K proprietary images. On Track~2, DocVerify
-achieves F1$_{\text{loc}} = 0.807 \pm 0.096$, exceeding all four challenge
-finishers including the overall winner Sunlight ($0.784$). The high Track~2
-variance ($\pm 0.096$) is driven by seeds where bonafide misclassifications
-generate false-positive mask pixels; F1 on attack images is stable
-($0.881 \pm 0.015$).
-
-The comparison should be interpreted with caution. DocVerify was developed
+This comparison must be interpreted with caution. DocVerify was developed
 independently after the DeepID 2025 Challenge submission deadline had already
-closed; consequently, official test-set evaluation was not possible and we
-report results on our internal 15\% holdout instead. Although both sets are
-drawn from the same FantasyID distribution, they are not identical, making the
-comparison indicative rather than strictly controlled.
+closed; official test-set evaluation was therefore not possible and results
+are reported on our internal 15\% holdout, whereas all challenge figures
+were obtained on the official test set (FantasyID test partition plus a
+private out-of-domain set from PXL Vision). The two evaluation sets are
+not identical, making direct numerical comparisons indicative rather than
+strictly controlled.
+
+It is also important to note the training data disparity among the systems
+in Table~\ref{tab:challenge}. Sunlight augmented the FantasyID training set
+with over 60\,000 external identity document images; the TruFor baseline
+was pre-trained on 876\,000 general-purpose manipulation images before any
+fine-tuning. By contrast, AG/EdgeDoc, UAM-Biometrics, and DocVerify trained
+exclusively on FantasyID, making them more directly comparable to one another.
+
+With that caveat, DocVerify achieves F1@0.5 $= 0.969 \pm 0.014$ on
+Track~1, broadly in line with the other FantasyID-only systems
+(AG/EdgeDoc: $0.958$; UAM-Biometrics: $0.712$) and competitive with
+Sunlight ($0.991$) despite using no external data. On Track~2, DocVerify
+achieves F1$_{\text{loc}} = 0.807 \pm 0.096$, comparable to the
+challenge winner Sunlight ($0.784$); however, the margin ($+0.023$) is
+well within the standard deviation of our estimates and should not be
+interpreted as a definitive improvement. The high Track~2 variance is
+driven by seeds where bonafide misclassifications generate false-positive
+mask pixels; F1 on confirmed attack images is substantially more stable
+($0.881 \pm 0.015$).
 
 \subsection{Qualitative Analysis}
 \label{subsec:qualitative}
