@@ -1,0 +1,16 @@
+\begin{table}[!t]
+\centering
+\caption{Comparison of TruFor~\citep{trufor2023} (zero-shot and fine-tuned on
+FantasyID) against DocVerify on the internal holdout ($N=498$).
+DocVerify results are mean\,$\pm$\,std over 30 seeds.}
+\label{tab:trufor_comparison}
+\begin{tabular}{lccc}
+\toprule
+System & PR-AUC & ROC-AUC & Dice\textsubscript{global} \\
+\midrule
+TruFor zero-shot~\citep{trufor2023} & 0.791 & 0.611 & 0.056 \\
+TruFor fine-tuned & 0.981 & 0.951 & 0.132 \\
+\textbf{DocVerify} (ours) & \textbf{0.997} $\pm$ 0.002 & \textbf{0.991} $\pm$ 0.006 & \textbf{0.875} $\pm$ 0.018 \\
+\bottomrule
+\end{tabular}
+\end{table}

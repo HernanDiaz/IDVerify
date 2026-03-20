@@ -1,0 +1,4 @@
+System,Training,PR-AUC,ROC-AUC,Dice (global),Dice (pos),F1-det@0.5
+TruFor (zero-shot),876K pre-training,0.791,0.611,0.056,0.110,0.551
+TruFor (fine-tuned),FantasyID,0.981,0.951,0.132,0.285,0.856
+DocVerify (ours),FantasyID,0.997 ± 0.002,0.991 ± 0.006,0.875 ± 0.018,0.881 ± 0.015,0.965 ± 0.015
