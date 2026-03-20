@@ -23,12 +23,13 @@ often small (a single text field or portrait), the structured background
 (guilloché patterns, UV-reactive inks) creates strong false negatives for
 general-purpose noise detectors, and document type diversity demands
 generalization beyond natural-image pre-training. Official evaluations on
-FantasyID confirm that general-purpose baselines (TruFor, MMFusion, FatFormer,
-UniFD) all achieve false-negative rates above 50\% at a 10\% false-positive
+FantasyID confirm that general-purpose baselines (TruFor, MMFusion~\citep{mmfusion2024},
+FatFormer~\citep{fatformer2024}, UniFD~\citep{unifd2023}) all achieve
+false-negative rates above 50\% at a 10\% false-positive
 threshold~\citep{fantasyid2024}, motivating domain-specific approaches.
 
 Among systems trained exclusively on FantasyID, \citet{edgedoc2025} propose
-EdgeDoc, a lightweight CNN-Transformer encoder (EdgeNeXt) fed with the green
+EdgeDoc, a lightweight CNN-Transformer encoder (EdgeNeXt~\citep{edgenext2022}) fed with the green
 channel and a NoisePrint residual, with a U-Net decoder optimized jointly for
 classification and localization. \citet{remtkd2025} introduce Re-MTKD, a
 reinforcement-learning multi-teacher knowledge distillation framework using a

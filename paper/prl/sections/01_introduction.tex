@@ -40,7 +40,7 @@ two tasks independently \citep{trufor2023} or collapses both losses into a
 scalar objective via a fixed weight $\lambda$~\citep{caruana1997multitask,
 kendall2018multi}. The choice of $\lambda$ is arbitrary and dataset-dependent.
 A second challenge is the risk of over-fitting the model-selection criterion:
-HPO that maximizes PR-AUC may sacrifice Dice, and vice versa.
+hyperparameter optimization (HPO) that maximizes PR-AUC may sacrifice Dice, and vice versa.
 
 This paper introduces DocVerify, a multi-task forensic document
 analysis system that addresses both challenges. Our contributions are:
@@ -60,9 +60,10 @@ analysis system that addresses both challenges. Our contributions are:
 
   \item \textit{Rigorous nested cross-validation.}
     A 10-fold outer $\times$ 5-fold inner nested cross-validation scheme with
-    50 MOTPE trials per outer fold (2\,500 HPO evaluations total). Final
-    performance is estimated on a blind holdout using 30 independent seeds,
-    with Wilcoxon signed-rank tests and Holm--Bonferroni correction.
+    50 Multiobjective Tree-structured Parzen Estimator (MOTPE) trials per
+    outer fold (2\,500 HPO evaluations total). Final performance is estimated
+    on a blind holdout using 30 independent seeds, with Wilcoxon signed-rank
+    tests~\citep{wilcoxon1945} and Holm--Bonferroni correction~\citep{holm1979}.
 \end{enumerate}
 
 The source code and experimental artifacts are publicly available at

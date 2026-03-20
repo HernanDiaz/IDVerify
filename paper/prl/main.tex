@@ -24,6 +24,9 @@
 \usepackage{url}
 \usepackage{microtype}
 
+%% ── PRL journal style ────────────────────────────────────────
+\usepackage{prletters}
+
 %% ── hyperref ─────────────────────────────────────────────────
 \usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 
@@ -42,8 +45,8 @@
 
 \begin{frontmatter}
 
-\title{Multi-Objective Pareto Hyperparameter Optimization for Joint Detection and
-       Localization of Forged Identity Documents}
+\title{Multi-objective Pareto hyperparameter optimization for joint detection and
+       localization of forged identity documents}
 
 \author[1]{Hern\'{a}n D\'{i}az Rodr\'{i}guez\corref{cor1}}
 \cortext[cor1]{Corresponding author.}
@@ -64,8 +67,8 @@ within a 10-fold nested cross-validation protocol (50 trials per outer fold,
 500 unique configurations evaluated across 5 inner splits — 2\,500 individual
 model trainings in total), DocVerify selects configurations from the
 Pareto-optimal front by minimizing Euclidean distance to the ideal point
-$(1,1)$, without any manual weighting. Evaluated on the FantasyID benchmark
-\citep{fantasyid2024}, DocVerify achieves PR-AUC $= 0.9921 \pm 0.0058$ and
+$(1,1)$, without any manual weighting. Evaluated on the FantasyID benchmark,
+DocVerify achieves PR-AUC $= 0.9921 \pm 0.0058$ and
 Dice $= 0.856 \pm 0.030$ under nested cross-validation, and detection
 F1@0.5 $= 0.969 \pm 0.014$ with localization F1 $= 0.807 \pm 0.096$ on the
 blind test set (30 seeds). An ablation confirms that Pareto-optimized loss
