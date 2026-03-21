@@ -2,7 +2,7 @@
 
 DocVerify is a multi-task deep learning system that simultaneously detects forged identity documents (binary classification) and localises the altered regions (pixel-level segmentation). Its core contribution is a **multi-objective Pareto HPO framework** (Optuna / MOTPE) that jointly optimises PR-AUC and Dice instead of collapsing both objectives into a single scalar loss weight.
 
-Evaluated on the [FantasyID dataset](https://www.idiap.ch/paper/fantasyid/), the system achieves results competitive with top-3 submissions to the [DeepID 2025 Challenge (ICCV)](https://deepid-iccv.github.io/) while training exclusively on FantasyID with a fully custom architecture — no external data, no TruFor pretraining.
+Evaluated on the [FantasyID dataset](https://zenodo.org/records/17063366), the system achieves results competitive with top-3 submissions to the [DeepID 2025 Challenge (ICCV)](https://deepid-iccv.github.io/) while training exclusively on FantasyID with a fully custom architecture — no external data, no TruFor pretraining.
 
 | Metric | DocVerify | AG/EdgeDoc (3rd, FantasyID-only) | Sunlight (1st, 60K+ external) |
 |---|---|---|---|
@@ -50,7 +50,7 @@ pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cu1
 
 ### Dataset setup
 
-Download [FantasyID](https://www.idiap.ch/paper/fantasyid/) and extract to:
+Download [FantasyID](https://zenodo.org/records/17063366) and extract to:
 
 ```
 DocVerify/
@@ -101,10 +101,18 @@ DocVerify/
 ├── eval_sidtd.py                   — SIDTD evaluation script
 ├── finetune_sidtd.py               — SIDTD fine-tuning script
 ├── requirements.txt
+├── exports_hpo_pareto_nested/      — Experiment results (CSVs + Optuna DB)
+│   ├── nested_outer_results.csv    — Per-fold NCV metrics (Table 2)
+│   ├── optuna_trials_nested.csv    — All 2,500 HPO trials
+│   ├── optuna_nested_outer.sqlite3 — Full Optuna study database
+│   ├── final_blind_test_multiseed.csv — Ablation study, 30 seeds (Table 3)
+│   ├── scalar_experiment/          — Pareto vs scalar comparison (Table 4)
+│   ├── challenge_metrics*.csv      — Track 1/2 challenge metrics (Table 5)
+│   └── stat_tests.csv              — Wilcoxon + Cohen's d statistical tests
 ├── paper/
 │   ├── README_paper.md             — Paper build instructions
 │   ├── tifs/                       — IEEE T-IFS version (12 pages, IEEEtran)
-│   └── prl/                        — Pattern Recognition Letters version (7 pages, elsarticle)
+│   └── prltemplate/                — Pattern Recognition Letters version (7 pages, elsarticle) — SUBMITTED
 ├── paper_figures/                  — Figure generation scripts (matplotlib)
 └── sota_comparison/                — TruFor comparison pipeline
     ├── 00_export_holdout.py        — Export holdout images
@@ -119,14 +127,12 @@ DocVerify/
 
 ## Paper
 
-Two versions of the paper are maintained in `paper/`:
-
 | Version | Venue | Pages | Status |
 |---|---|---|---|
 | `paper/tifs/` | IEEE T-IFS (Q1, IF ~6.8) | 12 | Draft — compiles, no errors |
-| `paper/prl/` | Pattern Recognition Letters (Q1) | 7 | Draft — compiles, no errors |
+| `paper/prltemplate/` | Pattern Recognition Letters (Q1) | 7 | **Submitted — 2026-03-21** |
 
-See `paper/README_paper.md` for build instructions and submission TODOs.
+See `paper/README_paper.md` for build instructions.
 
 ---
 

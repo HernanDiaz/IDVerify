@@ -1,6 +1,6 @@
 # DocVerify — Paper Writing Plan
 **Date started:** 2026-03-14
-**Last updated:** 2026-03-17
+**Last updated:** 2026-03-21
 
 ---
 
@@ -38,18 +38,22 @@
 
 | Journal | Format | Limit | Status |
 |---|---|---|---|
-| **IEEE T-IFS** | IEEEtran double-col | 14p body + refs | ✅ Draft ready — 12 pages |
-| **Pattern Recognition Letters** | elsarticle 5p double-col | 7p incl. refs | ✅ Draft ready — 7 pages |
+| **Pattern Recognition Letters** | elsarticle 5p double-col | 7p incl. refs | ✅ **Submitted — 2026-03-21** |
+| **IEEE T-IFS** | IEEEtran double-col | 14p body + refs | Draft ready — 12 pages |
 | IEEE TNNLS | IEEEtran | 14p | Fallback if T-IFS rejected |
 | Pattern Recognition | elsarticle | Open | Fallback after PRL |
-
-**Strategy:** Submit to T-IFS first (strongest venue). In parallel, PRL is a viable
-target given the paper fits within 7 pages and PRL is less strict on multi-dataset
-requirements.
 
 ---
 
 ## 4. Paper Versions
+
+### PRL (`paper/prltemplate/`) — 7 pages — SUBMITTED
+Condensed version:
+- Sec 4.4 removed (Pareto vs Scalar)
+- Related Work condensed to ~0.7 pages
+- Qualitative: attack-only example (bonafide removed)
+- NCV table: ROC-AUC column removed
+- Author-year citations (`\citep{}`/`\citet{}`)
 
 ### T-IFS (`paper/tifs/`) — 12 pages
 Full version with all sections:
@@ -57,15 +61,6 @@ Full version with all sections:
 - Full qualitative analysis (bonafide + attack examples)
 - Full Related Work (~1.5 pages)
 - NCV table with ROC-AUC column
-
-### PRL (`paper/prl/`) — 7 pages
-Condensed version:
-- Sec 4.4 removed (Pareto vs Scalar)
-- Related Work condensed to ~0.7 pages
-- Qualitative: attack-only example (bonafide removed)
-- NCV table: ROC-AUC column removed
-- Research Highlights in separate `highlights.tex`
-- Author-year citations (`\citep{}`/`\citet{}`)
 
 ---
 
@@ -118,29 +113,18 @@ Condensed version:
 
 ---
 
-## 7. TruFor Comparison (in progress)
+## 7. TODOs
 
-TruFor fine-tuning on FantasyID completed (30 epochs, best avg_det_bacc=0.8763).
-Inference on holdout running → will generate `trufor_finetuned_scores.csv`.
-
-Planned table: **TruFor zero-shot** vs **TruFor fine-tuned** vs **DocVerify**.
-
-Scripts: `sota_comparison/run_trufor_finetuned_inference.py` → `02_eval_comparison.py`
-
----
-
-## 8. TODOs Before Submission
+### PRL — SUBMITTED ✅
+- [x] Ecuaciones en Word corregidas con OOXML Math
+- [x] Data Availability Statement: FantasyID → https://zenodo.org/records/17063366
+- [x] Submission completada en Elsevier Editorial Manager (2026-03-21)
 
 ### T-IFS
 - [ ] Add TruFor fine-tuned row to comparison table once inference completes
 - [ ] Upload model weights to Zenodo → add DOI
 - [ ] Run IEEE PDF checker / Xplore compliance tool
 - [ ] Fill "Manuscript received" date
-
-### PRL
-- [ ] Add TruFor fine-tuned row to comparison table
-- [ ] Fill `\received{}`, `\finalform{}`, `\accepted{}` in frontmatter
-- [ ] Submit Research Highlights file separately as required
 
 ### Both
 - [ ] DeepID Challenge: contact organizers for official test set evaluation

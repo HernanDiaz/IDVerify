@@ -1,5 +1,5 @@
 # DocVerify — Contexto del Proyecto
-**Última actualización:** 2026-03-17
+**Última actualización:** 2026-03-21
 
 ---
 
@@ -11,22 +11,20 @@ Sistema de detección y localización de documentos de identidad falsificados me
 
 ---
 
-## Estado Actual del Proyecto (2026-03-17)
+## Estado Actual del Proyecto (2026-03-21)
 
 ### Experimentos completados
 - ✅ **Pipeline principal v3** — Nested CV 10×5×50, blind test 30 seeds, scalar experiment
 - ✅ **TruFor zero-shot** — Evaluado sobre holdout, métricas en `sota_comparison/trufor_scores.csv`
 - ✅ **TruFor fine-tuning** — 30 épocas sobre FantasyID, mejor avg_det_bacc=0.8763 (época 29)
-- ⏳ **TruFor fine-tuneado inference** — En curso (PID 22856), salida en `trufor_finetuned_output/`
-- ❌ **SIDTD** — Testado e implementado pero excluido del paper por malos resultados
+- ✅ **SIDTD** — Testado e implementado pero excluido del paper por malos resultados
 
 ### Paper
-- ✅ **T-IFS version** — `paper/tifs/`, 12 páginas, IEEEtran, compila sin errores
-- ✅ **PRL version** — `paper/prl/`, 7 páginas, elsarticle, compila sin errores
-- ⏳ **Tabla comparativa TruFor** — Pendiente de completar la inferencia
+- ✅ **PRL version** — `paper/prltemplate/`, 7 páginas, elsarticle — **ENVIADO 2026-03-21**
+- ✅ **T-IFS version** — `paper/tifs/`, 12 páginas, IEEEtran, compila sin errores (pendiente envío)
 
 ### Repositorio
-- ✅ Git limpio — reorganizado, `.gitignore` actualizado, pusheado a origin
+- ✅ Git limpio — `paper/prl/` migrado a `paper/prltemplate/`, resultados CSV subidos, `.gitignore` actualizado
 
 ---
 
@@ -37,6 +35,7 @@ Sistema de detección y localización de documentos de identidad falsificados me
   - Anotaciones JSON con `region_provenance: altered`
   - Split: 85% desarrollo (~2.791 imgs) / 15% holdout (~493 imgs, fijo con random_state=42)
   - Publicado por Idiap Research Institute para el DeepID 2025 Challenge
+  - **URL:** https://zenodo.org/records/17063366
 
 - **SIDTD** — Testado pero excluido. Resultados muy inferiores a FantasyID; diferencias de dominio demasiado grandes.
 
@@ -122,17 +121,6 @@ Sistema de detección y localización de documentos de identidad falsificados me
 
 ---
 
-## TruFor Fine-Tuning
-
-- **Modelo base:** `trufor.pth.tar` (CVPR 2023, Epoch 81)
-- **Estrategia:** Congelar NP++, backbone, loc_head; entrenar conf_head y det_head
-- **Configuración:** 30 épocas, LR=0.001, batch=8, imagen 512×512
-- **Mejor modelo:** época 29, avg_det_bacc=0.8763 → `weights/trufor_fantasyid/best.pth.tar`
-- **Script:** `sota_comparison/run_trufor_finetune.py`
-- **Inferencia:** En curso → `sota_comparison/trufor_finetuned_scores.csv`
-
----
-
 ## Stack Tecnológico
 
 - **Framework:** PyTorch 2.10.0+cu130
@@ -157,15 +145,21 @@ DocVerify/
 ├── scalar_experiment.py             — Experimento escalarización (baseline)
 ├── evaluate_challenge_metrics.py    — Métricas DeepID Challenge
 ├── dataset_sidtd.py                 — Parser SIDTD (excluido del paper)
+├── exports_hpo_pareto_nested/       — Resultados del experimento (en repo)
+│   ├── nested_outer_results.csv     — Métricas por fold (Tabla 2)
+│   ├── optuna_trials_nested.csv     — 2.500 trials HPO
+│   ├── optuna_nested_outer.sqlite3  — BD Optuna completa
+│   ├── final_blind_test_multiseed.csv — Ablación 30 seeds (Tabla 3)
+│   ├── scalar_experiment/           — Comparativa Pareto vs scalar (Tabla 4)
+│   ├── challenge_metrics*.csv       — Métricas challenge (Tabla 5)
+│   └── stat_tests.csv               — Tests estadísticos
 ├── paper/
 │   ├── tifs/                        — Versión T-IFS (12 páginas)
-│   └── prl/                         — Versión PRL (7 páginas)
+│   └── prltemplate/                 — Versión PRL (7 páginas) — ENVIADO 2026-03-21
 ├── paper_figures/                   — Scripts generación figuras
 └── sota_comparison/
     ├── trufor_scores.csv            — TruFor zero-shot sobre holdout
-    ├── trufor_finetuned_scores.csv  — TruFor fine-tuneado sobre holdout
-    ├── holdout_gt.csv               — Ground truth holdout
-    └── comparison_table.tex         — Tabla LaTeX generada
+    └── holdout_gt.csv               — Ground truth holdout
 ```
 
 ---
@@ -197,15 +191,11 @@ Bugs corregidos. N_OUTER=5 insuficiente para potencia estadística Q1 (p_min=0.0
 
 ## Orientación hacia Publicación
 
-**Targets:**
-- **IEEE T-IFS** (Q1, IF ~6.8) — versión principal, 12 páginas
-- **Pattern Recognition Letters** (Q1) — versión compacta, 7 páginas
+**Estado:**
+- **Pattern Recognition Letters** (Q1) — ✅ **ENVIADO 2026-03-21**
+- **IEEE T-IFS** (Q1, IF ~6.8) — Draft listo, pendiente de envío
 
 **Limitaciones conocidas para revisores:**
 - Dataset único (SIDTD excluido por malos resultados)
 - Arquitectura Patel CNN no es estado del arte (posibles peticiones de comparativa con ViT)
 - Evaluación challenge sobre holdout interno, no test set oficial
-
-**Pendiente crítico:**
-- Tabla comparativa TruFor fine-tuneado vs DocVerify (inferencia en curso)
-- Evaluación oficial DeepID Challenge (contactar organizadores)
