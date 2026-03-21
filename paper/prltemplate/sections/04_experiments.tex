@@ -58,15 +58,6 @@ localization quality.
 \subsection{Ablation Study}
 \label{subsec:ablation}
 
-To isolate each design decision, we evaluate four variants on the blind test
-set using 30 independent seeds: \textit{Multitask} (ours, joint detection +
-localization with Pareto-optimized $\lambda_{\text{mask}}$);
-\texttt{cls\_only} (classification head only); \texttt{seg\_only}
-(segmentation head only, detection by thresholding mean mask probability);
-and \texttt{unweighted\_losses} (full multitask, $\lambda_{\text{cls}} =
-\lambda_{\text{mask}} = 0.5$, bypassing HPO).
-Table~\ref{tab:ablation} summarizes results.
-
 \begin{table*}[!t]
   \centering
   \caption{Ablation study (blind test, 30 seeds).
@@ -88,6 +79,15 @@ Table~\ref{tab:ablation} summarizes results.
   \end{tabular}
 \end{table*}
 
+To isolate each design decision, we evaluate four variants on the blind test
+set using 30 independent seeds: \textit{Multitask} (ours, joint detection +
+localization with Pareto-optimized $\lambda_{\text{mask}}$);
+\texttt{cls\_only} (classification head only); \texttt{seg\_only}
+(segmentation head only, detection by thresholding mean mask probability);
+and \texttt{unweighted\_losses} (full multitask, $\lambda_{\text{cls}} =
+\lambda_{\text{mask}} = 0.5$, bypassing HPO).
+Table~\ref{tab:ablation} summarizes results.
+
 Three findings stand out. First, joint multitask training is essential:
 \texttt{cls\_only} produces near-zero Dice ($0.002 \pm 0.008$). Second, a
 dedicated classification head is necessary: \texttt{seg\_only} achieves
@@ -100,14 +100,6 @@ effect), validating the HPO contribution.
 
 \subsection{Pareto HPO vs.\ Scalar Selection}
 \label{subsec:scalar}
-
-A key question for any multi-objective HPO framework is whether the added
-complexity over simpler scalar alternatives yields measurable gains. We
-address this directly by comparing three selection criteria applied to the
-\emph{same} 50 MOTPE trials per outer fold: Pareto (ours, distance
-to ideal point); \texttt{by\_prauc} (select trial maximizing inner-fold
-PR-AUC); and \texttt{by\_dice} (select trial maximizing inner-fold Dice).
-Results on the 10-fold NCV are shown in Table~\ref{tab:scalar}.
 
 \begin{table}[!t]
   \centering
@@ -124,6 +116,14 @@ Results on the 10-fold NCV are shown in Table~\ref{tab:scalar}.
   \end{tabular}
 \end{table}
 
+A key question for any multi-objective HPO framework is whether the added
+complexity over simpler scalar alternatives yields measurable gains. We
+address this directly by comparing three selection criteria applied to the
+\emph{same} 50 MOTPE trials per outer fold: Pareto (ours, distance
+to ideal point); \texttt{by\_prauc} (select trial maximizing inner-fold
+PR-AUC); and \texttt{by\_dice} (select trial maximizing inner-fold Dice).
+Results on the 10-fold NCV are shown in Table~\ref{tab:scalar}.
+
 No statistically significant differences are found between any pair of
 selection criteria (Wilcoxon + Holm, all $p \geq 0.05$, $n = 10$), with
 absolute differences below $0.004$ on PR-AUC and $0.008$ on Dice.
@@ -135,10 +135,6 @@ which ranks detection and localization independently.
 
 \subsection{Comparison with Related Systems}
 \label{subsec:challenge}
-
-Table~\ref{tab:challenge} compares DocVerify against the top participants of
-the DeepID 2025 Challenge on Track~1 (detection F1@0.5) and Track~2
-(per-image localization F1), computed on our 15\% holdout using 30 seeds.
 
 \begin{table}[!t]
   \centering
@@ -163,6 +159,10 @@ the DeepID 2025 Challenge on Track~1 (detection F1@0.5) and Track~2
     \bottomrule
   \end{tabular}
 \end{table}
+
+Table~\ref{tab:challenge} compares DocVerify against the top participants of
+the DeepID 2025 Challenge on Track~1 (detection F1@0.5) and Track~2
+(per-image localization F1), computed on our 15\% holdout using 30 seeds.
 
 This comparison must be interpreted with caution. DocVerify was developed
 independently after the DeepID 2025 Challenge submission deadline had already

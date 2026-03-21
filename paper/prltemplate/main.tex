@@ -2,6 +2,7 @@
 %% DocVerify — Pattern Recognition Letters (PRL) submission
 %%
 %% Format: elsarticle, 5p two-column, author-year (elsarticle-harv)
+%% Style:  prletters.sty as required by the journal
 %% Limit:  7 pages including references
 %%
 %% Build:
@@ -24,8 +25,28 @@
 \usepackage{url}
 \usepackage{microtype}
 
-%% ── PRL journal style ────────────────────────────────────────
+%% ── PRL journal style (required by the journal) ──────────────
 \usepackage{prletters}
+\usepackage{etoolbox}
+
+%% Make abstract span full width (remove Article history / keywords panel)
+\makeatletter
+\renewcommand{\articleinfobox}{}
+\patchcmd{\MaketitleBox}%
+  {\parbox[t]{.4\textwidth}{\unvbox\absbox}}%
+  {\parbox[t]{.777\textwidth}{\unvbox\absbox}}%
+  {}{}
+\patchcmd{\pprintMaketitle}%
+  {\parbox[t]{.4\textwidth}{\unvbox\absbox}}%
+  {\parbox[t]{.777\textwidth}{\unvbox\absbox}}%
+  {}{}
+\renewenvironment{abstract}{%
+  \global\setbox\absbox=\vbox\bgroup%
+  \hsize=.777\textwidth}%
+ {\par\vspace{6pt}%
+  \noindent\mbox{~}\hfill\copyright~\the\year\
+  Elsevier~Ltd.~All~rights~reserved.\egroup}
+\makeatother
 
 %% ── hyperref ─────────────────────────────────────────────────
 \usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
@@ -64,23 +85,25 @@ multi-objective hyperparameter optimization (HPO) framework that treats
 detection quality (PR-AUC) and localization quality (Dice) as simultaneous
 objectives. Using the Multiobjective Tree-structured Parzen Estimator (MOTPE)
 within a 10-fold nested cross-validation protocol (50 trials per outer fold,
-500 unique configurations evaluated across 5 inner splits — 2\,500 individual
+500 unique configurations evaluated across 5 inner splits --- 2\,500 individual
 model trainings in total), DocVerify selects configurations from the
 Pareto-optimal front by minimizing Euclidean distance to the ideal point
-$(1,1)$, without any manual weighting. Evaluated on the FantasyID benchmark,
-DocVerify achieves PR-AUC $= 0.9921 \pm 0.0058$ and
-Dice $= 0.856 \pm 0.030$ under nested cross-validation, and detection
-F1@0.5 $= 0.969 \pm 0.014$ with localization F1 $= 0.807 \pm 0.096$ on the
+(1, 1), without any manual weighting. Evaluated on the FantasyID benchmark,
+DocVerify achieves PR-AUC = 0.9921 ± 0.0058 and
+Dice = 0.856 ± 0.030 under nested cross-validation, and detection
+F1@0.5 = 0.969 ± 0.014 with localization F1 = 0.807 ± 0.096 on the
 blind test set (30 seeds). An ablation confirms that Pareto-optimized loss
 weighting provides a statistically significant Dice improvement over
-equal-weight joint training ($p = 1.3 \times 10^{-4}$, $d = 1.01$, large
-effect) while maintaining equivalent detection accuracy.
+equal-weight joint training (p < 0.001, d = 1.01, large effect)
+while maintaining equivalent detection accuracy.
 \end{abstract}
 
 \begin{keyword}
-identity document forensics \sep forgery detection \sep forgery localization \sep
-multi-task learning \sep multi-objective HPO \sep Pareto front \sep
-nested cross-validation \sep MOTPE
+  identity document forensics \sep
+  multi-objective optimization \sep
+  hyperparameter optimization \sep
+  multi-task learning \sep
+  document forgery detection
 \end{keyword}
 
 \end{frontmatter}

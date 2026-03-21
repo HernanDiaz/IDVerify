@@ -51,7 +51,7 @@ sota_comparison/*.log
 sota_comparison/*.npy
 
 # ============================================================
-# LaTeX — artefactos de compilación (no los PDFs)
+# LaTeX — artefactos de compilación
 # ============================================================
 *.aux
 *.bbl
@@ -59,6 +59,14 @@ sota_comparison/*.npy
 *.spl
 paper/**/*.log
 paper/**/*.out
+paper/prltemplate/main.pdf
+
+# ============================================================
+# Paper — archivos Word temporales y figuras generadas
+# ============================================================
+paper/**/*.docx
+paper_figures/output/
+paper_figures/__pycache__/
 
 # ============================================================
 # Competition baseline (submódulo externo, no rastrear)

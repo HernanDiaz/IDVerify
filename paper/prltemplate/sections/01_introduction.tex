@@ -37,8 +37,7 @@ two objectives are in \emph{structural tension}: the classification head
 benefits from global image features, while the segmentation head requires
 spatially precise, pixel-level representations. Prior work either treats the
 two tasks independently \citep{trufor2023} or collapses both losses into a
-scalar objective via a fixed weight $\lambda$~\citep{caruana1997multitask,
-kendall2018multi}. The choice of $\lambda$ is arbitrary and dataset-dependent.
+scalar objective via a fixed weight $\lambda$~\citep{kendall2018multi}. The choice of $\lambda$ is arbitrary and dataset-dependent.
 A second challenge is the risk of over-fitting the model-selection criterion:
 hyperparameter optimization (HPO) that maximizes PR-AUC may sacrifice Dice, and vice versa.
 
@@ -68,6 +67,17 @@ analysis system that addresses both challenges. Our contributions are:
 
 The source code and experimental artifacts are publicly available at
 \url{https://github.com/HernanDiaz/IDVerify/}.
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{fig0_architecture_compact}
+  \caption{DocVerify architecture. The encoder maps a $3{\times}224{\times}224$
+    input to a $256{\times}7{\times}7$ bottleneck through six convolutional
+    blocks ($8\!\to\!256$ channels). The U-Net decoder reconstructs the forgery
+    mask via skip connections; the classification head outputs a document-level
+    tampered/genuine score.}
+  \label{fig:architecture}
+\end{figure*}
 
 The remainder of the paper is organized as follows. Section~\ref{sec:related}
 reviews related work. Section~\ref{sec:method} describes the DocVerify

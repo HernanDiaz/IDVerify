@@ -34,8 +34,9 @@ document designs, or physical tampering attacks remains an open question.
 \paragraph{Architecture.}
 The lightweight encoder was chosen to make 2\,500-model nested CV tractable;
 richer pretrained backbones~\citep{dosovitskiy2021vit} are expected to improve
-cross-domain generalization but would preclude the rigorous HPO validation
-that is the paper's primary contribution.
+cross-domain generalization but, given their higher training cost, would make
+it challenging to evaluate the same number of model configurations for HPO
+with current computational resources.
 
 \paragraph{Localization variance.}
 The high Track~2 standard deviation ($\pm 0.096$), driven by bonafide
