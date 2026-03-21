@@ -29,10 +29,10 @@ SIDTD/
 # ============================================================
 # Resultados y exportaciones HPO (modelos entrenados, grande)
 # ============================================================
-exports_hpo_pareto_nested/
+exports_hpo_pareto_nested/models/
 experimento1/
 experimento2/
-*.sqlite3
+exports_hpo_pareto_nested/resumen_experimento_v3.docx
 *.zip
 *.pt
 
