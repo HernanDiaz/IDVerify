@@ -23,7 +23,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Theme | Reviewer 1 | Reviewer 2 | Planned action |
 |-------|-----------|-----------|----------------|
 | Cross-domain / 2nd dataset (SIDTD) | R1.2 | R2.1.1, R2.2.1 | _TBD_ |
-| Table 5 comparison not on same test set | R1.6 | R2.1.2, R2.2.2 | _TBD_ |
+| Table 5 comparison not on same test set | R1.6 | R2.1.2, R2.2.2 | **DONE** — boldface caveat in Table 5 caption; competitive language removed from Sec. 4.5 + Conclusion |
 | Pareto vs scalar — weak evidence | R1.5 | R2.1 (implied), R2.2.4 | _TBD_ |
 | Data augmentation | R1.4 | R2.1.5 | _TBD_ |
 | Class imbalance | — | R2.1.4, R2.2.3 | **DONE** — justification (positive=majority, mild ratio) + pos_weight sensitivity sweep (30 seeds, all p_Holm>0.05); note in Sec. 3.1, full table in this letter |
@@ -119,9 +119,26 @@ AG FantasyID = 0.686), and consistent with the repository code
 > *Either remove the challenge comparison from Table 5 and move it to a clearly-labeled
 > appendix, or add a boldface caveat directly in the table caption.*
 
-**Response:** _TBD_
+**Response:** We kept Table 5 in the main text, as it gives readers useful context, but
+strengthened the caveats and removed all competitive language (addressing R1.6, R2.1.2 and
+R2.2.2 jointly):
+1. **Boldface caveat in the caption.** The Table 5 caption now states, in bold, that *the
+   evaluation sets differ and the results are not directly comparable*: the $\dagger$ entries use
+   the official challenge test set (FantasyID test partition plus a private out-of-domain
+   PXL Vision set), whereas DocVerify is evaluated on our internal 15% holdout; no ranking is
+   implied.
+2. **Competitive language removed.** The sentence that claimed DocVerify "substantially exceeds"
+   and "approaches" specific systems has been replaced by an explicit disclaimer that we do not
+   claim superiority over any challenge entry and report the numbers only to situate DocVerify in
+   context.
+3. The surrounding text still explains the protocol difference and the training-data disparity
+   (e.g. Sunlight augments FantasyID with external identity documents; TruFor is pre-trained on
+   general-purpose manipulation images).
 
-**Changes:** _TBD_
+**Changes:** Sec. 4.5, Table 5 caption: added the boldface "Evaluation sets differ and results
+are not directly comparable" caveat. Sec. 4.5 text: removed competitive/ranking language and
+replaced it with a non-superiority disclaimer. Fixed the fusion-row citation to point only to
+the challenge leaderboard (the source of the 0.958 figure).
 
 ---
 
@@ -187,9 +204,11 @@ AG FantasyID = 0.686), and consistent with the repository code
 > *Despite acknowledging this discrepancy, the author draws competitive conclusions... that
 > are not statistically justified.*
 
-**Response:** _TBD_ (see also R2.2.2, R1.6)
+**Response:** Addressed jointly with R1.6 (and R2.2.2). We removed the competitive conclusions
+and added a boldface caveat in the Table 5 caption stating that the evaluation sets differ and
+the results are not directly comparable. We no longer claim superiority over any challenge entry.
 
-**Changes:** _TBD_
+**Changes:** See R1.6 — Table 5 caption caveat + removal of competitive language in Sec. 4.5.
 
 ---
 
@@ -269,9 +288,15 @@ on PR-AUC or Dice.
 > *Add a clearly formatted disclaimer box within the table itself (not only in the text) and
 > remove any competitive language from the conclusions.*
 
-**Response:** _TBD_ (see also R1.6)
+**Response:** Addressed jointly with R1.6 and R2.1.2. As requested, the disclaimer is now *inside
+the table* (a boldface caveat in the Table 5 caption stating the evaluation sets differ and the
+results are not directly comparable), not only in the running text. All competitive language has
+been removed from the comparison text and from the Conclusion, which now states only that
+DocVerify is "broadly competitive... indicative only, since challenge systems used a different
+test set."
 
-**Changes:** _TBD_
+**Changes:** See R1.6 — boldface caveat in the Table 5 caption + removal of competitive language
+in Sec. 4.5 and the Conclusion.
 
 ---
 

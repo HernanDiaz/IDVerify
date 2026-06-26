@@ -141,8 +141,10 @@ which ranks detection and localization independently.
   \small
   \caption{Comparison with DeepID 2025 Challenge systems on Track~1
     (detection F1@0.5) and Track~2 (per-image localization F1).
-    $\dagger$: official challenge test set;
-    DocVerify on internal holdout (see text).
+    \rev{\textbf{Evaluation sets differ and results are not directly
+    comparable:} $\dagger$ entries use the official challenge test set
+    (FantasyID test partition plus a private out-of-domain PXL~Vision set),
+    whereas DocVerify uses our internal 15\% holdout; no ranking is implied.}
     Dashes: result not reported.}
   \label{tab:challenge}
   \begin{tabular}{p{3.6cm}cc}
@@ -151,7 +153,7 @@ which ranks detection and localization independently.
     \midrule
     Sunlight~\citep{remtkd2025} (1st)$^\dagger$    & 0.991 & 0.784 \\
     Incode (2nd)$^\dagger$                          & 0.868 & —     \\
-    \rev{EdgeDoc+TruFor fusion (3rd)}~\citep{edgedoc2025,deepid2025challenge}$^\dagger$ & \rev{0.958} & \rev{0.686} \\
+    \rev{EdgeDoc+TruFor fusion (3rd)}~\citep{deepid2025challenge}$^\dagger$ & \rev{0.958} & \rev{0.686} \\
     \rev{\quad EdgeDoc standalone}~\citep{edgedoc2025}    & \rev{0.43} & \rev{—}     \\
     UAM-Biometrics (4th)$^\dagger$                  & 0.712 & —     \\
     TruFor~\citep{trufor2023} baseline$^\dagger$   & 0.807 & 0.590 \\
@@ -179,17 +181,18 @@ in Table~\ref{tab:challenge}. Sunlight augmented the FantasyID training set
 with over 60\,000 external identity document images; the TruFor baseline
 was pre-trained on 876\,000 general-purpose manipulation images before any
 fine-tuning. \rev{The third-place entry corresponds to the EdgeDoc+TruFor
-\emph{fusion} submission (F1@0.5 $= 0.958$~\citep{edgedoc2025,deepid2025challenge}), which also
+\emph{fusion} submission (F1@0.5 $= 0.958$~\citep{deepid2025challenge}), which also
 relies on the pre-trained TruFor backbone; the EdgeDoc architecture trained
 on FantasyID alone reaches F1@0.5 $= 0.43$ (\citealp{edgedoc2025}, Table~2).
 By contrast, EdgeDoc (standalone), UAM-Biometrics, and DocVerify train
 exclusively on FantasyID, making them more directly comparable to one another.}
 
 With that caveat, DocVerify achieves F1@0.5 $= 0.969 \pm 0.014$ on
-Track~1. \rev{Among the systems trained on FantasyID alone, this substantially
-exceeds the EdgeDoc standalone architecture ($0.43$) and UAM-Biometrics
-($0.712$), and approaches the EdgeDoc+TruFor fusion ($0.958$) and Sunlight
-($0.991$), both of which rely on external pre-training.} On Track~2, DocVerify
+Track~1. \rev{Because this is measured on a different evaluation set, we do not
+claim superiority over any challenge entry; we report it only to situate
+DocVerify among the FantasyID-only methods (EdgeDoc standalone $0.43$,
+UAM-Biometrics $0.712$) and the externally pre-trained systems (fusion $0.958$,
+Sunlight $0.991$).} On Track~2, DocVerify
 achieves F1$_{\text{loc}} = 0.807 \pm 0.096$, comparable to the
 challenge winner Sunlight ($0.784$); however, the margin ($+0.023$) is
 well within the standard deviation of our estimates and should not be
