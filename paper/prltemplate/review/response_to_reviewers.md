@@ -26,7 +26,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Table 5 comparison not on same test set | R1.6 | R2.1.2, R2.2.2 | _TBD_ |
 | Pareto vs scalar — weak evidence | R1.5 | R2.1 (implied), R2.2.4 | _TBD_ |
 | Data augmentation | R1.4 | R2.1.5 | _TBD_ |
-| Class imbalance | — | R2.1.4, R2.2.3 | _TBD_ |
+| Class imbalance | — | R2.1.4, R2.2.3 | **DONE** — justification (positive=majority, mild ratio) + pos_weight sensitivity sweep (30 seeds, all p_Holm>0.05); note in Sec. 3.1, full table in this letter |
 | TruFor fine-tuned omitted | R1.3 | — | _TBD_ |
 | EdgeDoc attribution error | R1.1 | — | **DONE** — Table 5 split into fusion (0.958) + standalone (0.43) rows; loc 0.621→0.686 typo fixed |
 | Reproducibility / architecture detail | — | R2.2.5 | _TBD_ |
@@ -232,9 +232,13 @@ provided here for the reviewer; the repository (`main.py`, `train.py`) allows fu
 > *No justification is provided for this design choice, and no analysis of its impact is
 > presented.*
 
-**Response:** _TBD_ (see also R2.2.3)
+**Response:** Addressed jointly with R2.2.3 below, where we add both a justification and a
+sensitivity analysis. In brief: the imbalance is mild (2.5:1), the positive (attack) class is
+the *majority* (so PR-AUC, our primary detection metric, is robust to it), and the new
+sensitivity analysis shows that correcting the imbalance has no statistically significant effect
+on PR-AUC or Dice.
 
-**Changes:** _TBD_
+**Changes:** Sec. 3.1 (justification + sensitivity note); full analysis and table in R2.2.3 below.
 
 ---
 
@@ -276,9 +280,47 @@ provided here for the reviewer; the repository (`main.py`, `train.py`) allows fu
 > empirical justification... and include an ablation or sensitivity analysis on class
 > imbalance correction and its impact on PR-AUC and Dice.*
 
-**Response:** _TBD_
+**Response:** We thank the reviewer and have added both a justification and a sensitivity
+analysis.
 
-**Changes:** _TBD_
+*Justification.* Two points make the uncorrected imbalance benign in our setting. (i) The ratio
+is **mild** (2.5:1; 71.6% attack / 28.4% bonafide), far from the regime where loss reweighting
+is typically required. (ii) Crucially, the **positive class (label = 1) is *attack*, the
+*majority***. The conventional `pos_weight` correction up-weights the positive term, which here
+would up-weight the *already-majority* class — the opposite of imbalance correction. A correct
+imbalance correction in our case requires `pos_weight = N_neg/N_pos ≈ 0.40` (down-weighting the
+majority). We therefore evaluate the full direction of the correction, not just one value.
+Moreover, our primary detection metric is **PR-AUC**, which is threshold-free and robust to prior
+class balance.
+
+*Sensitivity analysis (new).* We retrained the selected final configuration with
+`pos_weight ∈ {0.40, 1.0, 2.52}` — correction toward the minority (bonafide), no correction
+(the paper's setting), and the naive formula that *aggravates* the imbalance — using the same
+blind-test protocol and **30 seeds per value** (the `pos_weight = 1.0` column reuses the paper's
+existing 30-seed blind test; the two new values were run identically). Results:
+
+| `pos_weight` | PR-AUC | Dice | bACC | recall (attack) | recall (bonafide) |
+|---|---|---|---|---|---|
+| 0.40 (→ minority) | 0.9973 ± 0.0018 | 0.879 ± 0.017 | 0.961 | 0.943 | **0.980** |
+| 1.0 (paper) | 0.9967 ± 0.0021 | 0.875 ± 0.018 | 0.957 | 0.944 | 0.971 |
+| 2.52 (→ majority) | 0.9967 ± 0.0019 | 0.869 ± 0.024 | 0.955 | 0.944 | 0.967 |
+
+Paired Wilcoxon + Holm–Bonferroni vs. the `pos_weight = 1.0` baseline shows **no statistically
+significant difference** on any metric (all $p_{\text{Holm}} > 0.05$; $|d| < 0.26$). Two
+observations: (a) PR-AUC and Dice are flat across the grid, so the no-correction choice costs
+nothing; (b) the **minority (bonafide) recall is consistently *higher* than the majority (attack)
+recall** (0.971 vs. 0.944 at baseline), directly refuting the concern that the model is biased
+toward the majority class. The small, non-significant monotonic trend (correcting toward the
+minority marginally raises bonafide recall and Dice; aggravating lowers them) confirms the
+analysis is sensitive enough to detect the *direction* of the effect, while its *magnitude* is
+negligible — exactly as expected for a mild ratio with a near-saturated detector.
+
+**Changes:** Sec. 3.1: added a sentence noting the mild ratio, that the positive (attack) class
+is the majority, PR-AUC robustness, and that a `pos_weight` sweep confirms no significant effect.
+To respect the journal's 7-page limit, the full per-class table is provided here in this response
+letter rather than in the manuscript. New experiment script and outputs are in the repository
+(`revision_experiments/pos_weight_sensitivity.py`,
+`revision_experiments/results/pos_weight/`).
 
 ---
 

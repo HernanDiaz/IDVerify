@@ -159,10 +159,11 @@ def _train_one_epoch(
     epoch:       int,
     max_epochs:  int,
     desc:        str = "",
+    pos_weight:  torch.Tensor | None = None,
 ) -> float:
     """Entrena una epoch con AMP, gradient clipping y barra de progreso."""
     model.train()
-    bce_fn     = nn.BCEWithLogitsLoss()
+    bce_fn     = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     total_loss = 0.0
     n_batches  = len(loader)
 
@@ -360,6 +361,10 @@ def _train_with_early_stopping(
 
     lw_cls = 0.0 if variant == "seg_only" else 1.0
 
+    _pw = params.get("pos_weight")
+    pos_weight = (torch.tensor([float(_pw)], device=device)
+                  if _pw is not None else None)
+
     outer_pbar = tqdm(range(1, max_epochs + 1),
                       desc=f"  Entrenando {desc}", unit="epoch", leave=True)
 
@@ -368,6 +373,7 @@ def _train_with_early_stopping(
             model, loader_tr, optimizer, scaler, device,
             lw_cls=lw_cls, lw_mask=lw_mask,
             epoch=epoch, max_epochs=max_epochs, desc=desc,
+            pos_weight=pos_weight,
         )
 
         pr_auc, dice = _eval_prauc_dice(model, loader_va, device)
