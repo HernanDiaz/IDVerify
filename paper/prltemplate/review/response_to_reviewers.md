@@ -30,7 +30,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | TruFor fine-tuned omitted | R1.3 | — | _TBD_ |
 | EdgeDoc attribution error | R1.1 | — | **DONE** — Table 5 split into fusion (0.958) + standalone (0.43) rows; loc 0.621→0.686 typo fixed |
 | Reproducibility / architecture detail | — | R2.2.5 | _TBD_ |
-| Blind-holdout protocol timing | — | R2.1.3 | _TBD_ |
+| Blind-holdout protocol timing | — | R2.1.3 | **DONE** — Sec. 3.1 sentence + 3-leg evidence (code isolation, git chronology, threshold from dev-internal val) |
 | Pre-trained backbone baseline | R1.7 | — | _TBD_ |
 | Qualitative: failure cases | R1.8 | — | _TBD_ |
 | Citation precision | R1.9 | — | _TBD_ |
@@ -198,9 +198,33 @@ AG FantasyID = 0.686), and consistent with the repository code
 > designed. If the holdout was used at any point during development... the blind test results
 > may be optimistically biased.*
 
-**Response:** _TBD_
+**Response:** We thank the reviewer for raising this. The 15% holdout was carved off **once, at
+the very start**, before any hyperparameter search or model-design decision, and was accessed
+only for the final 30-seed blind evaluation. This is verifiable in the public repository on
+three independent grounds:
 
-**Changes:** _TBD_
+1. **Structural (code).** In `main.py`, `load_and_prepare_data()` applies a single
+   `GroupShuffleSplit(test_size=0.15, random_state=42)` to separate the holdout *first*; the
+   nested cross-validation (`run_nested_cv`) receives only the 85% development partition, and
+   `run_blind_test` is invoked exactly once at the end. Anti-leakage assertions by document
+   identity (`stem`) guarantee the partitions are disjoint. Crucially, the classification
+   threshold is **not** tuned on the holdout: in `train.py` it is selected by a sweep over a
+   development-internal validation split (`loader_sel`, itself a `GroupShuffleSplit` within the
+   development set) and then applied unchanged to the holdout. No hyperparameter, model, or
+   decision threshold is informed by the holdout.
+
+2. **Chronological (git history).** The holdout split predates all experiments: it is present
+   from the first PyTorch commit, before the HPO ranges were refined and before the blind test
+   was run. Configuration changes made *after* the blind test did not touch `test_size`,
+   early-stopping patience, epoch budgets, or HPO ranges.
+
+3. **Discipline.** No design choice (early-stopping patience, epoch budget, HPO ranges,
+   classification threshold) was at any point informed by holdout performance.
+
+**Changes:** Sec. 3.1: added an explicit sentence (highlighted) stating that the split was
+performed once, before any hyperparameter search or model-design decision, and that the holdout
+was accessed only for the final blind evaluation. The structural/chronological evidence above is
+provided here for the reviewer; the repository (`main.py`, `train.py`) allows full verification.
 
 ---
 

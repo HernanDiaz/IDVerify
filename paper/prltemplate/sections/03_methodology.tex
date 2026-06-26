@@ -22,7 +22,9 @@ apply \texttt{GroupShuffleSplit} to all 3\,284 available FantasyID images
 (grouping by document identity, $\text{test\_size}=0.15$,
 \texttt{random\_state}=42) to obtain approximately 2\,791 development images
 and 493 blind holdout images, ensuring all captures of the same document
-identity remain in the same partition. The dataset is class-imbalanced:
+identity remain in the same partition. \rev{This split was performed once,
+before any hyperparameter search or model-design decision, and the holdout
+was accessed only for the final blind evaluation.} The dataset is class-imbalanced:
 2\,351 attack images (71.6\%) and 933 bonafide images (28.4\%); this
 imbalance is preserved in all splits and not corrected via resampling or
 loss weighting.
