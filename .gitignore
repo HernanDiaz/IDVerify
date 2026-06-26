@@ -90,3 +90,8 @@ desktop.ini
 # Claude worktrees (uso interno)
 # ============================================================
 .claude/worktrees/
+
+# ============================================================
+# PDFs de referencia para la revisión (pesados, no rastrear)
+# ============================================================
+BIB/
