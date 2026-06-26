@@ -28,7 +28,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Data augmentation | R1.4 | R2.1.5 | _TBD_ |
 | Class imbalance | — | R2.1.4, R2.2.3 | **DONE** — justification (positive=majority, mild ratio) + pos_weight sensitivity sweep (30 seeds, all p_Holm>0.05); note in Sec. 3.1, full table in this letter |
 | TruFor fine-tuned omitted | R1.3 | — | _TBD_ |
-| EdgeDoc attribution error | R1.1 | — | **DONE** — Table 5 split into fusion (0.958) + standalone (0.43) rows; loc 0.621→0.686 typo fixed |
+| EdgeDoc attribution error | R1.1 | — | **DONE** — Table 5 row renamed to fusion (0.958), cited to challenge leaderboard; standalone 0.43 noted in text; loc 0.621→0.686 typo fixed |
 | Reproducibility / architecture detail | — | R2.2.5 | _TBD_ |
 | Blind-holdout protocol timing | — | R2.1.3 | **DONE** — Sec. 3.1 sentence + 3-leg evidence (code isolation, git chronology, threshold from dev-internal val) |
 | Pre-trained backbone baseline | R1.7 | — | _TBD_ |
@@ -49,21 +49,22 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 > exact origin of the 0.958 value.*
 
 **Response:** We thank the reviewer for catching this. The reviewer is correct. We verified
-the value against George & Marcel (2025, Table 2): on the FantasyID partition of the DeepID
-2025 leaderboard, EdgeDoc **standalone** achieves F1 = 0.43, TruFor achieves F1 = 0.81, and
-the **EdgeDoc+TruFor fusion** achieves F1 = 0.96. Our original "AG/EdgeDoc = 0.958" row
+the values against the DeepID 2025 leaderboard: EdgeDoc **standalone** achieves F1 = 0.43
+(George & Marcel, 2025, Table 2), TruFor achieves F1 = 0.81, and the **EdgeDoc+TruFor fusion**
+achieves F1 = 0.96 (Korshunov et al., 2025, Table 2). Our original "AG/EdgeDoc = 0.958" row
 conflated the third-place team's *fusion* submission with the EdgeDoc architecture in
-isolation. We have corrected Table 5 to report both rows explicitly — EdgeDoc+TruFor fusion
-(0.96) and EdgeDoc standalone (0.43) — and we now note that the fusion relies on the
-pre-trained TruFor backbone, whereas EdgeDoc standalone is the FantasyID-only comparator.
-With the corrected attribution, DocVerify (0.969) substantially outperforms the only other
-FantasyID-only architectures (EdgeDoc standalone 0.43; UAM-Biometrics 0.712).
+isolation. We have renamed the row to "EdgeDoc+TruFor fusion (3rd)" and cite the 0.958 figure
+only to the challenge leaderboard (its actual source), and we state in the running text that
+the EdgeDoc architecture trained on FantasyID alone reaches F1 = 0.43, noting that the fusion
+relies on the pre-trained TruFor backbone whereas EdgeDoc standalone is the FantasyID-only
+comparator. Consistent with our response to R1.6/R2.1.2/R2.2.2, we do not draw competitive
+conclusions from these numbers, since DocVerify is evaluated on a different (internal) test set.
 
-**Changes:** Table 5 (Sec. 4.5): replaced the single "AG/EdgeDoc (3rd) 0.958" row with two
-rows — "EdgeDoc+TruFor fusion (3rd) 0.96" and "EdgeDoc standalone 0.43", both citing
-George & Marcel (2025, Table 2). Updated the two surrounding text passages (training-data
-disparity paragraph and the Track-1 comparison sentence) accordingly. Competitive language
-moderated.
+**Changes:** Table 5 (Sec. 4.5): renamed the "AG/EdgeDoc (3rd) 0.958" row to "EdgeDoc+TruFor
+fusion (3rd)", with the citation pointing only to the challenge leaderboard (Korshunov et al.,
+2025), the source of the 0.958 figure. The EdgeDoc standalone value (0.43; George & Marcel,
+2025, Table 2) is reported in the running text rather than as a separate row. Updated the
+surrounding passages; competitive language removed (see R1.6).
 
 **Note (internal, not for reviewer):** the fusion row's localization value was corrected from
 0.621 (LaTeX transcription typo in the previous draft) to **0.686**, verified against
