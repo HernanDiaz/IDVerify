@@ -32,11 +32,15 @@ research institute. Generalization to real-world identity documents, unseen
 document designs, or physical tampering attacks remains an open question.
 
 \paragraph{Architecture.}
-The lightweight encoder was chosen to make 2\,500-model nested CV tractable;
-richer pretrained backbones~\citep{dosovitskiy2021vit} are expected to improve
-cross-domain generalization but, given their higher training cost, would make
-it challenging to evaluate the same number of model configurations for HPO
-with current computational resources.
+The lightweight encoder was chosen to make 2\,500-model nested CV tractable.
+\rev{To confirm that the proposed MOTPE/Pareto protocol is not specific to this
+encoder, we applied the identical procedure to an ImageNet-pretrained ResNet-18
+backbone: it attained comparable blind-test performance (PR-AUC $0.994$,
+Dice $0.889$; full results archived externally~\citep{docverify_zenodo}),
+confirming the methodology is architecture-agnostic.}
+Richer pretrained backbones~\citep{dosovitskiy2021vit} are expected to further
+improve cross-domain generalization but, given their higher training cost, would
+make full nested-CV HPO challenging with current computational resources.
 
 \paragraph{Localization variance.}
 The high Track~2 standard deviation ($\pm 0.096$), driven by bonafide
