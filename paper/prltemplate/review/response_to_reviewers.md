@@ -122,8 +122,25 @@ a clean, synthetic dataset, so the un-augmented holdout penalises the train–te
 mismatch that augmentation introduces. The experiment script is included in the code repository
 (`revision_experiments/augmentation_ablation.py`); the per-seed CSVs are archived at [Zenodo].
 
+To rule out the alternative hypothesis that augmentation might trade in-domain accuracy for
+*cross-domain* robustness, we additionally evaluated both sets of 30 models zero-shot on the
+out-of-domain SIDTD dataset (templates subset; 1000 bonafide, 1222 attack), paired by seed:
+
+| Metric (SIDTD zero-shot) | No aug | With aug | Δ (aug−noaug) | Cohen's d | p (Holm) |
+|---|---|---|---|---|---|
+| PR-AUC | 0.5554 ± 0.0110 | 0.5639 ± 0.0096 | +0.0085 | +0.55 | 0.077 (n.s.) |
+| ROC-AUC | 0.5041 ± 0.0094 | 0.5089 ± 0.0060 | +0.0048 | +0.41 | 0.199 (n.s.) |
+
+Both conditions remain essentially at chance on SIDTD (PR-AUC ≈ 0.55–0.56, ROC-AUC ≈ 0.50–0.51):
+the FantasyID→SIDTD domain gap is too large for standard augmentation to close. The small PR-AUC
+gain in favour of augmentation does not survive Holm correction, so we make **no claim** that
+augmentation improves cross-domain generalization; we report this only for completeness, and it
+reinforces that FantasyID is a narrow synthetic domain (consistent with our Limitations
+paragraph). Script: `revision_experiments/sidtd_generalization.py`; CSVs archived at [Zenodo].
+
 **Changes:** Sec. 4.1 (Experimental Setup): added one sentence justifying the no-augmentation
-protocol with the ablation result, citing the external archive.
+protocol with the ablation result, citing the external archive. No additional paper text for the
+cross-domain check (null result; reported here for completeness only).
 
 ---
 
