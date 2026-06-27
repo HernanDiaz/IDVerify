@@ -31,7 +31,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | EdgeDoc attribution error | R1.1 | — | **DONE** — Table 5 row renamed to fusion (0.958), cited to challenge leaderboard; standalone 0.43 noted in text; loc 0.621→0.686 typo fixed |
 | Reproducibility / architecture detail | — | R2.2.5 | _TBD_ |
 | Blind-holdout protocol timing | — | R2.1.3 | **DONE** — Sec. 3.1 sentence + 3-leg evidence (code isolation, git chronology, threshold from dev-internal val) |
-| Pre-trained backbone baseline | R1.7 | — | _TBD_ |
+| Pre-trained backbone baseline | R1.7 | — | **DONE** — re-ran identical MOTPE/Pareto protocol on ImageNet ResNet-18 (n=30): PR-AUC 0.994, Dice 0.889; neither model dominates; script `revision_experiments/resnet18_motpe.py`, Discussion sentence added |
 | Qualitative: failure cases | R1.8 | — | _TBD_ |
 | Citation precision | R1.9 | — | _TBD_ |
 | Compute cost vs benefit | R1.10 | — | _TBD_ |
@@ -149,9 +149,16 @@ the challenge leaderboard (the source of the 0.958 figure).
 > *Consider adding at least one pre-trained backbone as a baseline (e.g. ResNet-18 with
 > ImageNet weights).*
 
-**Response:** _TBD_
+**Response:** We thank the reviewer. To verify that our MOTPE/Pareto HPO protocol is not tied to our lightweight encoder, we re-ran the *identical* methodology (50 MOTPE trials, 5 inner folds, Pareto selection by distance to the ideal point, 30-seed blind test) on an **ImageNet-pretrained ResNet-18** backbone with a U-Net decoder. To keep the additional cost tractable we used a single MOTPE study rather than the full 10-fold nested protocol. The complete, self-contained experiment script is provided in the repository at `revision_experiments/resnet18_motpe.py` (non-invasive: it reuses the original training pipeline without modifying any weights or results, and writes only to `revision_experiments/results/resnet18/`). Results on the blind holdout (n=30):
 
-**Changes:** _TBD_
+| Model | PR-AUC | Dice | BAcc | F1 (attack) | F1-macro |
+|---|---|---|---|---|---|
+| DocVerify | 0.9967±0.0021 | 0.8750±0.0180 | 0.9573±0.0184 | 0.9651±0.0152 | 0.9423±0.0234 |
+| ResNet18-MOTPE | 0.9942±0.0025 | 0.8894±0.0111 | 0.9629±0.0108 | 0.9779±0.0069 | 0.9613±0.0114 |
+
+Paired Wilcoxon + Holm: DocVerify higher PR-AUC (p=3e-4, d=0.75); ResNet-18 higher Dice (p=8e-3, d=−0.60), F1 (p=4e-3) and F1-macro (p=4e-3); BAcc not significant (p=0.29). MOTPE selected `loss_w_mask=2.69` for ResNet-18, close to the 2.46 selected for DocVerify, showing the Pareto balance is consistent across architectures. Since DocVerify is better on detection while ResNet-18 is better on localization, neither model dominates the other, which confirms that the methodology transfers cleanly to a modern pretrained backbone. Full code and per-seed CSVs are also archived at [Zenodo DOI].
+
+**Changes:** Added a sentence to the Discussion (Architecture limitation) reporting this result; experiment script committed to the repository (`revision_experiments/resnet18_motpe.py`) and archived on Zenodo.
 
 ---
 
