@@ -25,7 +25,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Cross-domain / 2nd dataset (SIDTD) | R1.2 | R2.1.1, R2.2.1 | _TBD_ |
 | Table 5 comparison not on same test set | R1.6 | R2.1.2, R2.2.2 | **DONE** — boldface caveat in Table 5 caption; competitive language removed from Sec. 4.5 + Conclusion |
 | Pareto vs scalar — weak evidence | R1.5 | R2.1 (implied), R2.2.4 | _TBD_ |
-| Data augmentation | R1.4 | R2.1.5 | _TBD_ |
+| Data augmentation | R1.4 | R2.1.5 | DONE |
 | Class imbalance | — | R2.1.4, R2.2.3 | **DONE** — justification (positive=majority, mild ratio) + pos_weight sensitivity sweep (30 seeds, all p_Holm>0.05); note in Sec. 3.1, full table in this letter |
 | TruFor fine-tuned omitted | R1.3 | — | _TBD_ |
 | EdgeDoc attribution error | R1.1 | — | **DONE** — Table 5 row renamed to fusion (0.958), cited to challenge leaderboard; standalone 0.43 noted in text; loc 0.621→0.686 typo fixed |
@@ -97,11 +97,33 @@ AG FantasyID = 0.686), and consistent with the repository code
 
 ### R1.4 — No data augmentation
 > *Please add standard augmentation (moderate rotation, brightness variation, Gaussian blur)
-> and report results with and without it.*
+> and report results with and without it. If augmentation degrades performance, that is itself
+> informative.*
 
-**Response:** _TBD_
+**Response:** We added the requested ablation. Using the paper's Pareto configuration and the
+identical blind-test protocol (30 seeds), we trained a second set of models with five standard
+augmentations applied **only** to the training loader (rotation ±10°, brightness ×[0.8,1.2],
+contrast ×[0.8,1.2], Gaussian blur k=3 σ∈[0.1,2.0], JPEG compression q∈[50,95]); the
+validation and holdout sets remain un-augmented. The "no aug" condition reuses the paper's
+blind test, so the comparison is paired by seed and analysed with Wilcoxon + Holm + Cohen's d.
 
-**Changes:** _TBD_
+| Metric | No aug | With aug | Δ (aug−noaug) | Cohen's d | p (Holm) |
+|---|---|---|---|---|---|
+| PR-AUC | 0.9967 ± 0.0021 | 0.9577 ± 0.0457 | −0.039 | −0.84 | 1.5e−8 |
+| Dice | 0.8750 ± 0.0180 | 0.7797 ± 0.0396 | −0.095 | −2.10 | 9.3e−9 |
+| BAcc | 0.9573 ± 0.0184 | 0.8302 ± 0.1007 | −0.127 | −1.20 | 5.6e−9 |
+| F1₁ | 0.9651 ± 0.0152 | 0.8593 ± 0.1061 | −0.106 | −0.97 | 1.1e−8 |
+| F1-macro | 0.9423 ± 0.0234 | 0.7998 ± 0.1136 | −0.142 | −1.19 | 7.5e−9 |
+
+Augmentation degrades all five metrics significantly (Holm-corrected p < 1e−7 in every case)
+and roughly doubles-to-quintuples their variance. As the reviewer anticipated ("if augmentation
+degrades performance, that is itself informative"), this confirms our design choice: FantasyID is
+a clean, synthetic dataset, so the un-augmented holdout penalises the train–test distribution
+mismatch that augmentation introduces. The experiment script is included in the code repository
+(`revision_experiments/augmentation_ablation.py`); the per-seed CSVs are archived at [Zenodo].
+
+**Changes:** Sec. 4.1 (Experimental Setup): added one sentence justifying the no-augmentation
+protocol with the ablation result, citing the external archive.
 
 ---
 
@@ -273,7 +295,12 @@ on PR-AUC or Dice.
 > *An unusual and potentially limiting choice for a dataset of only ~2,791 training images.
 > No ablation or justification for this decision is provided.*
 
-**Response:** _TBD_ (see also R1.4)
+**Response:** We now provide both an ablation and a justification (see R1.4 for the full
+30-seed paired comparison). In short, applying five standard augmentations significantly degrades
+every metric on the clean synthetic FantasyID holdout (e.g. Dice 0.875→0.780, PR-AUC
+0.997→0.958; all Holm-corrected p < 1e−7), confirming that the no-augmentation protocol is a
+deliberate, empirically-grounded choice rather than an oversight. Sec. 4.1 now states this with
+a one-sentence justification citing the external archive.
 
 **Changes:** _TBD_
 

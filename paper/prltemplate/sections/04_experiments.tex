@@ -13,7 +13,15 @@ equipped with an AMD Ryzen~5 3400G (3.70\,GHz), 32\,GB DDR4-3200 RAM, and an NVI
 RTX~5060\,Ti (16\,GB VRAM), using PyTorch 2.10.0 with CUDA 13.0 and
 Optuna~3.x. Training uses a batch size of 64 and no data augmentation:
 all images are resized to $224\!\times\!224$ pixels and normalised to
-$[0,1]$ prior to caching in GPU memory. The full NCV pipeline required
+$[0,1]$ prior to caching in GPU memory.
+\rev{This choice is deliberate: applying standard augmentation (rotation
+$\pm10^\circ$, brightness, contrast, Gaussian blur, and JPEG compression)
+significantly degraded every metric on the FantasyID holdout
+(Dice $0.875\!\to\!0.780$, PR-AUC $0.997\!\to\!0.958$; all $p<10^{-7}$, paired
+Wilcoxon over $n=30$ seeds), as the clean synthetic test distribution penalises
+augmentation-induced train--test mismatch; per-seed results are archived
+externally~\citep{docverify_zenodo}.}
+The full NCV pipeline required
 approximately 59~hours; VRAM caching reduces per-trial training time from
 $\sim$12 to $\sim$3.5 minutes.
 
