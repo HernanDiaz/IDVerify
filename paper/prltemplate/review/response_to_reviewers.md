@@ -23,12 +23,12 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Theme | Reviewer 1 | Reviewer 2 | Planned action |
 |-------|-----------|-----------|----------------|
 | Cross-domain / 2nd dataset (SIDTD) | R1.2 | R2.1.1, R2.2.1 | _TBD_ |
-| Table 5 comparison not on same test set | R1.6 | R2.1.2, R2.2.2 | **DONE** — boldface caveat in Table 5 caption; competitive language removed from Sec. 4.5 + Conclusion |
+| Challenge comparison not on same test set | R1.6 | R2.1.2, R2.2.2 | **DONE** — removed the challenge comparison table (reviewer's first option); §4.5 condensed to one paragraph, all caveats inline (differing sets, no superiority claim, training-data disparity) |
 | Pareto vs scalar — weak evidence | R1.5 | R2.1 (implied), R2.2.4 | **DONE** — 30-seed blind-test reframe (CIs + Cohen's d, Holm); Pareto significantly > both scalars; merged into ablation Table 3 |
 | Data augmentation | R1.4 | R2.1.5 | DONE |
 | Class imbalance | — | R2.1.4, R2.2.3 | **DONE** — justification (positive=majority, mild ratio) + pos_weight sensitivity sweep (30 seeds, all p_Holm>0.05); note in Sec. 3.1, full table in this letter |
-| TruFor fine-tuned omitted | R1.3 | — | _TBD_ |
-| EdgeDoc attribution error | R1.1 | — | **DONE** — Table 5 row renamed to fusion (0.958), cited to challenge leaderboard; standalone 0.43 noted in text; loc 0.621→0.686 typo fixed |
+| TruFor fine-tuned omitted | R1.3 | — | **DONE** — reviewer correct; rather than add a fine-tuned row, removed the whole table (no controlled comparison possible) and condensed §4.5, giving the section less weight |
+| EdgeDoc attribution error | R1.1 | — | **DONE** — corrected attribution now in §4.5 prose (EdgeDoc standalone 0.43 vs EdgeDoc+TruFor fusion 0.958, cited to challenge leaderboard); challenge table since removed (see R1.6) |
 | Reproducibility / architecture detail | — | R2.2.5 | _TBD_ |
 | Blind-holdout protocol timing | — | R2.1.3 | **DONE** — Sec. 3.1 sentence + 3-leg evidence (code isolation, git chronology, threshold from dev-internal val) |
 | Pre-trained backbone baseline | R1.7 | — | **DONE** — re-ran identical MOTPE/Pareto protocol on ImageNet ResNet-18 (n=30): PR-AUC 0.994, Dice 0.889; neither model dominates; script `revision_experiments/resnet18_motpe.py`, Discussion sentence added |
@@ -53,24 +53,19 @@ the values against the DeepID 2025 leaderboard: EdgeDoc **standalone** achieves 
 (George & Marcel, 2025, Table 2), TruFor achieves F1 = 0.81, and the **EdgeDoc+TruFor fusion**
 achieves F1 = 0.96 (Korshunov et al., 2025, Table 2). Our original "AG/EdgeDoc = 0.958" row
 conflated the third-place team's *fusion* submission with the EdgeDoc architecture in
-isolation. We have renamed the row to "EdgeDoc+TruFor fusion (3rd)" and cite the 0.958 figure
-only to the challenge leaderboard (its actual source), and we state in the running text that
-the EdgeDoc architecture trained on FantasyID alone reaches F1 = 0.43, noting that the fusion
-relies on the pre-trained TruFor backbone whereas EdgeDoc standalone is the FantasyID-only
-comparator. Consistent with our response to R1.6/R2.1.2/R2.2.2, we do not draw competitive
-conclusions from these numbers, since DocVerify is evaluated on a different (internal) test set.
+isolation. We corrected the attribution in the text: the EdgeDoc+TruFor fusion (0.958, cited
+only to the challenge leaderboard, its actual source) is distinguished from EdgeDoc standalone
+(0.43; George & Marcel, 2025, Table 2), noting that the fusion relies on the pre-trained TruFor
+backbone whereas EdgeDoc standalone is the FantasyID-only comparator. The challenge comparison
+table has since been removed (see R1.6), so this corrected attribution now appears in the
+running prose of Sec. 4.5. Consistent with our response to R1.6/R2.1.2/R2.2.2, we do not draw
+competitive conclusions from these numbers, since DocVerify is evaluated on a different
+(internal) test set.
 
-**Changes:** Table 5 (Sec. 4.5): renamed the "AG/EdgeDoc (3rd) 0.958" row to "EdgeDoc+TruFor
-fusion (3rd)", with the citation pointing only to the challenge leaderboard (Korshunov et al.,
-2025), the source of the 0.958 figure. The EdgeDoc standalone value (0.43; George & Marcel,
-2025, Table 2) is reported in the running text rather than as a separate row. Updated the
-surrounding passages; competitive language removed (see R1.6).
-
-**Note (internal, not for reviewer):** the fusion row's localization value was corrected from
-0.621 (LaTeX transcription typo in the previous draft) to **0.686**, verified against
-Korshunov et al. (2025), Tables 2 (detection, AG FantasyID = 0.958) and 3 (localization,
-AG FantasyID = 0.686), and consistent with the repository code
-(`evaluate_challenge_metrics.py`, `challenge.py`). Resolved.
+**Changes:** Sec. 4.5: corrected the EdgeDoc attribution in the prose (fusion 0.958 vs
+standalone 0.43; George & Marcel, 2025, Table 2), with the 0.958 citation pointing only to the
+challenge leaderboard (Korshunov et al., 2025). The challenge comparison table was subsequently
+removed (see R1.6), so the correction now lives only in text; competitive language removed.
 
 ---
 
@@ -89,9 +84,17 @@ AG FantasyID = 0.686), and consistent with the repository code
 > *Please either add the TruFor fine-tuned row to Table 5 or explain in the text why it was
 > excluded.*
 
-**Response:** _TBD_
+**Response:** The reviewer is correct: the original comparison did not include a fine-tuned
+TruFor result. Rather than add a single fine-tuned row, we removed the challenge comparison
+table entirely (Sec. 4.5). Because DocVerify is evaluated on our internal 15% holdout while
+every challenge figure comes from the official test set (FantasyID test partition plus a
+private out-of-domain PXL Vision set), no direct or controlled comparison is possible; a
+detailed table, with or without a fine-tuned TruFor row, would overstate its rigour. We
+therefore give this section less weight: Sec. 4.5 is now a short paragraph that situates
+DocVerify among related systems with explicit caveats and no superiority claim.
 
-**Changes:** _TBD_
+**Changes:** Sec. 4.5: removed the challenge comparison table and condensed the section to a
+single paragraph (see R1.6).
 
 ---
 
@@ -196,26 +199,22 @@ rewrote the text. Script committed to the repository; per-seed CSVs archived on 
 > *Either remove the challenge comparison from Table 5 and move it to a clearly-labeled
 > appendix, or add a boldface caveat directly in the table caption.*
 
-**Response:** We kept Table 5 in the main text, as it gives readers useful context, but
-strengthened the caveats and removed all competitive language (addressing R1.6, R2.1.2 and
-R2.2.2 jointly):
-1. **Boldface caveat in the caption.** The Table 5 caption now states, in bold, that *the
-   evaluation sets differ and the results are not directly comparable*: the $\dagger$ entries use
-   the official challenge test set (FantasyID test partition plus a private out-of-domain
-   PXL Vision set), whereas DocVerify is evaluated on our internal 15% holdout; no ranking is
-   implied.
-2. **Competitive language removed.** The sentence that claimed DocVerify "substantially exceeds"
-   and "approaches" specific systems has been replaced by an explicit disclaimer that we do not
-   claim superiority over any challenge entry and report the numbers only to situate DocVerify in
-   context.
-3. The surrounding text still explains the protocol difference and the training-data disparity
-   (e.g. Sunlight augments FantasyID with external identity documents; TruFor is pre-trained on
-   general-purpose manipulation images).
+**Response:** The reviewer offered two options: remove the comparison or add a boldface caveat.
+We chose the first. The challenge comparison table has been removed from the main text, and
+Sec. 4.5 is now a single short paragraph stating explicitly that:
+1. **Evaluation sets differ.** Our internal 15% holdout versus the official challenge test set
+   (FantasyID test partition plus a private out-of-domain PXL Vision set), so the comparison is
+   indicative rather than controlled.
+2. **No superiority claim.** We make no superiority claim and imply no ranking; the numbers only
+   situate DocVerify in context.
+3. **Training data differ markedly.** Sunlight adds over 60,000 external identity images and the
+   TruFor-based entries use a backbone pre-trained on ~828,000 manipulation images, whereas
+   EdgeDoc standalone, UAM-Biometrics and DocVerify train on FantasyID alone.
 
-**Changes:** Sec. 4.5, Table 5 caption: added the boldface "Evaluation sets differ and results
-are not directly comparable" caveat. Sec. 4.5 text: removed competitive/ranking language and
-replaced it with a non-superiority disclaimer. Fixed the fusion-row citation to point only to
-the challenge leaderboard (the source of the 0.958 figure).
+This removes the competitive framing the reviewers (R1.6, R2.1.2, R2.2.2) objected to.
+
+**Changes:** Sec. 4.5: removed the challenge comparison table; condensed the prose to one
+paragraph with all caveats inline; removed competitive/ranking language.
 
 ---
 
@@ -288,11 +287,13 @@ Paired Wilcoxon + Holm: DocVerify higher PR-AUC (p=3e-4, d=0.75); ResNet-18 high
 > *Despite acknowledging this discrepancy, the author draws competitive conclusions... that
 > are not statistically justified.*
 
-**Response:** Addressed jointly with R1.6 (and R2.2.2). We removed the competitive conclusions
-and added a boldface caveat in the Table 5 caption stating that the evaluation sets differ and
-the results are not directly comparable. We no longer claim superiority over any challenge entry.
+**Response:** Addressed jointly with R1.6 (and R2.2.2). We removed the challenge comparison
+table entirely and condensed Sec. 4.5 to a single paragraph that states the evaluation sets
+differ and the results are not directly comparable. We no longer claim superiority over any
+challenge entry.
 
-**Changes:** See R1.6 — Table 5 caption caveat + removal of competitive language in Sec. 4.5.
+**Changes:** See R1.6 — challenge comparison table removed; Sec. 4.5 condensed with all caveats
+inline and competitive language removed.
 
 ---
 
@@ -377,15 +378,16 @@ a one-sentence justification citing the external archive.
 > *Add a clearly formatted disclaimer box within the table itself (not only in the text) and
 > remove any competitive language from the conclusions.*
 
-**Response:** Addressed jointly with R1.6 and R2.1.2. As requested, the disclaimer is now *inside
-the table* (a boldface caveat in the Table 5 caption stating the evaluation sets differ and the
-results are not directly comparable), not only in the running text. All competitive language has
-been removed from the comparison text and from the Conclusion, which now states only that
-DocVerify is "broadly competitive... indicative only, since challenge systems used a different
-test set."
+**Response:** Addressed jointly with R1.6 and R2.1.2. Rather than add a disclaimer box inside the
+table, we removed the challenge comparison table entirely, which eliminates the methodological
+concern at its source: there is no longer a table that could be read as a direct comparison.
+Sec. 4.5 is now a single paragraph that states the evaluation sets differ and the results are
+indicative only. All competitive language has been removed from the comparison text and from the
+Conclusion, which now states only that DocVerify is "broadly competitive... indicative only,
+since challenge systems used a different test set."
 
-**Changes:** See R1.6 — boldface caveat in the Table 5 caption + removal of competitive language
-in Sec. 4.5 and the Conclusion.
+**Changes:** See R1.6 — challenge comparison table removed; Sec. 4.5 condensed with all caveats
+inline and competitive language removed from Sec. 4.5 and the Conclusion.
 
 ---
 
