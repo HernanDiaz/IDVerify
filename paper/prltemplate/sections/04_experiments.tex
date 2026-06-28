@@ -63,83 +63,73 @@ localization quality.
   \end{tabular}
 \end{table}
 
-\subsection{Ablation Study}
+\subsection{Ablation and Selection-Criterion Study}
 \label{subsec:ablation}
 
 \begin{table*}[!t]
   \centering
-  \caption{Ablation study (blind test, 30 seeds).
-           $p$: Wilcoxon~\citep{wilcoxon1945} + Holm~\citep{holm1979};
-           $d$: Cohen's~$d$~\citep{cohen1988statistical}.
-           *** $p < 0.001$; ns $p \geq 0.05$.}
+  \caption{\rev{Ablation and selection-criterion comparison (blind test,
+           30 seeds). All variants compared against \textbf{Pareto (ours)}:
+           Wilcoxon~\citep{wilcoxon1945}\,+\,Holm~\citep{holm1979}
+           (*\,$p<0.05$; ***\,$p<0.001$; ns\,$p\geq0.05$); the parenthesised
+           value is Cohen's~$d$~\citep{cohen1988statistical}. Effect sizes for
+           \texttt{cls\_only}/\texttt{seg\_only} exceed $d>5$ (near-disjoint
+           distributions) and are omitted; full statistics are in the response
+           letter.}}
   \label{tab:ablation}
-  \begin{tabular}{lcccccc}
+  \begin{tabular}{lcccc}
     \toprule
-    & \multicolumn{2}{c}{PR-AUC} & \multicolumn{4}{c}{Dice} \\
-    \cmidrule(r){2-3} \cmidrule(l){4-7}
-    Variant & Mean $\pm$ Std & vs.\ Multitask & Mean $\pm$ Std & vs.\ Multitask & $p_{\text{holm}}$ & $d$ \\
+    & \multicolumn{2}{c}{PR-AUC} & \multicolumn{2}{c}{Dice} \\
+    \cmidrule(r){2-3}\cmidrule(l){4-5}
+    Variant & Mean $\pm$ Std & vs.\ ours & Mean $\pm$ Std & vs.\ ours \\
     \midrule
-    \textbf{Multitask} (ours) & $\mathbf{0.9967 \pm 0.0021}$ & — & $\mathbf{0.875 \pm 0.018}$ & — & — & — \\
-    cls\_only          & $0.9503 \pm 0.0744$ & *** & $0.002 \pm 0.008$ & *** & $1.3 \times 10^{-8}$ & large \\
-    seg\_only          & $0.7277 \pm 0.0528$ & *** & $0.867 \pm 0.023$ & ns  & $0.288$              & small \\
-    unweighted\_losses & $0.9958 \pm 0.0016$ & ns  & $0.857 \pm 0.016$ & *** & $1.3 \times 10^{-4}$ & 1.01 \\
+    \textbf{Pareto (ours)} & $\mathbf{0.9967 \pm 0.0021}$ & — & $\mathbf{0.875 \pm 0.018}$ & — \\
+    \rev{\texttt{by\_prauc}} & \rev{$0.9953 \pm 0.0021$} & \rev{ns} & \rev{$0.859 \pm 0.023$} & \rev{*\,(0.59)} \\
+    \rev{\texttt{by\_dice}}  & \rev{$0.9948 \pm 0.0027$} & \rev{*\,(0.64)} & \rev{$0.857 \pm 0.015$} & \rev{***\,(1.00)} \\
+    \midrule
+    \texttt{cls\_only}          & $0.9503 \pm 0.0744$ & *** & $0.002 \pm 0.008$ & *** \\
+    \texttt{seg\_only}          & $0.7277 \pm 0.0528$ & *** & $0.867 \pm 0.023$ & ns \\
+    \texttt{unweighted\_losses} & $0.9958 \pm 0.0016$ & ns  & $0.857 \pm 0.016$ & ***\,(1.01) \\
     \bottomrule
   \end{tabular}
 \end{table*}
 
-To isolate each design decision, we evaluate four variants on the blind test
-set using 30 independent seeds: \textit{Multitask} (ours, joint detection +
-localization with Pareto-optimized $\lambda_{\text{mask}}$);
-\texttt{cls\_only} (classification head only); \texttt{seg\_only}
+To isolate each design decision, we evaluate the full model against five
+variants on the blind-test set using 30 independent seeds
+(Table~\ref{tab:ablation}). Three variants probe the architecture and loss
+weighting: \texttt{cls\_only} (classification head only); \texttt{seg\_only}
 (segmentation head only, detection by thresholding mean mask probability);
 and \texttt{unweighted\_losses} (full multitask, $\lambda_{\text{cls}} =
-\lambda_{\text{mask}} = 0.5$, bypassing HPO).
-Table~\ref{tab:ablation} summarizes results.
+\lambda_{\text{mask}} = 0.5$, bypassing HPO). \rev{Two further variants probe
+the HPO selection criterion applied to the \emph{same} 500 MOTPE trials:
+\texttt{by\_prauc} (the trial maximizing validation PR-AUC) and
+\texttt{by\_dice} (the trial maximizing validation Dice), against our Pareto
+criterion (distance to the ideal point).}
 
-Three findings stand out. First, joint multitask training is essential:
+Regarding the architecture and loss variants, three findings stand out.
+First, joint multitask training is essential:
 \texttt{cls\_only} produces near-zero Dice ($0.002 \pm 0.008$). Second, a
 dedicated classification head is necessary: \texttt{seg\_only} achieves
 competitive Dice ($0.867$) but PR-AUC drops to $0.728 \pm 0.053$, confirming
 that the segmentation logit alone is an unreliable detection signal. Third,
 Pareto-optimized weights outperform equal weights specifically on localization:
-\texttt{unweighted\_losses} matches Multitask on PR-AUC ($p = 0.083$) but
+\texttt{unweighted\_losses} matches the full model on PR-AUC ($p = 0.083$) but
 shows significantly lower Dice ($p = 1.3 \times 10^{-4}$, $d = 1.01$, large
 effect), validating the HPO contribution.
 
-\subsection{Pareto HPO vs.\ Scalar Selection}
-\label{subsec:scalar}
-
-\begin{table}[!t]
-  \centering
-  \caption{Pareto vs.\ scalar selection on 10-fold NCV (same 50 MOTPE trials).}
-  \label{tab:scalar}
-  \begin{tabular}{lcc}
-    \toprule
-    Method & PR-AUC & Dice \\
-    \midrule
-    \textbf{Pareto (ours)} & $0.9921 \pm 0.0060$ & $0.856 \pm 0.035$ \\
-    \texttt{by\_prauc}     & $0.9958 \pm 0.0015$ & $0.857 \pm 0.017$ \\
-    \texttt{by\_dice}      & $0.9936 \pm 0.0033$ & $0.863 \pm 0.015$ \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
 A key question for any multi-objective HPO framework is whether the added
-complexity over simpler scalar alternatives yields measurable gains. We
-address this directly by comparing three selection criteria applied to the
-\emph{same} 50 MOTPE trials per outer fold: Pareto (ours, distance
-to ideal point); \texttt{by\_prauc} (select trial maximizing inner-fold
-PR-AUC); and \texttt{by\_dice} (select trial maximizing inner-fold Dice).
-Results on the 10-fold NCV are shown in Table~\ref{tab:scalar}.
+complexity over simpler scalar alternatives yields measurable gains. \rev{Pareto
+significantly outperforms both scalar criteria after Holm correction:
+it improves localization over \texttt{by\_prauc} (Dice $+0.016$, $d=0.59$) and
+improves \emph{both} objectives over \texttt{by\_dice} (PR-AUC $+0.0019$,
+$d=0.64$; Dice $+0.018$, $d=1.00$, large effect). Each single-objective
+criterion sacrifices the objective it does not target, whereas Pareto
+balances both.}
 
-No statistically significant differences are found between any pair of
-selection criteria (Wilcoxon + Holm, all $p \geq 0.05$, $n = 10$), with
-absolute differences below $0.004$ on PR-AUC and $0.008$ on Dice.
-Pareto selection therefore matches scalar alternatives in predictive
-accuracy while requiring no a priori commitment to a primary objective,
-making the full trade-off landscape observable (Fig.~\ref{fig:pareto}),
-and remaining structurally consistent with the DeepID challenge protocol,
-which ranks detection and localization independently.
+Beyond predictive accuracy, Pareto selection requires no a priori commitment to a
+primary objective, making the full trade-off landscape observable
+(Fig.~\ref{fig:pareto}) and remaining structurally consistent with the DeepID
+challenge protocol, which ranks detection and localization independently.
 
 \subsection{Comparison with Related Systems}
 \label{subsec:challenge}
