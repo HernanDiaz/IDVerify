@@ -35,7 +35,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Qualitative: failure cases | R1.8 | — | _TBD_ |
 | Citation precision | R1.9 | — | DONE |
 | Compute cost vs benefit | R1.10 | — | _TBD_ |
-| Equation citing / F1@0.5 definition | — | R2.3.1, R2.3.2 | _TBD_ |
+| Equation citing / F1@0.5 definition | — | R2.3.1, R2.3.2 | DONE |
 
 ---
 
@@ -489,13 +489,23 @@ protocol that ranks detection and localization independently.
 ## Minor Concerns
 
 ### R2.3.1 — Equations must be explicitly cited in the text
-**Response:** _TBD_
+**Response:** Every numbered equation is now referred to by number at the point where
+its symbols are used. The combined loss (Eq. 1), the segmentation/Dice loss (Eq. 2),
+the multi-objective HPO formulation (Eq. 3), and the ideal-point selection criterion
+(Eq. 4) are each cited explicitly in the surrounding text; the previously unlabeled
+Dice loss now carries a label and is referenced.
 
-**Changes:** _TBD_
+**Changes:** Sec. 3.3 (Loss Functions) and Sec. 3.4 (Multi-Objective HPO): added explicit
+`Eq.~\ref{}` citations for all four display equations; added a label to the Dice loss.
 
 ---
 
 ### R2.3.2 — F1@0.5 must be formally defined at first occurrence
-**Response:** _TBD_
+**Response:** We now define the metric at its first occurrence: F1@0.5 is the F1 score
+of the bona-fide/attack decision taken at classification threshold 0.5, and F1_loc is
+the pixel-level F1 of the predicted mask. With the challenge comparison table removed
+(see R1.3), F1@0.5 first appears in Sec. 4.5, where both definitions are now given inline.
 
-**Changes:** _TBD_
+**Changes:** Sec. 4.5: parenthetical definitions of F1@0.5 ("F1 of the bona-fide/attack
+decision at classification threshold 0.5") and F1_loc ("pixel-level F1 of the predicted
+mask") at first use.

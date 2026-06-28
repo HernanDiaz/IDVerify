@@ -75,14 +75,17 @@ The combined training loss is:
                 \mathcal{L}_{\text{seg}},
   \label{eq:total_loss}
 \end{equation}
-where $\lambda_{\text{mask}} \in [0.5, 3.0]$ is included in the HPO search
+\rev{where, in Eq.~\ref{eq:total_loss},} $\lambda_{\text{mask}} \in [0.5, 3.0]$
+is included in the HPO search
 space. $\mathcal{L}_{\text{cls}} = \text{BCEWithLogits}(\hat{y}_{\text{cls}},
 y_{\text{cls}})$. The segmentation loss combines BCE and Dice:
 \begin{equation}
   \mathcal{L}_{\text{seg}} = \text{BCE}(\hat{Y}, Y) + 1 -
     \frac{2 \sum_i p_i g_i + \epsilon}{\sum_i p_i + \sum_i g_i + \epsilon},
+  \label{eq:seg_loss}
 \end{equation}
-as introduced for volumetric segmentation~\citep{milletari2016vnet} to address
+\rev{The Dice term in Eq.~\ref{eq:seg_loss},} as introduced for volumetric
+segmentation~\citep{milletari2016vnet}, \rev{addresses}
 foreground/background imbalance in small forgery regions.
 
 All models are trained with AdamW and ReduceLROnPlateau
@@ -111,7 +114,8 @@ Our HPO formulation simultaneously maximizes:
   \text{Dice}(\boldsymbol{\theta})\bigr).
   \label{eq:moopt}
 \end{equation}
-Table~\ref{tab:hpo_space} defines the search space $\Theta$.
+\rev{In Eq.~\ref{eq:moopt},} $\Theta$ \rev{is the search space defined in
+Table~\ref{tab:hpo_space}}.
 
 \begin{table}[!t]
   \centering
@@ -136,7 +140,7 @@ Table~\ref{tab:hpo_space} defines the search space $\Theta$.
 We use MOTPE~\citep{motpe2022} as implemented in Optuna~\citep{optuna2019}.
 After 50 trials on the inner splits, we select the configuration
 $\boldsymbol{\theta}^*$ from the Pareto front $\mathcal{P}$ by minimizing the
-Euclidean distance to the ideal point:
+Euclidean distance to the ideal point \rev{(Eq.~\ref{eq:ideal_point})}:
 \begin{equation}
   \boldsymbol{\theta}^* = \argmin_{\boldsymbol{\theta} \in \mathcal{P}}
     \sqrt{(1 - \text{PR-AUC})^2 + (1 - \text{Dice})^2}.
