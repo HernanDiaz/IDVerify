@@ -69,27 +69,24 @@ localization quality.
 \begin{table*}[!t]
   \centering
   \caption{\rev{Ablation and selection-criterion comparison (blind test,
-           30 seeds). All variants compared against \textbf{Pareto (ours)}:
-           Wilcoxon~\citep{wilcoxon1945}\,+\,Holm~\citep{holm1979}
-           (*\,$p<0.05$; ***\,$p<0.001$; ns\,$p\geq0.05$); the parenthesised
-           value is Cohen's~$d$~\citep{cohen1988statistical}. Effect sizes for
-           \texttt{cls\_only}/\texttt{seg\_only} exceed $d>5$ (near-disjoint
-           distributions) and are omitted; full statistics are in the response
-           letter.}}
+           30 seeds); all variants vs.\ \textbf{Pareto (ours)}. $p$: paired
+           Wilcoxon~\citep{wilcoxon1945}\,+\,Holm~\citep{holm1979} (significant
+           at $p<0.05$); $d$: Cohen's~$d$~\citep{cohen1988statistical}
+           ($|d|>0.8$ large effect).}}
   \label{tab:ablation}
-  \begin{tabular}{lcccc}
+  \begin{tabular}{lcccccc}
     \toprule
-    & \multicolumn{2}{c}{PR-AUC} & \multicolumn{2}{c}{Dice} \\
-    \cmidrule(r){2-3}\cmidrule(l){4-5}
-    Variant & Mean $\pm$ Std & vs.\ ours & Mean $\pm$ Std & vs.\ ours \\
+    & \multicolumn{3}{c}{PR-AUC} & \multicolumn{3}{c}{Dice} \\
+    \cmidrule(r){2-4}\cmidrule(l){5-7}
+    Variant & Mean $\pm$ Std & $p$ & $d$ & Mean $\pm$ Std & $p$ & $d$ \\
     \midrule
-    \textbf{Pareto (ours)} & $\mathbf{0.9967 \pm 0.0021}$ & — & $\mathbf{0.875 \pm 0.018}$ & — \\
-    \rev{\texttt{by\_prauc}} & \rev{$0.9953 \pm 0.0021$} & \rev{ns} & \rev{$0.859 \pm 0.023$} & \rev{*\,(0.59)} \\
-    \rev{\texttt{by\_dice}}  & \rev{$0.9948 \pm 0.0027$} & \rev{*\,(0.64)} & \rev{$0.857 \pm 0.015$} & \rev{***\,(1.00)} \\
+    \textbf{Pareto (ours)} & $\mathbf{0.9967 \pm 0.0021}$ & — & — & $\mathbf{0.875 \pm 0.018}$ & — & — \\
+    \rev{\texttt{by\_prauc}} & \rev{$0.9953 \pm 0.0021$} & \rev{$0.06$} & \rev{$0.49$} & \rev{$0.859 \pm 0.023$} & \rev{$0.04$} & \rev{$0.59$} \\
+    \rev{\texttt{by\_dice}}  & \rev{$0.9948 \pm 0.0027$} & \rev{$0.007$} & \rev{$0.64$} & \rev{$0.857 \pm 0.015$} & \rev{$<0.001$} & \rev{$1.00$} \\
     \midrule
-    \texttt{cls\_only}          & $0.9503 \pm 0.0744$ & *** & $0.002 \pm 0.008$ & *** \\
-    \texttt{seg\_only}          & $0.7277 \pm 0.0528$ & *** & $0.867 \pm 0.023$ & ns \\
-    \texttt{unweighted\_losses} & $0.9958 \pm 0.0016$ & ns  & $0.857 \pm 0.016$ & ***\,(1.01) \\
+    \texttt{cls\_only}          & $0.9503 \pm 0.0744$ & $<0.001$ & $0.62$ & $0.002 \pm 0.008$ & $<0.001$ & $47.2$ \\
+    \texttt{seg\_only}          & $0.7277 \pm 0.0528$ & $<0.001$ & $5.15$ & $0.867 \pm 0.023$ & $0.29$ & $0.32$ \\
+    \texttt{unweighted\_losses} & $0.9958 \pm 0.0016$ & $0.08$ & $0.37$ & $0.857 \pm 0.016$ & $<0.001$ & $1.01$ \\
     \bottomrule
   \end{tabular}
 \end{table*}
