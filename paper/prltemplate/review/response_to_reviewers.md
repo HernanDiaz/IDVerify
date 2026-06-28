@@ -401,7 +401,8 @@ every metric on the clean synthetic FantasyID holdout (e.g. Dice 0.875→0.780, 
 deliberate, empirically-grounded choice rather than an oversight. Sec. 4.1 now states this with
 a one-sentence justification citing the external archive.
 
-**Changes:** _TBD_
+**Changes:** See R1.4 (augmentation ablation added to Sec. 4.1; full 30-seed table in this
+letter under R1.4).
 
 ---
 
@@ -505,8 +506,6 @@ primary objective and exposes the full trade-off landscape (Fig. 3), consistent 
 protocol that ranks detection and localization independently.
 
 **Changes:** See R1.5.
-
-**Changes:** _TBD_
 
 ---
 
