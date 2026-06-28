@@ -115,17 +115,20 @@ Table~\ref{tab:hpo_space} defines the search space $\Theta$.
 
 \begin{table}[!t]
   \centering
-  \caption{HPO search space.}
+  \caption{HPO search space \rev{and final selected configuration
+           (Section~\ref{subsec:final_config}). All log-uniform except
+           dropout and $\lambda_{\text{mask}}$ (uniform) and decoder
+           channels (categorical)}.}
   \label{tab:hpo_space}
   \begin{tabular}{llc}
     \toprule
-    Parameter & Distribution & Range \\
+    Parameter & Range & \rev{Selected} \\
     \midrule
-    $\eta$ (learning rate) & log-uniform & $[5{\times}10^{-5},\; 9{\times}10^{-4}]$ \\
-    $\lambda_{\text{wd}}$ (weight decay) & log-uniform & $[10^{-7},\; 10^{-4}]$ \\
-    $p$ (dropout) & uniform & $[0.1,\; 0.4]$ \\
-    $C_{\text{dec}}$ (decoder channels) & categorical & $\{96, 128, 192, 256\}$ \\
-    $\lambda_{\text{mask}}$ (mask loss weight) & uniform & $[0.5,\; 3.0]$ \\
+    $\eta$ (learning rate) & $[5{\times}10^{-5},\; 9{\times}10^{-4}]$ & \rev{$5.21{\times}10^{-4}$} \\
+    $\lambda_{\text{wd}}$ (weight decay) & $[10^{-7},\; 10^{-4}]$ & \rev{$4.27{\times}10^{-5}$} \\
+    $p$ (dropout) & $[0.1,\; 0.4]$ & \rev{$0.103$} \\
+    $C_{\text{dec}}$ (decoder channels) & $\{96, 128, 192, 256\}$ & \rev{$192$} \\
+    $\lambda_{\text{mask}}$ (mask loss weight) & $[0.5,\; 3.0]$ & \rev{$2.46$} \\
     \bottomrule
   \end{tabular}
 \end{table}

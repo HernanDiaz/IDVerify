@@ -14,8 +14,8 @@ RTX~5060\,Ti (16\,GB VRAM), using PyTorch 2.10.0 with CUDA 13.0 and
 Optuna~3.x. Training uses a batch size of 64 and no data augmentation
 \rev{(applying standard augmentation, rotation $\pm10^\circ$, brightness,
 contrast, Gaussian blur and JPEG compression, significantly degraded every
-metric on the FantasyID holdout; see~\citep{docverify_zenodo})}:
-all images are resized to $224\!\times\!224$ pixels and normalised to
+metric on the FantasyID holdout; see~\citep{docverify_zenodo})}.
+All images are resized to $224\!\times\!224$ pixels and normalised to
 $[0,1]$ prior to caching in GPU memory.
 The full NCV pipeline required
 approximately 59~hours; VRAM caching reduces per-trial training time from
@@ -65,7 +65,7 @@ localization quality.
 estimates generalization, but the deployed system is a single model. We select
 the configuration with the smallest inner-CV distance to the ideal point
 ($1,1$) across all outer folds (Eq.~\ref{eq:ideal_point};
-Table~\ref{tab:final_config}), which fixes both
+Table~\ref{tab:hpo_space}), which fixes both
 the architecture (decoder width) and the Pareto-optimized loss weight
 $\lambda_{\text{mask}}=2.46$, consistent with the $2.3$--$2.7$ cluster of
 Section~\ref{subsec:ncv_results}. This final configuration is retrained from
@@ -73,24 +73,6 @@ scratch on the development set (up to 100 epochs with early stopping, as in
 Section~\ref{subsec:ncv}) and evaluated on the held-out 15\% blind-test
 set; we repeat the retraining over 30 independent seeds to quantify
 run-to-run variability.}
-
-\begin{table}[!t]
-  \centering
-  \caption{\rev{Final Pareto-selected configuration (lowest distance to
-           ideal).}}
-  \label{tab:final_config}
-  \begin{tabular}{lc}
-    \toprule
-    Hyperparameter & Value \\
-    \midrule
-    Learning rate            & $5.21 \times 10^{-4}$ \\
-    Weight decay             & $4.27 \times 10^{-5}$ \\
-    Dropout rate             & $0.103$ \\
-    Decoder channels         & $192$ \\
-    Loss weight $\lambda_{\text{mask}}$ & $2.46$ \\
-    \bottomrule
-  \end{tabular}
-\end{table}
 
 \subsection{Ablation and Selection-Criterion Study}
 \label{subsec:ablation}
@@ -158,69 +140,24 @@ challenge protocol, which ranks detection and localization independently.
 \subsection{Comparison with Related Systems}
 \label{subsec:challenge}
 
-\begin{table}[!t]
-  \centering
-  \small
-  \caption{Comparison with DeepID 2025 Challenge systems on Track~1
-    (detection F1@0.5) and Track~2 (per-image localization F1).
-    \rev{\textbf{Evaluation sets differ and results are not directly
-    comparable:} $\dagger$ entries use the official challenge test set
-    (FantasyID test partition plus a private out-of-domain PXL~Vision set),
-    whereas DocVerify uses our internal 15\% holdout; no ranking is implied.}
-    Dashes: result not reported.}
-  \label{tab:challenge}
-  \begin{tabular}{p{4.0cm}cc}
-    \toprule
-    System & F1@0.5 & F1$_{\text{loc}}$ \\
-    \midrule
-    Sunlight (1st)$^\dagger$                        & 0.991 & 0.784 \\
-    Incode (2nd)$^\dagger$                          & 0.868 & —     \\
-    \rev{EdgeDoc+TruFor fusion (3rd)}$^\dagger$     & \rev{0.958} & \rev{0.686} \\
-    UAM-Biometrics (4th)$^\dagger$                  & 0.712 & —     \\
-    TruFor baseline$^\dagger$                       & 0.807 & 0.590 \\
-    \midrule
-    \textbf{DocVerify (ours)} & $\mathbf{0.969 \pm 0.014}$ & $\mathbf{0.807 \pm 0.096}$ \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-Table~\ref{tab:challenge} compares DocVerify against the top participants of
-the DeepID 2025 Challenge on Track~1 (detection F1@0.5) and Track~2
-(per-image localization F1), computed on our 15\% holdout using 30 seeds.
-
-This comparison must be interpreted with caution. DocVerify was developed
-independently after the DeepID 2025 Challenge submission deadline had already
-closed; official test-set evaluation was therefore not possible and results
-are reported on our internal 15\% holdout, whereas all challenge figures
-were obtained on the official test set (FantasyID test partition plus a
-private out-of-domain set from PXL Vision). The two evaluation sets are
-not identical, making direct numerical comparisons indicative rather than
-strictly controlled.
-
-It is also important to note the training data disparity among the systems
-in Table~\ref{tab:challenge}. Sunlight augmented the FantasyID training set
-with over 60\,000 external identity document images; the TruFor baseline
-was pre-trained on 876\,000 general-purpose manipulation images before any
-fine-tuning. \rev{The third-place entry corresponds to the EdgeDoc+TruFor
-\emph{fusion} submission (F1@0.5 $= 0.958$~\citep{deepid2025challenge}), which also
-relies on the pre-trained TruFor backbone; the EdgeDoc architecture trained
-on FantasyID alone reaches F1@0.5 $= 0.43$ (\citealp{edgedoc2025}, Table~2).
-By contrast, EdgeDoc (standalone), UAM-Biometrics, and DocVerify train
-exclusively on FantasyID, making them more directly comparable to one another.}
-
-With that caveat, DocVerify achieves F1@0.5 $= 0.969 \pm 0.014$ on
-Track~1. \rev{Because this is measured on a different evaluation set, we do not
-claim superiority over any challenge entry; we report it only to situate
-DocVerify among the FantasyID-only methods (EdgeDoc standalone $0.43$,
-UAM-Biometrics $0.712$) and the externally pre-trained systems (fusion $0.958$,
-Sunlight $0.991$).} On Track~2, DocVerify
-achieves F1$_{\text{loc}} = 0.807 \pm 0.096$, comparable to the
-challenge winner Sunlight ($0.784$); however, the margin ($+0.023$) is
-well within the standard deviation of our estimates and should not be
-interpreted as a definitive improvement. The high Track~2 variance is
-driven by seeds where bonafide misclassifications generate false-positive
-mask pixels; F1 on confirmed attack images is substantially more stable
-($0.881 \pm 0.015$).
+\rev{DocVerify was developed after the DeepID 2025
+Challenge~\citep{deepid2025challenge} deadline, so official test-set
+evaluation was not possible; we report results on our internal 15\% holdout
+(30 seeds), which differs from the official challenge set (FantasyID test
+partition plus a private PXL~Vision set), making any comparison indicative
+rather than controlled. Training data also differ markedly. The leading
+entries rely on external data: Sunlight (1st) augmented FantasyID with over
+60\,000 identity images, while the third-place EdgeDoc+TruFor
+fusion~\citep{edgedoc2025} and the TruFor baseline~\citep{trufor2023} build on
+a backbone pre-trained on $\sim$828\,000 manipulation images. EdgeDoc
+(standalone), UAM-Biometrics, and DocVerify instead train on FantasyID alone,
+the most directly comparable group. With these caveats, DocVerify reaches
+detection F1@0.5 $=0.969 \pm 0.014$ and localization
+F1$_{\text{loc}} = 0.807 \pm 0.096$, in line with the challenge winner
+Sunlight (F1@0.5 $0.991$, F1$_{\text{loc}}$ $0.784$) and ahead of the
+FantasyID-only entries (EdgeDoc $0.43$, UAM-Biometrics $0.712$), despite using
+no external data; we make no superiority claim given the differing evaluation
+sets.}
 
 \subsection{Qualitative Analysis}
 \label{subsec:qualitative}
