@@ -173,9 +173,12 @@ approach generalizes across architectures. \emph{Across datasets}, evaluating th
 out-of-domain SIDTD dataset~\citep{sidtd2024} (templates subset; 1\,000 bonafide,
 1\,222 attack) drops performance to near chance (PR-AUC $0.555 \pm 0.011$, ROC-AUC
 $0.504 \pm 0.009$): the FantasyID$\rightarrow$SIDTD domain gap is too wide for a
-model trained on FantasyID alone, which bounds the operational scope of the current
-system to the synthetic FantasyID domain and motivates multi-source training as
-future work.}
+model trained on FantasyID alone. Retraining the same architecture on the SIDTD
+training partition, however, recovers strong performance (PR-AUC $0.878 \pm 0.016$,
+ROC-AUC $0.826 \pm 0.023$), showing the gap reflects domain shift rather than
+architectural capacity; the zero-shot scope of the current FantasyID-trained system
+is thus bounded to its training domain, motivating multi-source training as future
+work.}
 
 \subsection{Qualitative Analysis}
 \label{subsec:qualitative}

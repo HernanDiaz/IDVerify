@@ -22,7 +22,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 
 | Theme | Reviewer 1 | Reviewer 2 | Planned action |
 |-------|-----------|-----------|----------------|
-| Cross-domain / 2nd dataset (SIDTD) | R1.2 | R2.1.1, R2.2.1 | **DONE** — new Generalization subsection (§4.6): SIDTD zero-shot result reported candidly (PR-AUC 0.555, ROC-AUC 0.504, near chance) + explicit FantasyID-domain scope restriction; Conclusion future-work reframed |
+| Cross-domain / 2nd dataset (SIDTD) | R1.2 | R2.1.1, R2.2.1 | **DONE** — new Generalization subsection (§4.6): SIDTD zero-shot reported candidly (PR-AUC 0.555, near chance) + in-domain retraining recovery (PR-AUC 0.878, ROC-AUC 0.826, domain-shift not arch limit) + explicit FantasyID-domain scope restriction; Conclusion future-work reframed |
 | Challenge comparison not on same test set | R1.6 | R2.1.2, R2.2.2 | **DONE** — removed the challenge comparison table (reviewer's first option); §4.5 condensed to one paragraph, all caveats inline (differing sets, no superiority claim, training-data disparity) |
 | Pareto vs scalar — weak evidence | R1.5 | R2.1 (implied), R2.2.4 | **DONE** — 30-seed blind-test reframe (CIs + Cohen's d, Holm); Pareto significantly > both scalars; merged into ablation Table 3 |
 | Data augmentation | R1.4 | R2.1.5 | DONE |
@@ -79,18 +79,23 @@ section now contains a dedicated **Generalization** subsection (Sec. 4.6) whose
 *Across datasets* paragraph reports the zero-shot transfer to the out-of-domain SIDTD
 dataset (templates subset; 1,000 bonafide, 1,222 attack) candidly, including the
 unfavorable numbers: the 30 blind-test models fall to near chance (PR-AUC 0.555 ± 0.011,
-ROC-AUC 0.504 ± 0.009). We discuss the domain gap explicitly (distinct document templates,
-capture conditions and tampering styles) and state that it bounds the operational scope of
-the system to the synthetic FantasyID domain, motivating multi-source training as future
-work. The per-seed SIDTD CSVs are archived externally (Zenodo); the evaluation script is in
-the repository (`revision_experiments/sidtd_generalization.py`). This is consistent with the
-cross-domain augmentation check reported under R1.4, which independently confirms the gap is
-too wide for standard augmentation to close.
+ROC-AUC 0.504 ± 0.009). To distinguish a domain-shift problem from an architectural one, we
+also retrained the *same* architecture directly on the SIDTD training partition (25 seeds):
+performance recovers to PR-AUC 0.878 ± 0.016, ROC-AUC 0.826 ± 0.023 (few-shot at 10–400 shots
+stays near chance; only full in-domain training recovers). We therefore state in Sec. 4.6 that
+the gap reflects domain shift rather than architectural capacity, and that the *zero-shot*
+scope of the current FantasyID-trained system is bounded to its training domain, motivating
+multi-source training as future work. The per-seed SIDTD CSVs (zero-shot, few-shot and full
+retraining) are archived externally (Zenodo); the scripts are in the repository
+(`revision_experiments/sidtd_generalization.py`, `finetune_sidtd.py`). This is consistent with
+the cross-domain augmentation check reported under R1.4, which independently confirms the
+zero-shot gap is too wide for standard augmentation to close.
 
 **Changes:** Sec. 4.6 (new **Generalization** subsection): added an *Across datasets*
-paragraph reporting the SIDTD zero-shot null result (PR-AUC 0.555, ROC-AUC 0.504) and a
-candid domain-gap discussion; the former "Single dataset" limitation paragraph is subsumed
-by this concrete result.
+paragraph reporting the SIDTD zero-shot null result (PR-AUC 0.555, ROC-AUC 0.504), the
+in-domain retraining recovery (PR-AUC 0.878, ROC-AUC 0.826), and a candid domain-gap
+discussion; the former "Single dataset" limitation paragraph is subsumed by this concrete
+result.
 
 ---
 
