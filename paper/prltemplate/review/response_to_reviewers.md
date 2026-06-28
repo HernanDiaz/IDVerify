@@ -33,7 +33,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Blind-holdout protocol timing | — | R2.1.3 | **DONE** — Sec. 3.1 sentence + 3-leg evidence (code isolation, git chronology, threshold from dev-internal val) |
 | Pre-trained backbone baseline | R1.7 | — | **DONE** — re-ran identical MOTPE/Pareto protocol on ImageNet ResNet-18 (n=30): PR-AUC 0.994, Dice 0.889; neither model dominates; script `revision_experiments/resnet18_motpe.py`, Discussion sentence added |
 | Qualitative: failure cases | R1.8 | — | _TBD_ |
-| Citation precision | R1.9 | — | _TBD_ |
+| Citation precision | R1.9 | — | DONE |
 | Compute cost vs benefit | R1.10 | — | _TBD_ |
 | Equation citing / F1@0.5 definition | — | R2.3.1, R2.3.2 | _TBD_ |
 
@@ -253,9 +253,27 @@ Paired Wilcoxon + Holm: DocVerify higher PR-AUC (p=3e-4, d=0.75); ResNet-18 high
 > *Verify these numerical claims against the original sources... "3,284 images" for FantasyID
 > does not appear in the original paper; "876,000 images" for TruFor... original reports ~828K.*
 
-**Response:** _TBD_
+**Response:** We thank the reviewer for the careful check and have verified every
+numerical claim against its original source, correcting the inaccuracies.
 
-**Changes:** _TBD_
+1. **FantasyID "3,284 images".** The reviewer is correct that this figure is not a
+   number reported in the FantasyID paper; it is the size of the release we actually
+   process. To avoid attributing our own count to the dataset, Sec. 3.1 now reads
+   "The FantasyID release we process contains 3,284 labeled images" and states the
+   split explicitly (2,791 development + 493 holdout = 3,284).
+
+2. **TruFor "876,000 images".** Corrected to ~828,000 to match the figure reported by
+   the original TruFor paper; the related-work description (Sec. 2) now reads
+   "~828,000 pre-training images", consistent with the "~828,000 manipulation images"
+   already stated in Sec. 4.5.
+
+3. **Bibliography encoding.** While verifying the references we also found and fixed
+   two malformed ampersand entries (`&amp;` HTML encoding) in the bibliography, in
+   the Optuna KDD'19 and Miettinen records, which now use the correct LaTeX `\&`.
+
+**Changes:** Sec. 3.1 wording (FantasyID count attributed to our processing, explicit
+split); Sec. 2 TruFor pre-training figure 876,000 → ~828,000; `references.bib`
+`&amp;` → `\&` (two entries).
 
 ---
 
