@@ -34,7 +34,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Pre-trained backbone baseline | R1.7 | — | **DONE** — re-ran identical MOTPE/Pareto protocol on ImageNet ResNet-18 (n=30): PR-AUC 0.994, Dice 0.889; neither model dominates; script `revision_experiments/resnet18_motpe.py`, Discussion sentence added |
 | Qualitative: failure cases | R1.8 | — | _TBD_ |
 | Citation precision | R1.9 | — | DONE |
-| Compute cost vs benefit | R1.10 | — | _TBD_ |
+| Compute cost vs benefit | R1.10 | — | DONE |
 | Equation citing / F1@0.5 definition | — | R2.3.1, R2.3.2 | DONE |
 
 ---
@@ -300,9 +300,33 @@ split); Sec. 2 TruFor pre-training figure 876,000 → ~828,000; `references.bib`
 > *The paper would benefit from a brief discussion of whether the computational investment was
 > proportional to the gain.*
 
-**Response:** _TBD_
+**Response:** We agree, and we now make explicit what the ~59-hour budget actually pays for.
+That figure is the cost of the **full scientific protocol**, not the cost of *using* the
+method. It breaks down (measured wall-clock, single RTX 5060 Ti, VRAM-cached) as follows:
 
-**Changes:** _TBD_
+| Phase | What it is | Trainings | Wall-clock |
+|---|---|---|---|
+| Nested HPO search | 10 outer folds × 50 MOTPE trials × 5 inner splits | 2 500 | ~50 h |
+| Outer final models | one retrain per outer fold (unbiased CV estimate) | 10 | ~1 h |
+| Blind-test ablation | 30 seeds × 4 variants | 120 | ~12 h |
+| **Total scientific protocol** | | | **~59–63 h** |
+| **Practical deployment** | one fixed config, one seed | 1 | **7.7 ± 1.0 min** |
+
+The point is the contrast in the last two rows. The multi-hour budget buys *scientific rigor*:
+an unbiased nested 10-fold cross-validation estimate plus 30-seed statistical robustness for the
+ablation. A practitioner who only needs the deployable artifact does **not** pay this: once the
+Pareto-selected configuration is fixed, retraining the single deployed model from scratch (up to
+100 epochs with early stopping) takes only **7.7 ± 1.0 min** per seed (range 6.0–10.2 min,
+measured over the 30 blind-test seeds). The lightweight encoder is the design choice that keeps
+this marginal cost at minute scale, and the Pareto loss weighting that the search yields adds
+**no inference-time cost** while delivering a statistically significant localization gain
+(Dice, d = 1.01 over equal weights; Sec. 4.3). The investment is therefore amortized once and is
+proportional to the gain.
+
+**Changes:** Sec. 4.1 (Experimental Setup): added one sentence clarifying that the 59-hour budget
+covers the full scientific protocol, whereas retraining the single deployed model from scratch
+takes 7.7 ± 1.0 min. Full breakdown reported here in the response letter to respect the 7-page
+limit; per-seed training times are released in the reproducibility archive (Zenodo DOI).
 
 ---
 
