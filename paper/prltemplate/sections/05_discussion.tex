@@ -24,28 +24,6 @@ at $0.5$. Pareto-optimized weights yield significantly higher Dice ($p = 1.3
 PR-AUC, confirming that $\lambda_{\text{mask}} \approx 2.4$ is broadly optimal
 and that MOTPE surfaces this value reliably across folds.
 
-\subsection{\rev{Generalization}}
-
-\rev{\paragraph{Across architectures.}
-The lightweight encoder was chosen to make 2\,500-model nested CV tractable. To
-confirm that the proposed MOTPE/Pareto protocol is not specific to this encoder,
-we applied the identical procedure to an ImageNet-pretrained ResNet-18 backbone:
-it attained comparable blind-test performance (PR-AUC $0.994$, Dice $0.889$; full
-results archived externally~\citep{docverify_zenodo}), with neither model
-dominating the other. The contribution is therefore the multi-objective selection
-methodology rather than the specific architecture.}
-
-\rev{\paragraph{Across datasets.}
-To probe cross-domain transfer, we evaluated the blind-test models zero-shot on
-the out-of-domain SIDTD dataset~\citep{sidtd2024} (templates subset; 1\,000
-bonafide, 1\,222 attack). Performance falls to near chance (PR-AUC
-$0.555 \pm 0.011$, ROC-AUC $0.504 \pm 0.009$; full numbers archived
-externally~\citep{docverify_zenodo}): the FantasyID$\rightarrow$SIDTD domain gap,
-spanning distinct document templates, capture conditions and tampering styles, is
-too wide for a model trained on FantasyID alone. We report this null result
-candidly; it bounds the operational scope of the current system to the synthetic
-FantasyID domain and motivates multi-source training as future work.}
-
 \subsection{Limitations}
 
 \paragraph{Architecture.}

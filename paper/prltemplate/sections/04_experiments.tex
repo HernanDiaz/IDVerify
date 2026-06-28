@@ -161,6 +161,22 @@ FantasyID-only entries (EdgeDoc $0.43$, UAM-Biometrics $0.712$), despite using
 no external data; we make no superiority claim given the differing evaluation
 sets.}
 
+\subsection{\rev{Generalization}}
+\label{subsec:generalization}
+
+\rev{Two experiments probe whether the approach generalizes beyond its specific
+setting. \emph{Across architectures}, applying the identical MOTPE/Pareto protocol
+to an ImageNet-pretrained ResNet-18 backbone yields comparable blind-test
+performance (PR-AUC $0.994$, Dice $0.889$; archived
+externally~\citep{docverify_zenodo}), with neither model dominating, so the
+approach generalizes across architectures. \emph{Across datasets}, evaluating the blind-test models zero-shot on the
+out-of-domain SIDTD dataset~\citep{sidtd2024} (templates subset; 1\,000 bonafide,
+1\,222 attack) drops performance to near chance (PR-AUC $0.555 \pm 0.011$, ROC-AUC
+$0.504 \pm 0.009$): the FantasyID$\rightarrow$SIDTD domain gap is too wide for a
+model trained on FantasyID alone, which bounds the operational scope of the current
+system to the synthetic FantasyID domain and motivates multi-source training as
+future work.}
+
 \subsection{Qualitative Analysis}
 \label{subsec:qualitative}
 
