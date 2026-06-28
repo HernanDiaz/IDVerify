@@ -72,7 +72,7 @@ localization quality.
            30 seeds); all variants vs.\ \textbf{Pareto (ours)}. $p$: paired
            Wilcoxon~\citep{wilcoxon1945}\,+\,Holm~\citep{holm1979} (significant
            at $p<0.05$); $d$: Cohen's~$d$~\citep{cohen1988statistical}
-           ($|d|>0.8$ large effect).}}
+           ($|d|\!\approx\!0.2$ small, $0.5$ medium, $\geq\!0.8$ large).}}
   \label{tab:ablation}
   \begin{tabular}{lcccccc}
     \toprule
@@ -119,9 +119,7 @@ complexity over simpler scalar alternatives yields measurable gains. \rev{Pareto
 significantly outperforms both scalar criteria after Holm correction:
 it improves localization over \texttt{by\_prauc} (Dice $+0.016$, $d=0.59$) and
 improves \emph{both} objectives over \texttt{by\_dice} (PR-AUC $+0.0019$,
-$d=0.64$; Dice $+0.018$, $d=1.00$, large effect). Each single-objective
-criterion sacrifices the objective it does not target, whereas Pareto
-balances both.}
+$d=0.64$; Dice $+0.018$, $d=1.00$, large effect).}
 
 Beyond predictive accuracy, Pareto selection requires no a priori commitment to a
 primary objective, making the full trade-off landscape observable
