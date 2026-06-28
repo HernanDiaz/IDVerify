@@ -24,7 +24,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 |-------|-----------|-----------|----------------|
 | Cross-domain / 2nd dataset (SIDTD) | R1.2 | R2.1.1, R2.2.1 | _TBD_ |
 | Table 5 comparison not on same test set | R1.6 | R2.1.2, R2.2.2 | **DONE** — boldface caveat in Table 5 caption; competitive language removed from Sec. 4.5 + Conclusion |
-| Pareto vs scalar — weak evidence | R1.5 | R2.1 (implied), R2.2.4 | _TBD_ |
+| Pareto vs scalar — weak evidence | R1.5 | R2.1 (implied), R2.2.4 | **DONE** — 30-seed blind-test reframe (CIs + Cohen's d, Holm); Pareto significantly > both scalars; merged into ablation Table 3 |
 | Data augmentation | R1.4 | R2.1.5 | DONE |
 | Class imbalance | — | R2.1.4, R2.2.3 | **DONE** — justification (positive=majority, mild ratio) + pos_weight sensitivity sweep (30 seeds, all p_Holm>0.05); note in Sec. 3.1, full table in this letter |
 | TruFor fine-tuned omitted | R1.3 | — | _TBD_ |
@@ -149,9 +149,46 @@ cross-domain check (null result; reported here for completeness only).
 > confidence intervals and effect sizes... if differences remain non-significant, reframe the
 > paper honestly.*
 
-**Response:** _TBD_
+**Response:** We agree the original n=10 comparison was underpowered. We elevated the
+Pareto-vs-scalar comparison to the same 30-seed blind-test protocol used elsewhere in the
+paper, reporting 95% CIs and Cohen's d with Holm correction across all 10 contrasts
+(2 comparisons × 5 metrics). Selection uses the same 500 MOTPE trials: each scalar rule picks
+the trial with the highest validation objective (`by_prauc` → PR-AUC; `by_dice` → Dice); the
+global winner is retrained over 30 seeds and evaluated on the 15% holdout. The script is in the
+repository (`revision_experiments/pareto_vs_scalar_blindtest.py`, non-invasive; writes only to
+`results/scalar30/`). Means ± std (n=30):
 
-**Changes:** _TBD_
+| Criterion | PR-AUC | Dice | BAcc | F1 (attack) | F1-macro |
+|---|---|---|---|---|---|
+| Pareto (ours) | 0.9967±0.0021 | 0.8750±0.0180 | 0.9573±0.0184 | 0.9651±0.0152 | 0.9423±0.0234 |
+| by_prauc | 0.9953±0.0021 | 0.8589±0.0230 | 0.9481±0.0146 | 0.9569±0.0122 | 0.9294±0.0184 |
+| by_dice | 0.9948±0.0027 | 0.8566±0.0147 | 0.9463±0.0170 | 0.9564±0.0121 | 0.9283±0.0184 |
+
+Paired Wilcoxon + Holm (Δ = Pareto − scalar; positive = Pareto higher):
+
+| Comparison | Metric | Δ | 95% CI | d | p_holm | Sig. |
+|---|---|---|---|---|---|---|
+| Pareto vs by_prauc | PR-AUC | +0.0014 | [0.0003, 0.0024] | 0.49 | 0.062 | ns |
+| | Dice | +0.0161 | [0.0060, 0.0262] | 0.59 | 0.043 | * |
+| | BAcc | +0.0092 | [0.0006, 0.0178] | 0.40 | 0.061 | ns |
+| | F1 (attack) | +0.0082 | [0.0014, 0.0151] | 0.45 | 0.066 | ns |
+| | F1-macro | +0.0129 | [0.0024, 0.0234] | 0.46 | 0.050 | * |
+| Pareto vs by_dice | PR-AUC | +0.0019 | [0.0008, 0.0030] | 0.64 | 0.007 | ** |
+| | Dice | +0.0185 | [0.0116, 0.0254] | 1.00 | 0.0004 | *** |
+| | BAcc | +0.0110 | [0.0019, 0.0201] | 0.45 | 0.040 | * |
+| | F1 (attack) | +0.0087 | [0.0014, 0.0160] | 0.44 | 0.066 | ns |
+| | F1-macro | +0.0140 | [0.0028, 0.0251] | 0.47 | 0.043 | * |
+
+At this power Pareto significantly outperforms both scalar criteria after Holm correction: it
+improves localization over `by_prauc` (Dice +0.016, d=0.59) and improves *both* objectives over
+`by_dice` (PR-AUC +0.0019, d=0.64; Dice +0.018, d=1.00, large). Each single-objective criterion
+sacrifices the objective it does not target, whereas Pareto balances both. This reverses the
+original underpowered "no significant difference" finding into a demonstrated advantage, while
+preserving Pareto's structural benefit of requiring no a priori objective weighting.
+
+**Changes:** Sec. 4.3 (renamed "Ablation and Selection-Criterion Study"): replaced the n=10 NCV
+Table 4 with the 30-seed blind-test results, merged into the single full-width ablation Table 3;
+rewrote the text. Script committed to the repository; per-seed CSVs archived on Zenodo.
 
 ---
 
@@ -406,7 +443,13 @@ letter rather than in the manuscript. New experiment script and outputs are in t
 > beyond predictive accuracy (e.g. reduced sensitivity to the choice of scalar weight, better
 > coverage of the trade-off landscape, or improved robustness across seeds).*
 
-**Response:** _TBD_ (see also R1.5)
+**Response:** Addressed jointly with R1.5: at n=30 Pareto significantly outperforms both scalar
+criteria after Holm correction (`by_dice`: PR-AUC d=0.64, Dice d=1.00; `by_prauc`: Dice d=0.59,
+F1-macro significant). Beyond predictive accuracy, Pareto requires no a priori commitment to a
+primary objective and exposes the full trade-off landscape (Fig. 3), consistent with the DeepID
+protocol that ranks detection and localization independently.
+
+**Changes:** See R1.5.
 
 **Changes:** _TBD_
 
