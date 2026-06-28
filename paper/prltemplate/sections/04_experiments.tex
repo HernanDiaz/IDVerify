@@ -143,9 +143,8 @@ challenge protocol, which ranks detection and localization independently.
 \rev{DocVerify was developed after the DeepID 2025
 Challenge~\citep{deepid2025challenge} deadline, so official test-set
 evaluation was not possible; we report results on our internal 15\% holdout
-(30 seeds), which differs from the official challenge set (FantasyID test
-partition plus a private PXL~Vision set), making any comparison indicative
-rather than controlled. Training data also differ markedly. The leading
+(30 seeds), which differs from the official challenge set, making any comparison
+indicative rather than controlled. Training data also differ markedly. The leading
 entries rely on external data: Sunlight (1st) augmented FantasyID with over
 60\,000 identity images, while the third-place EdgeDoc+TruFor
 fusion~\citep{edgedoc2025} and the TruFor baseline~\citep{trufor2023} build on
@@ -165,7 +164,7 @@ sets.}
 \label{subsec:generalization}
 
 \rev{Two experiments probe whether the approach generalizes beyond its specific
-setting. \emph{Across architectures}, applying the identical MOTPE/Pareto protocol
+setting. \emph{Across architectures}, applying the identical MOTPE protocol
 to an ImageNet-pretrained ResNet-18 backbone yields comparable blind-test
 performance (PR-AUC $0.994$, Dice $0.889$; archived
 externally~\citep{docverify_zenodo}), with neither model dominating, so the
