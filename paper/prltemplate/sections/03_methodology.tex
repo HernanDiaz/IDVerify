@@ -22,7 +22,8 @@ apply \texttt{GroupShuffleSplit} to all 3\,284 available FantasyID images
 \texttt{random\_state}=42) to obtain approximately 2\,791 development images
 and 493 blind holdout images. \rev{This split was performed once,
 before any hyperparameter search or model-design decision, and the holdout
-was accessed only for the final blind evaluation.} The dataset is class-imbalanced:
+was accessed only for the final blind evaluation
+(Section~\ref{subsec:ablation}).} The dataset is class-imbalanced:
 2\,351 attack images (71.6\%) and 933 bonafide images (28.4\%); this
 imbalance is preserved in all splits and not corrected via resampling or
 loss weighting. \rev{The mild imbalance (2.5:1, attack-majority)
