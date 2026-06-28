@@ -147,7 +147,8 @@ resulting objective space.
 
 To obtain unbiased estimates while keeping HPO blind to test data, we use a
 three-level nested CV scheme \citep{varma2006bias}. The outer loop uses 10
-stratified folds; each fold serves once as the test set. For each outer fold,
+stratified folds \rev{of the training set ($85\%$)}; each fold serves once as
+the test set. For each outer fold,
 the remaining data is split into 5 inner folds on which 50 MOTPE trials are
 run (up to 15 epochs each, patience~$=1$). The optimal $\boldsymbol{\theta}^*$
 is then used to retrain from scratch on all outer-fold training data (up to 100

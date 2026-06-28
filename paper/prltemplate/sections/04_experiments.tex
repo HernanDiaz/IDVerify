@@ -63,6 +63,41 @@ localization quality.
   \end{tabular}
 \end{table}
 
+\subsection{Final Model Configuration}
+\label{subsec:final_config}
+
+\rev{The cross-validation above yields ten fold-specific configurations and
+estimates generalization, but the deployed system is a single model. We select
+the configuration with the smallest inner-CV distance to the ideal point
+($1,1$) across all outer folds (Eq.~\ref{eq:ideal_point};
+Table~\ref{tab:final_config}), which fixes both
+the architecture (decoder width) and the Pareto-optimized loss weight
+$\lambda_{\text{mask}}=2.46$, consistent with the $2.3$--$2.7$ cluster of
+Section~\ref{subsec:ncv_results}. This final configuration is retrained from
+scratch on the development set (up to 100 epochs with early stopping, as in
+Section~\ref{subsec:ncv}) and evaluated on the held-out 15\% blind-test
+set; we repeat the retraining over 30 independent seeds to quantify
+run-to-run variability. All comparisons in the remainder of this section share
+this 30-seed blind-test protocol.}
+
+\begin{table}[!t]
+  \centering
+  \caption{\rev{Final Pareto-selected configuration (lowest inner-CV
+           distance to the ideal point).}}
+  \label{tab:final_config}
+  \begin{tabular}{lc}
+    \toprule
+    Hyperparameter & Value \\
+    \midrule
+    Learning rate            & $5.21 \times 10^{-4}$ \\
+    Weight decay             & $4.27 \times 10^{-5}$ \\
+    Dropout rate             & $0.103$ \\
+    Decoder channels         & $192$ \\
+    Loss weight $\lambda_{\text{mask}}$ & $2.46$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \subsection{Ablation and Selection-Criterion Study}
 \label{subsec:ablation}
 
@@ -91,8 +126,8 @@ localization quality.
   \end{tabular}
 \end{table*}
 
-To isolate each design decision, we evaluate the full model against five
-variants on the blind-test set using 30 independent seeds
+To isolate each design decision, we evaluate this final model against five
+variants under the same 30-seed blind-test protocol
 (Table~\ref{tab:ablation}). Three variants probe the architecture and loss
 weighting: \texttt{cls\_only} (classification head only); \texttt{seg\_only}
 (segmentation head only, detection by thresholding mean mask probability);
