@@ -22,7 +22,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 
 | Theme | Reviewer 1 | Reviewer 2 | Planned action |
 |-------|-----------|-----------|----------------|
-| Cross-domain / 2nd dataset (SIDTD) | R1.2 | R2.1.1, R2.2.1 | _TBD_ |
+| Cross-domain / 2nd dataset (SIDTD) | R1.2 | R2.1.1, R2.2.1 | **DONE** — new Generalization subsection (§5.2): SIDTD zero-shot result reported candidly (PR-AUC 0.555, ROC-AUC 0.504, near chance) + explicit FantasyID-domain scope restriction; Conclusion future-work reframed |
 | Challenge comparison not on same test set | R1.6 | R2.1.2, R2.2.2 | **DONE** — removed the challenge comparison table (reviewer's first option); §4.5 condensed to one paragraph, all caveats inline (differing sets, no superiority claim, training-data disparity) |
 | Pareto vs scalar — weak evidence | R1.5 | R2.1 (implied), R2.2.4 | **DONE** — 30-seed blind-test reframe (CIs + Cohen's d, Holm); Pareto significantly > both scalars; merged into ablation Table 3 |
 | Data augmentation | R1.4 | R2.1.5 | DONE |
@@ -74,9 +74,23 @@ removed (see R1.6), so the correction now lives only in text; competitive langua
 > classic file-drawer problem. I strongly recommend including SIDTD results... A candid
 > discussion of the domain gap would strengthen the paper.*
 
-**Response:** _TBD_
+**Response:** We agree and have brought the SIDTD result into the paper. The revised
+Discussion now contains a dedicated **Generalization** subsection (Sec. 5.2) whose
+*Across datasets* paragraph reports the zero-shot transfer to the out-of-domain SIDTD
+dataset (templates subset; 1,000 bonafide, 1,222 attack) candidly, including the
+unfavorable numbers: the 30 blind-test models fall to near chance (PR-AUC 0.555 ± 0.011,
+ROC-AUC 0.504 ± 0.009). We discuss the domain gap explicitly (distinct document templates,
+capture conditions and tampering styles) and state that it bounds the operational scope of
+the system to the synthetic FantasyID domain, motivating multi-source training as future
+work. The per-seed SIDTD CSVs are archived externally (Zenodo); the evaluation script is in
+the repository (`revision_experiments/sidtd_generalization.py`). This is consistent with the
+cross-domain augmentation check reported under R1.4, which independently confirms the gap is
+too wide for standard augmentation to close.
 
-**Changes:** _TBD_
+**Changes:** Sec. 5.2 (new **Generalization** subsection): added an *Across datasets*
+paragraph reporting the SIDTD zero-shot null result (PR-AUC 0.555, ROC-AUC 0.504) and a
+candid domain-gap discussion; the former "Single dataset" limitation paragraph is subsumed
+by this concrete result.
 
 ---
 
@@ -233,7 +247,7 @@ paragraph with all caveats inline; removed competitive/ranking language.
 
 Paired Wilcoxon + Holm: DocVerify higher PR-AUC (p=3e-4, d=0.75); ResNet-18 higher Dice (p=8e-3, d=−0.60), F1 (p=4e-3) and F1-macro (p=4e-3); BAcc not significant (p=0.29). MOTPE selected `loss_w_mask=2.69` for ResNet-18, close to the 2.46 selected for DocVerify, showing the Pareto balance is consistent across architectures. Since DocVerify is better on detection while ResNet-18 is better on localization, neither model dominates the other, which confirms that the methodology transfers cleanly to a modern pretrained backbone. Full code and per-seed CSVs are also archived at [Zenodo DOI].
 
-**Changes:** Added a sentence to the Discussion (Architecture limitation) reporting this result; experiment script committed to the repository (`revision_experiments/resnet18_motpe.py`) and archived on Zenodo.
+**Changes:** Sec. 5.2 (new **Generalization** subsection): the *Across architectures* paragraph reports this result (ResNet-18 PR-AUC 0.994, Dice 0.889; neither model dominates), framing the contribution as the multi-objective selection methodology rather than the specific architecture; experiment script committed to the repository (`revision_experiments/resnet18_motpe.py`) and archived on Zenodo.
 
 ---
 
@@ -295,9 +309,16 @@ split); Sec. 2 TruFor pre-training figure 876,000 → ~828,000; `references.bib`
 > *This severely limits the generalizability of the claims... leaving the practical
 > applicability of DocVerify entirely undemonstrated on real-world documents.*
 
-**Response:** _TBD_ (see also R2.2.1, R1.2)
+**Response:** We have addressed this on two fronts. (1) *Cross-domain evidence:* the new
+**Generalization** subsection (Sec. 5.2, *Across datasets*) now reports the zero-shot SIDTD
+evaluation (PR-AUC 0.555, ROC-AUC 0.504), so the practical out-of-domain behavior is no
+longer undemonstrated; it is shown to be near chance and discussed candidly (see R1.2).
+(2) *Scope restriction:* we explicitly bound the operational scope to the synthetic FantasyID
+domain in Sec. 5.2 and reframed the Conclusion's future-work statement around the cross-domain
+gap exposed on SIDTD. The challenge comparison (Sec. 4.5) is already hedged as indicative only.
 
-**Changes:** _TBD_
+**Changes:** Sec. 5.2 *Across datasets* paragraph (SIDTD result + scope-bounding statement);
+Conclusion future-work sentence reframed around the SIDTD cross-domain gap (Sec. 5.2).
 
 ---
 
@@ -386,9 +407,18 @@ a one-sentence justification citing the external archive.
 > DocTamper, or any real-world document dataset) or substantially revise the scope of the
 > claims to explicitly restrict them to the FantasyID domain, with appropriate hedging.*
 
-**Response:** _TBD_ (see also R1.2)
+**Response:** We chose both options the reviewer offers, not one. We *provide* a cross-domain
+result, the zero-shot SIDTD evaluation now reported in the new **Generalization** subsection
+(Sec. 5.2; PR-AUC 0.555, ROC-AUC 0.504, near chance), *and* we explicitly restrict the scope:
+Sec. 5.2 states that performance bounds the system to the synthetic FantasyID domain, and the
+Conclusion's future-work statement is reframed around closing this gap via multi-source
+training. All competitive language relative to the challenge was already removed (see R1.6).
+SIDTD was used as the additional benchmark because it is a public ID-document dataset directly
+relevant to our task; MIDV-2020/DocTamper target different settings (capture variation, generic
+document tampering) and are left for the multi-source future work.
 
-**Changes:** _TBD_
+**Changes:** Sec. 5.2 *Across datasets* paragraph (SIDTD cross-domain result + explicit
+FantasyID-domain scope restriction); Conclusion future-work reframed (see R1.2, R2.1.1).
 
 ---
 
