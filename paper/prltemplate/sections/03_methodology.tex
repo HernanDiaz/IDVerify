@@ -50,21 +50,23 @@ ImageNet biases of uncertain benefit here. The channel progression is $8 \to 16 
 and batch normalization. Blocks 1--4 use $3 \times 3$
 convolutions; blocks 5--6 use $5 \times 5$ convolutions. Downsampling uses
 average pooling after blocks 2 and~3 (to preserve boundary information) and
-max pooling after blocks 4 and~5 (for translation invariance). Skip connections
-are extracted from each block prior to pooling.
+max pooling after blocks 4 and~5 (for translation invariance).
 
 \subsubsection{Classification Head}
 Global average pooling is applied to the $7 \times 7$ bottleneck, yielding a
 256-dimensional vector passed through four fully-connected layers
-(256$\to$32$\to$16$\to$16$\to$1) with dropout and LeakyReLU, producing a
-classification logit $\hat{y}_{\text{cls}}$.
+(256$\to$32$\to$16$\to$16$\to$1). \rev{Dropout (rate $p$) precedes each linear
+layer and LeakyReLU ($\alpha=0.2$) each hidden layer; the final layer is linear,}
+producing a classification logit $\hat{y}_{\text{cls}}$.
 
 \subsubsection{Segmentation Head (U-Net Decoder)}
-A five-stage U-Net decoder~\citep{unet2015} reconstructs the spatial mask via
-bilinear upsampling and skip-connection concatenation. The channel width halves
-at each stage from $C_{\text{dec}}$ (a tunable HPO parameter) down to
-$C_{\text{dec}}/16$. A final $1 \times 1$ convolution produces the
-segmentation logit $\hat{Y}_{\text{mask}}$.
+A five-stage U-Net decoder~\citep{unet2015} reconstructs the spatial mask.
+\rev{Each stage applies bilinear $\times2$ upsampling, concatenates channel-wise
+the matching-resolution encoder skip (tapped before pooling), then two $3\times3$
+convolutions with LeakyReLU ($\alpha=0.2$) and no batch normalization.} The
+channel width halves at each stage from
+$C_{\text{dec}}$ (a tunable HPO parameter) down to $C_{\text{dec}}/16$. A final
+$1 \times 1$ convolution produces the segmentation logit $\hat{Y}_{\text{mask}}$.
 
 \subsection{Loss Functions}
 \label{subsec:loss}
@@ -160,7 +162,8 @@ the test set. For each outer fold,
 the remaining data is split into 5 inner folds on which 50 MOTPE trials are
 run (up to 15 epochs each, patience~$=1$). The optimal $\boldsymbol{\theta}^*$
 is then used to retrain from scratch on all outer-fold training data (up to 100
-epochs, early stopping patience~$=12$). This design ensures HPO never sees test data: 50 MOTPE trials per outer fold
+epochs, early stopping patience~$=12$ \rev{on the validation distance to the
+ideal point (Eq.~\ref{eq:ideal_point}), as in Pareto selection}). This design ensures HPO never sees test data: 50 MOTPE trials per outer fold
 yield 500 unique hyperparameter configurations in total (10 outer
 folds $\times$ 50 trials); because each configuration is evaluated on 5 inner
 splits, this corresponds to $10 \times 50 \times 5 = 2\,500$ individual model

@@ -12,9 +12,9 @@ All experiments are conducted on a single workstation running Windows~11,
 equipped with an AMD Ryzen~5 3400G (3.70\,GHz), 32\,GB DDR4-3200 RAM, and an NVIDIA
 RTX~5060\,Ti (16\,GB VRAM), using PyTorch 2.10.0 with CUDA 13.0 and
 Optuna~3.x. Training uses a batch size of 64 and no data augmentation
-\rev{(applying standard augmentation, rotation $\pm10^\circ$, brightness,
-contrast, Gaussian blur and JPEG compression, significantly degraded every
-metric on the FantasyID holdout; see~\citep{docverify_zenodo})}.
+\rev{(standard augmentation, rotation, brightness, contrast, blur and JPEG,
+significantly degraded every metric on the FantasyID holdout;
+see~\citep{docverify_zenodo})}.
 All images are resized to $224\!\times\!224$ pixels and normalised to
 $[0,1]$ prior to caching in GPU memory.
 The full NCV pipeline required
@@ -175,18 +175,16 @@ $0.504 \pm 0.009$): the FantasyID$\rightarrow$SIDTD domain gap is too wide for a
 model trained on FantasyID alone. Retraining the same architecture on the SIDTD
 training partition, however, recovers strong performance (PR-AUC $0.878 \pm 0.016$,
 ROC-AUC $0.826 \pm 0.023$), showing the gap reflects domain shift rather than
-architectural capacity; the zero-shot scope of the current FantasyID-trained system
-is thus bounded to its training domain, motivating multi-source training as future
-work.}
+architectural capacity. The zero-shot scope of the current FantasyID-trained
+system is thus bounded to its training domain.}
 
 \subsection{Qualitative Analysis}
 \label{subsec:qualitative}
 
 Figure~\ref{fig:qualitative} shows a representative output for a forged
-document with five altered regions. The predicted mask successfully localizes
-all five tampered fields — photograph, given name, date of birth, document
-number, and expiry date — with tight spatial alignment to the ground-truth
-alterations.
+document with five altered regions (photograph, given name, date of birth,
+document number, expiry date). The predicted mask localizes all five with tight
+spatial alignment to the ground-truth alterations.
 
 \begin{figure*}[!t]
   \centering
@@ -194,9 +192,9 @@ alterations.
     \small\textbf{Input document} &
     \small\textbf{Predicted mask} &
     \small\textbf{Overlay} \\[2pt]
-    \includegraphics[width=0.318\textwidth]{fig_qual_attack_input} &
-    \includegraphics[width=0.318\textwidth]{fig_qual_attack_mask}   &
-    \includegraphics[width=0.318\textwidth]{fig_qual_attack_overlay} \\[1pt]
+    \includegraphics[width=0.27\textwidth]{fig_qual_attack_input} &
+    \includegraphics[width=0.27\textwidth]{fig_qual_attack_mask}   &
+    \includegraphics[width=0.27\textwidth]{fig_qual_attack_overlay} \\[1pt]
     \multicolumn{3}{c}{\small Forged document — five altered regions localized} \\
   \end{tabular}
   \caption{Qualitative result on a forged FantasyID sample. \textbf{Left:}

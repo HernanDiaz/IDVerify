@@ -29,7 +29,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Class imbalance | — | R2.1.4, R2.2.3 | **DONE** — justification (positive=majority, mild ratio) + pos_weight sensitivity sweep (30 seeds, all p_Holm>0.05); note in Sec. 3.1, full table in this letter |
 | TruFor fine-tuned omitted | R1.3 | — | **DONE** — reviewer correct; rather than add a fine-tuned row, removed the whole table (no controlled comparison possible) and condensed §4.5, giving the section less weight |
 | EdgeDoc attribution error | R1.1 | — | **DONE** — corrected attribution now in §4.5 prose (EdgeDoc standalone 0.43 vs EdgeDoc+TruFor fusion 0.958, cited to challenge leaderboard); challenge table since removed (see R1.6) |
-| Reproducibility / architecture detail | — | R2.2.5 | _TBD_ |
+| Reproducibility / architecture detail | — | R2.2.5 | DONE |
 | Blind-holdout protocol timing | — | R2.1.3 | **DONE** — Sec. 3.1 sentence + 3-leg evidence (code isolation, git chronology, threshold from dev-internal val) |
 | Pre-trained backbone baseline | R1.7 | — | **DONE** — re-ran identical MOTPE/Pareto protocol on ImageNet ResNet-18 (n=30): PR-AUC 0.994, Dice 0.889; neither model dominates; script `revision_experiments/resnet18_motpe.py`, Discussion sentence added |
 | Qualitative: failure cases | R1.8 | — | _TBD_ |
@@ -514,9 +514,35 @@ protocol that ranks detection and localization independently.
 > block structure (# conv layers, kernel sizes, BN); skip-connection concatenation mechanism;
 > early-stopping monitored metric.*
 
-**Response:** _TBD_
+**Response:** We have completed the architecture description with all four missing details,
+matching the released implementation (`model.py`, `train.py`; archived at the Zenodo DOI):
 
-**Changes:** _TBD_
+1. **Classification head (Sec. 3.2.2).** Global average pooling of the 256-channel
+   bottleneck feeds four fully-connected layers (256→32→16→16→1). A dropout layer with
+   rate `p` (an HPO parameter) precedes *each* linear layer, and LeakyReLU (α=0.2) follows
+   each *hidden* layer; the final layer is linear, producing the classification logit.
+
+2. **Decoder block structure (Sec. 3.2.3).** Each of the five U-Net decoder stages performs
+   bilinear ×2 upsampling, channel-wise concatenation of the matching-resolution encoder
+   skip, then **two 3×3 convolutions** with LeakyReLU (α=0.2) and **no batch normalization**
+   (in contrast to the encoder, which does use BN). Channel width halves at each stage from
+   `C_dec` down to `C_dec/16`, and a final 1×1 convolution emits the segmentation logit.
+
+3. **Skip-connection mechanism (Sec. 3.2.3).** Encoder skips are tapped *before* pooling at
+   resolutions 224/112/56/28/14 and concatenated channel-wise (not summed) with the
+   upsampled decoder feature at the matching resolution.
+
+4. **Early-stopping monitored metric (Sec. 3.4).** The default multitask model is monitored
+   on the validation distance to the ideal point, √((1−PR-AUC)²+(1−Dice)²) (Eq. 4) — the
+   same criterion as Pareto selection — with patience 12; ReduceLROnPlateau steps on the
+   same monitor. (The single-task ablations `cls_only`/`seg_only` monitor 1−PR-AUC and
+   1−Dice respectively.)
+
+**Changes:** Sec. 3.2.2 (classification head: dropout/activation/final-linear detail),
+Sec. 3.2.3 (decoder: two 3×3 convs, LeakyReLU, no BN; skip tapped before pooling and
+concatenated channel-wise), Sec. 3.4 (early-stopping monitored metric tied to Eq. 4).
+To stay within the 7-page limit, the qualitative figure was slightly reduced in size with
+no loss of content.
 
 ---
 
