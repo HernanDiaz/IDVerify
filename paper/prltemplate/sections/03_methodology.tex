@@ -42,10 +42,7 @@ The encoder is a six-block lightweight CNN inspired by \citet{patel2023dcnn},
 a deepfake-detection architecture specifically designed for forgery artifact
 extraction. A lightweight encoder is a deliberate design choice: the nested
 CV protocol requires training ${\sim}2\,500$ models, so per-trial cost must
-be kept low (${\sim}3.5$~min on our hardware). Heavier pretrained backbones
-(e.g.\ ResNet-50, ViT) would make this scale infeasible; moreover, with only
-${\sim}2\,800$ training images, large pretrained encoders risk importing
-ImageNet biases of uncertain benefit here. The channel progression is $8 \to 16 \to 32 \to 64 \to 128 \to
+be kept low. The channel progression is $8 \to 16 \to 32 \to 64 \to 128 \to
 256$ filters. All layers use LeakyReLU ($\alpha=0.2$)
 and batch normalization. Blocks 1--4 use $3 \times 3$
 convolutions; blocks 5--6 use $5 \times 5$ convolutions. Downsampling uses
