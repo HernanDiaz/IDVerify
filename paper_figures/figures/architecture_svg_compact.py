@@ -27,9 +27,9 @@ LINE_H   = 12      # one content-line height
 POOL_H   = 10      # pool/upsample box below applicable enc blocks
 IO_H     = 14      # I/O box height (input only)
 HGAP     = 6       # horizontal gap between blocks (arrow zone)
-ROW_GAP  = 38      # encoder-row → decoder-row vertical gap
+ROW_GAP  = 20      # encoder-row → decoder-row vertical gap
 MX       = 2       # left/right canvas margin (tight — no wasted whitespace)
-MY       = 18      # top margin (just enough for section labels at MY-11)
+MY       = 7       # top margin (tight — section labels removed)
 BH       = TITLE_H + 2 * LINE_H   # block height without pool  (= 37 pt)
 
 FONT = "'Times New Roman', Georgia, serif"
@@ -311,7 +311,7 @@ def build_svg() -> str:
     parts.append(_arrowhead(tip_x, dec_arr_y, 'l', C_ARR))
 
     # ── INPUT box — below Enc Block 1, vertical upward arrow ───────────────
-    inp_y = enc_bot[0] + 18
+    inp_y = enc_bot[0] + 6
     parts += [_r(enc_x[0], inp_y, BW, IO_H, C_IO),
               _t(enc_x[0] + BW/2, inp_y + IO_H/2, "Input 224×224×3", size=FS_IO)]
     parts.append(_av(enc_x[0] + BW/2, inp_y, enc_bot[0]))
@@ -332,13 +332,6 @@ def build_svg() -> str:
         if lbl:
             parts.append(_t(sx + 5, (y1 + y2) / 2, lbl,
                             size=5.4, fill=C_DIM, anchor="start"))
-
-    # ── SECTION LABELS — centred on the full canvas width ────────────────────
-    label_cx = CW / 2
-    parts.append(_t(label_cx, R1_TOP - 11, "PATEL CNN ENCODER",
-                    size=FS_H, weight="bold", fill="#111111"))
-    parts.append(_t(label_cx + 7, R2_TOP - 13, "U-NET DECODER",
-                    size=FS_H, weight="bold", fill="#111111"))
 
     # ── SEPARATOR LINE ─────────────────────────────────────────────────────
     parts.append(

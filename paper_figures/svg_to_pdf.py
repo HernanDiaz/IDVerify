@@ -3,23 +3,27 @@ import sys
 from pathlib import Path
 
 SVG_IN  = Path(r"E:\PycharmProjects\DocVerify\paper_figures\output\fig0_architecture_compact.svg")
-PDF_OUT = Path(r"E:\PycharmProjects\DocVerify\paper\figures\fig0_architecture_compact.pdf")
+PDF_OUT = Path(r"E:\PycharmProjects\DocVerify\paper\prltemplate\figures\fig0_architecture_compact.pdf")
 
-# --- Try svglib + rlPyCairo (Cairo backend for ReportLab) ---
+# --- svglib + ReportLab (rlPyCairo backend used only if available) ---
 try:
-    import rlPyCairo  # noqa — registers Cairo backend
+    try:
+        import rlPyCairo  # noqa — optional Cairo backend for nicer rendering
+    except Exception:
+        pass
     from svglib.svglib import svg2rlg
     from reportlab.graphics import renderPDF
 
+    PDF_OUT.parent.mkdir(parents=True, exist_ok=True)
     drawing = svg2rlg(str(SVG_IN))
     if drawing is None:
         raise RuntimeError("svg2rlg returned None")
     print(f"Drawing: {drawing.width:.1f} x {drawing.height:.1f} pt")
     renderPDF.drawToFile(drawing, str(PDF_OUT))
-    print(f"Saved (rlPyCairo): {PDF_OUT}")
+    print(f"Saved (svglib): {PDF_OUT}")
     sys.exit(0)
 except Exception as e:
-    print(f"rlPyCairo failed: {e}")
+    print(f"svglib failed: {e}")
 
 # --- Fallback: pycairo SVGSurface → PDFSurface ---
 try:
