@@ -605,11 +605,14 @@ Dice loss now carries a label and is referenced.
 ---
 
 ### R2.3.2 — F1@0.5 must be formally defined at first occurrence
-**Response:** We now define the metric at its first occurrence: F1@0.5 is the F1 score
-of the bona-fide/attack decision taken at classification threshold 0.5, and F1_loc is
-the pixel-level F1 of the predicted mask. With the challenge comparison table removed
-(see R1.3), F1@0.5 first appears in Sec. 4.5, where both definitions are now given inline.
+**Response:** We now define the metric at its first occurrence, including the base F1
+formula. F1@0.5 is the F1 score (the harmonic mean of precision and recall,
+F1 = 2PR/(P+R)) of the bona-fide/attack decision taken at classification threshold 0.5,
+and F1_loc is the pixel-level F1 of the predicted mask. With the challenge comparison
+table removed (see R1.3), F1@0.5 first appears in Sec. 4.5, where all definitions are now
+given inline.
 
-**Changes:** Sec. 4.5: parenthetical definitions of F1@0.5 ("F1 of the bona-fide/attack
-decision at classification threshold 0.5") and F1_loc ("pixel-level F1 of the predicted
-mask") at first use.
+**Changes:** Sec. 4.5: parenthetical definitions at first use of F1@0.5 ("the F1 score,
+2PR/(P+R), of the bona-fide/attack decision at classification threshold 0.5") and F1_loc
+("pixel-level F1 of the predicted mask"), now spelling out the base F1 harmonic-mean
+formula.
