@@ -32,7 +32,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Reproducibility / architecture detail | — | R2.2.5 | DONE |
 | Blind-holdout protocol timing | — | R2.1.3 | **DONE** — Sec. 3.1 sentence + 3-leg evidence (code isolation, git chronology, threshold from dev-internal val) |
 | Pre-trained backbone baseline | R1.7 | — | **DONE** — re-ran identical MOTPE/Pareto protocol on ImageNet ResNet-18 (n=30): PR-AUC 0.994, Dice 0.889; neither model dominates; script `revision_experiments/resnet18_motpe.py`, Discussion sentence added |
-| Qualitative: failure cases | R1.8 | — | _TBD_ |
+| Qualitative: failure cases | R1.8 | — | **DONE** — replaced single-example figure with 2×3 figure (success / localization failure / bona-fide false positive) from blind-test seed 42; script `revision_experiments/qualitative_examples.py`, §4.7 rewritten |
 | Citation precision | R1.9 | — | DONE |
 | Compute cost vs benefit | R1.10 | — | DONE |
 | Equation citing / F1@0.5 definition | — | R2.3.1, R2.3.2 | DONE |
@@ -260,9 +260,29 @@ Paired Wilcoxon + Holm: DocVerify higher PR-AUC (p=3e-4, d=0.75); ResNet-18 high
 > *Please include at least three examples: one success, one localization failure, and one
 > false positive on a bonafide document.*
 
-**Response:** _TBD_
+**Response:** We agree. The original single-example figure showed only a near-perfect
+case and gave an overly optimistic impression of the model's behaviour. We replaced it
+with a figure contrasting the three requested outcomes, all drawn from the same blind-test
+model (seed 42, no retraining) so the comparison is internally consistent:
+1. **Correct detection** — a forged photograph correctly flagged (p_attack=0.96) and
+   tightly localized (Dice 0.96).
+2. **Localization failure** — a forgery correctly flagged (p_attack=1.00) but whose
+   predicted mask drifts onto the portrait (Dice 0.22), the dominant failure mode for Dice.
+3. **Bona-fide false positive** — a genuine document wrongly flagged as an attack
+   (p_attack=0.96) with a spurious mask, illustrating the rare false positives discussed
+   in the Discussion.
 
-**Changes:** _TBD_
+Cases were selected programmatically (highest-Dice face-swap attack, lowest-Dice detected
+attack, and highest-confidence bona-fide false positive) to be representative rather than
+cherry-picked; the generation script is committed for reproducibility. This makes the
+localization variance and false-positive behaviour visible directly in the paper, with the
+quantitative variance already reported in Tables 2 and 3.
+
+**Changes:** Replaced the single-example qualitative figure with a 2×3 figure
+(Fig. `fig:qualitative`, Sec. 4.7) showing ground truth (top) vs. DocVerify prediction
+(bottom) for the three cases above, and rewrote the accompanying paragraph to describe both
+failure modes. Generation script committed (`revision_experiments/qualitative_examples.py`),
+which reuses the blind-test checkpoint and its saved decision threshold (no retraining).
 
 ---
 

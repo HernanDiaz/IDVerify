@@ -183,26 +183,23 @@ system is thus bounded to its training domain.}
 \subsection{Qualitative Analysis}
 \label{subsec:qualitative}
 
-Figure~\ref{fig:qualitative} shows a representative output for a forged
-document with five altered regions (photograph, given name, date of birth,
-document number, expiry date). The predicted mask localizes all five with tight
-spatial alignment to the ground-truth alterations.
+\rev{Figure~\ref{fig:qualitative} contrasts three blind-test outcomes from one
+model. The typical case (left) precisely localizes a forged photograph
+($p_{\text{attack}}=0.96$, Dice $0.96$). The other columns show the two failure
+modes: a forgery correctly flagged ($p_{\text{attack}}=1.00$) but whose mask
+drifts onto the portrait (centre, Dice $0.22$), and a bona-fide document wrongly
+flagged ($p_{\text{attack}}=0.96$) with a spurious mask (right), illustrating
+the localization variance and rare false positives of
+Sec.~\ref{sec:discussion}.}
 
 \begin{figure*}[!t]
   \centering
-  \begin{tabular}{@{}ccc@{}}
-    \small\textbf{Input document} &
-    \small\textbf{Predicted mask} &
-    \small\textbf{Overlay} \\[2pt]
-    \includegraphics[width=0.27\textwidth]{fig_qual_attack_input} &
-    \includegraphics[width=0.27\textwidth]{fig_qual_attack_mask}   &
-    \includegraphics[width=0.27\textwidth]{fig_qual_attack_overlay} \\[1pt]
-    \multicolumn{3}{c}{\small Forged document — five altered regions localized} \\
-  \end{tabular}
-  \caption{Qualitative result on a forged FantasyID sample. \textbf{Left:}
-  input document. \textbf{Centre:} binary mask predicted by DocVerify.
-  \textbf{Right:} predicted mask overlaid in red on the input. All five
-  tampered fields are correctly localized.}
+  \includegraphics[width=0.82\textwidth]{fig_qualitative}
+  \caption{\rev{Representative blind-test predictions (single seed). Top row:
+  ground-truth altered regions (green); bottom row: regions predicted by
+  DocVerify (red). Left: a forged photograph correctly detected and localized.
+  Centre: a forgery correctly flagged but poorly localized. Right: a bona-fide
+  document misclassified as an attack.}}
   \label{fig:qualitative}
 \end{figure*}
 
