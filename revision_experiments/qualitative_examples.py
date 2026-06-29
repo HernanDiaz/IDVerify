@@ -150,7 +150,9 @@ def main():
     gt_cmap = ListedColormap([(0, 0, 0, 0), (0.10, 0.70, 0.20, 0.45)])   # verde GT
     pr_cmap = ListedColormap([(0, 0, 0, 0), (0.90, 0.10, 0.10, 0.45)])   # rojo pred
 
-    fig, axes = plt.subplots(2, 3, figsize=(6.6, 2.95))
+    # Generate at the paper's full text width (7.16 in) so that, included at
+    # \textwidth, the figure is 1:1 and its 9 pt text matches the body text.
+    fig, axes = plt.subplots(2, 3, figsize=(7.16, 3.20))
     axes[0, 0].set_ylabel("Ground truth", fontsize=9)
     axes[1, 0].set_ylabel("Prediction", fontsize=9)
 
@@ -173,11 +175,10 @@ def main():
         ax.set_xticks([])
         ax.set_yticks([])
 
-    fig.tight_layout()
-    fig.subplots_adjust(hspace=0.04)
+    fig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0.04, hspace=0)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    fig.savefig(f"{OUT_STEM}.pdf", bbox_inches="tight")
-    fig.savefig(f"{OUT_STEM}.png", dpi=200, bbox_inches="tight")
+    fig.savefig(f"{OUT_STEM}.pdf", dpi=600, bbox_inches="tight", pad_inches=0)
+    fig.savefig(f"{OUT_STEM}.png", dpi=600, bbox_inches="tight", pad_inches=0)
     print(f"[OK] figura guardada: {OUT_STEM}.pdf / .png")
 
 
