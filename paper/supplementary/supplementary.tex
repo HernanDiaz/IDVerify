@@ -1,0 +1,322 @@
+% ============================================================
+% Supplementary Material — DocVerify (PRL submission)
+% Companion document archived on Zenodo. Contains the full
+% experimental tables that did not fit the 7-page PRL limit.
+% Build: pdflatex supplementary.tex  (x2)
+% ============================================================
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\captionsetup{font=small,labelfont=bf}
+\renewcommand{\arraystretch}{1.15}
+
+% Supplementary numbering: S1, Table S1, etc.
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\title{\textbf{Supplementary Material}\\[4pt]
+\large Multi-objective Pareto Hyperparameter Optimization for Joint
+Detection and Localization of Forged Identity Documents}
+\author{Hern\'{a}n D\'{i}az Rodr\'{i}guez\\
+\small Department of Computer Science, University of Oviedo, Asturias, Spain\\
+\small \texttt{diazhernan@uniovi.es}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent
+This document is a companion to the Pattern Recognition Letters submission
+\emph{Multi-objective Pareto Hyperparameter Optimization for Joint Detection
+and Localization of Forged Identity Documents} (DocVerify). It collects the
+complete experimental tables that, owing to the journal's strict page limit,
+are summarized in only one or two sentences in the main paper or in the
+response to reviewers. All numbers are computed from the released result CSVs
+(archived together with this document); section references (e.g.\ Sec.~4.3)
+point to the main paper. Unless stated otherwise, all blind-test results use
+the held-out 15\% FantasyID partition, $224\times224$ inputs, and the
+Pareto-selected configuration of Table~2 in the main paper. Statistical tests
+are paired two-sided Wilcoxon signed-rank tests with Holm correction across
+metrics within an experiment; effect sizes are paired Cohen's~$d$.
+
+\tableofcontents
+\vspace{6pt}
+\hrule
+
+% ============================================================
+\section{Computational cost breakdown}
+\label{sec:compute}
+
+The ${\sim}59$-hour budget reported in Sec.~4.1 is the cost of the full
+\emph{scientific} protocol (unbiased nested cross-validation plus a 30-seed
+ablation), not the cost of \emph{using} the method. Table~\ref{tab:compute}
+gives the measured wall-clock breakdown on a single NVIDIA RTX~5060\,Ti
+(16\,GB) with VRAM caching. Once the configuration is fixed, retraining the
+single deployed model from scratch (up to 100 epochs with early stopping)
+costs only $7.7\pm1.0$~min per seed; the Pareto loss weighting adds no
+inference-time cost.
+
+\begin{table}[h]
+  \centering
+  \caption{Wall-clock cost per phase (single GPU, VRAM-cached). Per-seed
+           retraining time is the mean over the 30 blind-test seeds
+           (range 6.0--10.2\,min).}
+  \label{tab:compute}
+  \begin{tabular}{lrr}
+    \toprule
+    Phase & Trainings & Wall-clock \\
+    \midrule
+    Nested HPO search (10 outer $\times$ 50 MOTPE $\times$ 5 inner) & 2\,500 & ${\sim}50$\,h \\
+    Outer final models (one retrain per outer fold)                & 10     & ${\sim}1$\,h  \\
+    Blind-test ablation (30 seeds $\times$ 4 variants)             & 120    & ${\sim}12$\,h \\
+    \midrule
+    \textbf{Total scientific protocol}                             & \textbf{2\,630} & \textbf{${\sim}59$--$63$\,h} \\
+    \midrule
+    \textbf{Practical deployment} (one fixed config, one seed)     & \textbf{1} & \textbf{$7.7\pm1.0$\,min} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================
+\section{Data-augmentation ablation}
+\label{sec:aug}
+
+Sec.~4.1 states that standard augmentation degraded every metric on the
+FantasyID holdout. Table~\ref{tab:aug} gives the full 30-seed comparison.
+The augmented model applies, in the training loader only, random rotation
+($\pm10^\circ$), brightness, contrast, Gaussian blur, and JPEG compression,
+using the \emph{same} Pareto configuration. On the clean synthetic holdout,
+augmentation significantly degrades every metric (all Holm $p<10^{-7}$) and
+inflates variance by $2$--$5\times$, confirming the paper's no-augmentation
+choice for this dataset.
+
+\begin{table}[h]
+  \centering
+  \caption{Augmentation ablation (blind test, 30 seeds). $\Delta$:
+           aug $-$ no\_aug; $d$: paired Cohen's~$d$; $p_{\text{Holm}}$:
+           Holm-corrected paired Wilcoxon. All differences significant.}
+  \label{tab:aug}
+  \begin{tabular}{lccccc}
+    \toprule
+    Metric & No aug (ours) & Aug & $\Delta$ & $d$ & $p_{\text{Holm}}$ \\
+    \midrule
+    PR-AUC    & $0.9967\pm0.0021$ & $0.9577\pm0.0457$ & $-0.0390$ & $-0.84$ & $1.5\times10^{-8}$ \\
+    Dice      & $0.8750\pm0.0180$ & $0.7797\pm0.0396$ & $-0.0953$ & $-2.10$ & $9.3\times10^{-9}$ \\
+    BAcc      & $0.9573\pm0.0184$ & $0.8302\pm0.1007$ & $-0.1271$ & $-1.20$ & $5.6\times10^{-9}$ \\
+    F1$_1$    & $0.9651\pm0.0152$ & $0.8593\pm0.1061$ & $-0.1058$ & $-0.97$ & $1.1\times10^{-8}$ \\
+    F1$_{\text{macro}}$ & $0.9423\pm0.0234$ & $0.7998\pm0.1136$ & $-0.1425$ & $-1.19$ & $7.5\times10^{-9}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================
+\section{Class-imbalance (\texttt{pos\_weight}) sensitivity}
+\label{sec:posweight}
+
+Sec.~3.1 notes that the mild class imbalance (2.5:1, attack-majority) leaves
+PR-AUC robust and that a \texttt{pos\_weight} sweep confirms no significant
+effect. Table~\ref{tab:posweight} reports the three settings (inverse-frequency
+$0.397$, neutral $1.0$, and the attack-favouring $2.518$), each over 30 seeds.
+No metric differs significantly from the neutral baseline after Holm correction
+(all $p_{\text{Holm}}>0.5$), so no loss re-weighting is applied in the main
+model.
+
+\begin{table}[h]
+  \centering
+  \caption{\texttt{pos\_weight} sensitivity (blind test, 30 seeds).
+           Baseline is \texttt{pos\_weight}$=1.0$. No comparison against the
+           baseline reaches significance after Holm correction.}
+  \label{tab:posweight}
+  \begin{tabular}{lccccc}
+    \toprule
+    \texttt{pos\_weight} & PR-AUC & Dice & BAcc & Rec.\ attack & Rec.\ bonafide \\
+    \midrule
+    $0.397$ (inv.\ freq.)        & $0.9973\pm0.0018$ & $0.8793\pm0.0168$ & $0.9614\pm0.0146$ & $0.9431$ & $0.9797$ \\
+    $1.0$ (baseline)             & $0.9967\pm0.0021$ & $0.8750\pm0.0180$ & $0.9573\pm0.0184$ & $0.9435$ & $0.9712$ \\
+    $2.518$ (attack-favouring)   & $0.9967\pm0.0019$ & $0.8688\pm0.0240$ & $0.9552\pm0.0164$ & $0.9435$ & $0.9669$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================
+\section{Selection criterion: Pareto vs.\ scalar (full results)}
+\label{sec:scalar}
+
+Table~3 of the main paper reports a compact form of the selection-criterion
+study. Table~\ref{tab:scalar} gives the complete 30-seed results with 95\%
+confidence intervals for all five metrics, and Table~\ref{tab:scalar_stats}
+the paired statistics. Both scalar criteria select the global argmax (by
+validation PR-AUC or validation Dice) over the \emph{same} 500 MOTPE trials;
+our Pareto criterion uses the distance to the ideal point. Pareto improves
+localization over \texttt{by\_prauc} and improves \emph{both} objectives over
+\texttt{by\_dice}.
+
+\begin{table}[h]
+  \centering
+  \caption{Selection-criterion comparison (blind test, 30 seeds).
+           Mean\,$\pm$\,Std with 95\% CI in brackets.}
+  \label{tab:scalar}
+  \small
+  \begin{tabular}{lccc}
+    \toprule
+    Metric & \textbf{Pareto (ours)} & \texttt{by\_prauc} & \texttt{by\_dice} \\
+    \midrule
+    PR-AUC & $0.9967\pm0.0021$        & $0.9953\pm0.0021$        & $0.9948\pm0.0027$ \\
+           & {\scriptsize[0.9959, 0.9975]} & {\scriptsize[0.9945, 0.9961]} & {\scriptsize[0.9938, 0.9958]} \\
+    Dice   & $0.8750\pm0.0180$        & $0.8589\pm0.0230$        & $0.8566\pm0.0147$ \\
+           & {\scriptsize[0.8683, 0.8818]} & {\scriptsize[0.8504, 0.8675]} & {\scriptsize[0.8511, 0.8620]} \\
+    BAcc   & $0.9573\pm0.0184$        & $0.9481\pm0.0146$        & $0.9463\pm0.0170$ \\
+           & {\scriptsize[0.9504, 0.9642]} & {\scriptsize[0.9427, 0.9536]} & {\scriptsize[0.9400, 0.9527]} \\
+    F1$_1$ & $0.9651\pm0.0152$        & $0.9569\pm0.0122$        & $0.9564\pm0.0121$ \\
+           & {\scriptsize[0.9594, 0.9708]} & {\scriptsize[0.9523, 0.9614]} & {\scriptsize[0.9519, 0.9609]} \\
+    F1$_{\text{macro}}$ & $0.9423\pm0.0234$ & $0.9294\pm0.0184$   & $0.9283\pm0.0184$ \\
+           & {\scriptsize[0.9335, 0.9510]} & {\scriptsize[0.9225, 0.9362]} & {\scriptsize[0.9214, 0.9352]} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \caption{Paired statistics, Pareto vs.\ each scalar criterion (30 seeds).
+           $\Delta$: Pareto $-$ scalar; $d$: paired Cohen's~$d$;
+           $p_{\text{Holm}}$: Holm-corrected paired Wilcoxon;
+           \checkmark{}: significant at $p_{\text{Holm}}<0.05$.}
+  \label{tab:scalar_stats}
+  \small
+  \begin{tabular}{llcccc}
+    \toprule
+    Comparison & Metric & $\Delta$ & $d$ & $p_{\text{Holm}}$ & sig. \\
+    \midrule
+    \multirow{5}{*}{Pareto vs \texttt{by\_prauc}}
+      & PR-AUC & $+0.0014$ & $0.49$ & $0.062$ & \\
+      & Dice   & $+0.0161$ & $0.59$ & $0.043$ & \checkmark \\
+      & BAcc   & $+0.0092$ & $0.40$ & $0.061$ & \\
+      & F1$_1$ & $+0.0082$ & $0.45$ & $0.066$ & \\
+      & F1$_{\text{macro}}$ & $+0.0129$ & $0.46$ & $0.050$ & \checkmark \\
+    \midrule
+    \multirow{5}{*}{Pareto vs \texttt{by\_dice}}
+      & PR-AUC & $+0.0019$ & $0.64$ & $0.0072$ & \checkmark \\
+      & Dice   & $+0.0185$ & $1.00$ & $0.00039$ & \checkmark \\
+      & BAcc   & $+0.0110$ & $0.45$ & $0.040$ & \checkmark \\
+      & F1$_1$ & $+0.0087$ & $0.44$ & $0.066$ & \\
+      & F1$_{\text{macro}}$ & $+0.0140$ & $0.47$ & $0.043$ & \checkmark \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================
+\section{Architecture-agnostic validation (ResNet-18)}
+\label{sec:resnet}
+
+Sec.~4.6 states that the identical MOTPE protocol, applied to an
+ImageNet-pretrained ResNet-18 backbone, yields comparable blind-test
+performance and that neither model dominates. Table~\ref{tab:resnet} gives the
+full 30-seed comparison. The ResNet-18 Pareto-selected configuration
+(distance to ideal $=0.164$) is $\eta=3.68\times10^{-4}$,
+$\lambda_{\text{wd}}=1.45\times10^{-6}$, dropout $=0.381$,
+$C_{\text{dec}}=256$, $\lambda_{\text{mask}}=2.69$, the last consistent with
+DocVerify's $2.46$. DocVerify is better on PR-AUC; ResNet-18 is better on Dice
+and the F1 metrics; balanced accuracy does not differ significantly.
+
+\begin{table}[h]
+  \centering
+  \caption{DocVerify vs.\ ResNet-18 under the identical MOTPE protocol
+           (blind test, 30 seeds). $\Delta$: DocVerify $-$ ResNet-18;
+           $d$: paired Cohen's~$d$; $p_{\text{Holm}}$: Holm-corrected paired
+           Wilcoxon.}
+  \label{tab:resnet}
+  \begin{tabular}{lccccc}
+    \toprule
+    Metric & DocVerify & ResNet18-MOTPE & $\Delta$ & $d$ & $p_{\text{Holm}}$ \\
+    \midrule
+    PR-AUC    & $0.9967\pm0.0021$ & $0.9942\pm0.0025$ & $+0.0024$ & $+0.75$ & $2.8\times10^{-4}$ \\
+    Dice      & $0.8750\pm0.0180$ & $0.8894\pm0.0111$ & $-0.0144$ & $-0.60$ & $8.1\times10^{-3}$ \\
+    BAcc      & $0.9573\pm0.0184$ & $0.9629\pm0.0108$ & $-0.0055$ & $-0.21$ & $0.285$ (n.s.) \\
+    F1$_1$    & $0.9651\pm0.0152$ & $0.9779\pm0.0069$ & $-0.0128$ & $-0.67$ & $3.8\times10^{-3}$ \\
+    F1$_{\text{macro}}$ & $0.9423\pm0.0234$ & $0.9613\pm0.0114$ & $-0.0190$ & $-0.63$ & $4.0\times10^{-3}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================
+\section{Cross-domain generalization (SIDTD)}
+\label{sec:sidtd}
+
+Sec.~4.6 reports that the FantasyID-trained model is near chance zero-shot on
+the out-of-domain SIDTD dataset, but recovers strong performance when the same
+architecture is retrained on the SIDTD training partition. Table~\ref{tab:sidtd}
+gives the full curve from zero-shot ($n_{\text{shots}}=0$) through few-shot to
+full retraining ($n_{\text{shots}}=1777$). Few-shot adaptation up to 400
+samples stays near chance; only full in-domain retraining recovers performance,
+confirming that the gap reflects domain shift rather than architectural
+capacity.
+
+\begin{table}[h]
+  \centering
+  \caption{SIDTD adaptation curve. $n_{\text{shots}}=0$ is zero-shot
+           (30 seeds); $n_{\text{shots}}\geq10$ are few-shot/full retrainings
+           (25 seeds each). Templates subset (1\,000 bonafide, 1\,222 attack).}
+  \label{tab:sidtd}
+  \begin{tabular}{rcccc}
+    \toprule
+    $n_{\text{shots}}$ & PR-AUC & ROC-AUC & BAcc & F1$_{\text{macro}}$ \\
+    \midrule
+    0 (zero-shot) & $0.5554\pm0.0110$ & $0.5041\pm0.0094$ & $0.5010$ & --- \\
+    10   & $0.5485\pm0.0084$ & $0.4893\pm0.0147$ & $0.5002\pm0.0135$ & $0.4841\pm0.0199$ \\
+    25   & $0.5595\pm0.0089$ & $0.4996\pm0.0092$ & $0.5046\pm0.0146$ & $0.4755\pm0.0255$ \\
+    50   & $0.5575\pm0.0102$ & $0.4960\pm0.0128$ & $0.4953\pm0.0167$ & $0.4652\pm0.0207$ \\
+    100  & $0.5706\pm0.0208$ & $0.5060\pm0.0199$ & $0.5032\pm0.0203$ & $0.4848\pm0.0259$ \\
+    200  & $0.5774\pm0.0170$ & $0.5089\pm0.0144$ & $0.5031\pm0.0182$ & $0.4853\pm0.0289$ \\
+    400  & $0.5912\pm0.0238$ & $0.5123\pm0.0171$ & $0.5028\pm0.0184$ & $0.4843\pm0.0349$ \\
+    \textbf{1\,777 (full)} & $\mathbf{0.8780\pm0.0161}$ & $\mathbf{0.8263\pm0.0228}$ & $\mathbf{0.7188\pm0.0349}$ & $\mathbf{0.7142\pm0.0333}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================
+\section{Augmentation does not close the cross-domain gap}
+\label{sec:aug_sidtd}
+
+As a follow-up to Sections~\ref{sec:aug} and~\ref{sec:sidtd}, we tested whether
+augmentation-trained checkpoints generalize better zero-shot to SIDTD.
+Table~\ref{tab:aug_sidtd} shows a null result: both the augmented and
+non-augmented models remain at chance, with no significant difference in
+detection quality after Holm correction. Augmentation therefore does not
+substitute for in-domain data; closing the gap requires multi-source training
+(future work, Sec.~6).
+
+\begin{table}[h]
+  \centering
+  \caption{Zero-shot SIDTD generalization, augmented vs.\ non-augmented
+           FantasyID training (30 seeds each). $\Delta$: aug $-$ no\_aug;
+           $p_{\text{Holm}}$: Holm-corrected paired Wilcoxon.}
+  \label{tab:aug_sidtd}
+  \begin{tabular}{lcccc}
+    \toprule
+    Metric & No aug & Aug & $\Delta$ & $p_{\text{Holm}}$ \\
+    \midrule
+    PR-AUC  & $0.5554\pm0.0110$ & $0.5639\pm0.0096$ & $+0.0085$ & $0.077$ (n.s.) \\
+    ROC-AUC & $0.5041\pm0.0094$ & $0.5089\pm0.0060$ & $+0.0048$ & $0.199$ (n.s.) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\vspace{8pt}
+\noindent\textbf{Data availability.} The result CSVs underlying every table
+above, together with the experiment scripts, are released in the
+reproducibility archive accompanying this document.
+
+\end{document}
