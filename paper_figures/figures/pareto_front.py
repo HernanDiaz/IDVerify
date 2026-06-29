@@ -52,7 +52,7 @@ class ParetoFrontFigure(FigureGenerator):
         pareto = self._data.pareto_front
         all_t  = self._data.all_trials
 
-        fig, ax = plt.subplots(figsize=IEEEStyle.FIGSIZE_DOUBLE_COL)
+        fig, ax = plt.subplots(figsize=(IEEEStyle.FIGSIZE_DOUBLE_COL[0], 2.4))
 
         # ── Background: all trials ───────────────────────────────────────────
         ax.scatter(
