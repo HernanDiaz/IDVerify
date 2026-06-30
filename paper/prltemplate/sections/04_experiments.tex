@@ -116,7 +116,7 @@ the HPO selection criterion applied to the \emph{same} 500 MOTPE trials:
 \texttt{by\_dice} (the trial maximizing validation Dice), against our Pareto
 criterion (distance to the ideal point).}
 
-Regarding the architecture and loss variants, three findings stand out.
+Regarding the architecture and loss variants, three findings emerge.
 First, joint multitask training is essential:
 \texttt{cls\_only} produces near-zero Dice ($0.002 \pm 0.008$). Second, a
 dedicated classification head is necessary: \texttt{seg\_only} achieves
@@ -125,7 +125,7 @@ that the segmentation logit alone is an unreliable detection signal. Third,
 Pareto-optimized weights outperform equal weights specifically on localization:
 \texttt{unweighted\_losses} matches the full model on PR-AUC ($p = 0.083$) but
 shows significantly lower Dice ($p = 1.3 \times 10^{-4}$, $d = 1.01$, large
-effect), validating the HPO contribution.
+effect), supporting the HPO contribution.
 
 A key question for any multi-objective HPO framework is whether the added
 complexity over simpler scalar alternatives yields measurable gains. \rev{Pareto
@@ -185,8 +185,8 @@ $\lambda_{\text{mask}} = 2.69$ (vs.\ $2.46$ for DocVerify), so the Pareto balanc
 is consistent across backbones. It reaches PR-AUC $0.994 \pm 0.003$ and Dice
 $0.889 \pm 0.011$ (30 seeds); paired Wilcoxon\,+\,Holm gives DocVerify a small
 PR-AUC edge ($d = 0.75$) and ResNet-18 a Dice/F1 edge ($d = 0.60$--$0.67$), with
-balanced accuracy tied. Neither dominates, so the selection methodology
-generalizes across architectures~\citep{docverify_zenodo}. \emph{Across datasets},
+balanced accuracy tied. Neither dominates, indicating the selection methodology
+is not tied to a specific backbone~\citep{docverify_zenodo}. \emph{Across datasets},
 we evaluate the FantasyID blind-test models zero-shot on the out-of-domain SIDTD
 dataset~\citep{sidtd2024}, using only its \emph{templates} subset (2\,222 images:
 1\,000 bonafide, 1\,222 attack) rather than the full SIDTD video collection.
