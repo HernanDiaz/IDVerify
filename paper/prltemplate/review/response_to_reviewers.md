@@ -559,7 +559,7 @@ protocol that ranks detection and localization independently.
 > early-stopping monitored metric.*
 
 **Response:** We have completed the architecture description with all four missing details,
-matching the released implementation (`model.py`, `train.py`; archived at Zenodo, doi:10.5281/zenodo.21076490):
+matching the released implementation (`model.py`, `train.py`; available on GitHub: https://github.com/HernanDiaz/IDVerify):
 
 1. **Classification head (Sec. 3.2.2).** Global average pooling of the 256-channel
    bottleneck feeds four fully-connected layers (256→32→16→16→1). A dropout layer with
