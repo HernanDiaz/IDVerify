@@ -177,29 +177,35 @@ sets.}
 \label{subsec:generalization}
 
 \rev{Two experiments probe whether the approach generalizes beyond its specific
-setting. \emph{Across architectures}, applying the identical MOTPE protocol
-to an ImageNet-pretrained ResNet-18 backbone yields comparable blind-test
-performance (PR-AUC $0.994$, Dice $0.889$; archived
-externally~\citep{docverify_zenodo}), with neither model dominating, so the
-approach generalizes across architectures. \emph{Across datasets}, evaluating the blind-test models zero-shot on the
-out-of-domain SIDTD dataset~\citep{sidtd2024} (templates subset; 1\,000 bonafide,
-1\,222 attack) drops performance to near chance (PR-AUC $0.555 \pm 0.011$, ROC-AUC
+setting. \emph{Across architectures}, we re-ran the identical MOTPE protocol
+(50 trials, 5 inner splits, Pareto selection, 30-seed blind test; a single study
+rather than the full nested loop, to bound cost) with the encoder replaced by an
+ImageNet-pretrained ResNet-18 feeding the same U-Net decoder. MOTPE selected
+$\lambda_{\text{mask}} = 2.69$ (vs.\ $2.46$ for DocVerify), so the Pareto balance
+is consistent across backbones. It reaches PR-AUC $0.994 \pm 0.003$ and Dice
+$0.889 \pm 0.011$ (30 seeds); paired Wilcoxon\,+\,Holm gives DocVerify a small
+PR-AUC edge ($d = 0.75$) and ResNet-18 a Dice/F1 edge ($d = 0.60$--$0.67$), with
+balanced accuracy tied. Neither dominates, so the selection methodology
+generalizes across architectures~\citep{docverify_zenodo}. \emph{Across datasets},
+we evaluate the FantasyID blind-test models zero-shot on the out-of-domain SIDTD
+dataset~\citep{sidtd2024}, using only its \emph{templates} subset (2\,222 images:
+1\,000 bonafide, 1\,222 attack) rather than the full SIDTD video collection.
+Zero-shot performance drops to near chance (PR-AUC $0.555 \pm 0.011$, ROC-AUC
 $0.504 \pm 0.009$): the FantasyID$\rightarrow$SIDTD domain gap is too wide for a
-model trained on FantasyID alone. Retraining the same architecture on the SIDTD
-training partition, however, recovers strong performance (PR-AUC $0.878 \pm 0.016$,
-ROC-AUC $0.826 \pm 0.023$), showing the gap reflects domain shift rather than
-architectural capacity. The zero-shot scope of the current FantasyID-trained
-system is thus bounded to its training domain.}
+model trained on FantasyID alone. Retraining the same architecture on an 80/20
+stratified split of the templates subset (1\,777 train, 445 test) recovers PR-AUC
+$0.878 \pm 0.016$, ROC-AUC $0.826 \pm 0.023$, whereas a few-shot sweep
+(10--400 images) stays at chance: only full in-domain training closes the gap, so
+it reflects domain shift, not architectural capacity. The zero-shot scope of the
+current FantasyID-trained system is thus bounded to its training domain.}
 
 \subsection{Qualitative Analysis}
 \label{subsec:qualitative}
 
-\rev{Figure~\ref{fig:qualitative} contrasts three blind-test outcomes from one
-model. The typical case (left) precisely localizes a forged photograph
-($p_{\text{attack}}=0.96$, Dice $0.96$). The other columns show the two failure
-modes: a forgery correctly flagged ($p_{\text{attack}}=1.00$) but whose mask
-drifts onto the portrait (centre, Dice $0.22$), and a bona-fide document wrongly
-flagged ($p_{\text{attack}}=0.96$) with a spurious mask (right), illustrating
-the localization variance and rare false positives of
-Sec.~\ref{sec:discussion}.}
+\rev{Figure~\ref{fig:qualitative} contrasts three blind-test outcomes: a forged
+photograph precisely localized (left, $p_{\text{attack}}=0.96$, Dice $0.96$), and
+the two failure modes, a forgery correctly flagged but with its mask drifting onto
+the portrait (centre, $p_{\text{attack}}=1.00$, Dice $0.22$) and a bona-fide
+document wrongly flagged with a spurious mask (right, $p_{\text{attack}}=0.96$),
+illustrating the model's localization variance and false positives.}
 
