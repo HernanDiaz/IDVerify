@@ -7,31 +7,34 @@
 
 \subsection{Analysis of Key Findings}
 
-The ablation reveals an asymmetry between the two tasks. The
-\texttt{seg\_only} variant achieves competitive Dice ($0.867 \pm 0.023$, $p =
-0.288$ vs.\ Multitask) but its PR-AUC collapses to $0.728 \pm 0.053$:
-the U-Net decoder captures sufficient forgery evidence for pixel-level
-prediction yet cannot reliably aggregate it into a binary document-level
-decision. The result confirms that the shared encoder, regularized by the
-segmentation loss, learns spatially-aware features that strongly improve
-document-level detection.
+The ablation reveals a task asymmetry: \texttt{seg\_only} achieves competitive
+Dice ($0.867 \pm 0.023$, $p = 0.288$ vs.\ Pareto) but its PR-AUC collapses to
+$0.728 \pm 0.053$. The U-Net decoder captures forgery evidence for pixel-level
+prediction yet cannot aggregate it into a reliable document-level decision,
+confirming the shared encoder, regularized by the segmentation loss, learns
+spatially-aware features that improve detection.
 
-Comparing Multitask against \texttt{unweighted\_losses} isolates the
-contribution of HPO loss weighting. These variants differ only in whether
-$\lambda_{\text{mask}}$ is set by Pareto HPO (mean $2.39 \pm 0.43$) or fixed
-at $0.5$. Pareto-optimized weights yield significantly higher Dice ($p = 1.3
-\times 10^{-4}$, $d = 1.01$, large effect) while maintaining equivalent
-PR-AUC, confirming that $\lambda_{\text{mask}} \approx 2.4$ is broadly optimal
-and that MOTPE surfaces this value reliably across folds.
+Comparing Pareto against \texttt{unweighted\_losses} isolates the HPO
+loss-weighting contribution: these differ only in whether $\lambda_{\text{mask}}$
+is HPO-set \rev{($2.46$ deployed, NCV fold mean $2.39 \pm 0.43$)} or fixed at
+$0.5$. Pareto-optimized weights yield significantly higher Dice ($p =
+1.3 \times 10^{-4}$, $d = 1.01$) at equal PR-AUC, confirming
+$\lambda_{\text{mask}} \approx 2.4$ is broadly optimal. \rev{The comparison
+against the two scalar criteria (Sec.~\ref{subsec:ablation}) further shows the
+gain stems from the selection rule itself: scalar criteria over-commit to one
+axis, whereas distance-to-ideal selection balances both objectives without a
+priori weighting.}
 
 \subsection{Limitations}
 
-\paragraph{Architecture.}
-Richer pretrained backbones~\citep{dosovitskiy2021vit} are expected to further
-improve cross-domain generalization but, given their higher training cost, would
-make full nested-CV HPO challenging with current computational resources.
+\paragraph{\rev{Computational cost.}}
+\rev{The full nested-CV protocol (2{,}500 trials, ${\sim}59$~h) is computationally
+heavy, but this reflects the unbiased-estimation protocol, not MOTPE itself:
+HPO alone can be run on a single train/validation split at a fraction of the
+cost, and the deployed model retrains in $7.7 \pm 1.0$~min.}
 
-\paragraph{Localization variance.}
-The high Track~2 standard deviation ($\pm 0.096$), driven by bonafide
-false-positive masks, represents a practical reliability concern. Targeted
-calibration strategies are a natural extension.
+\paragraph{\rev{Generalization.}}
+\rev{Trained on FantasyID alone, DocVerify falls to near chance zero-shot on SIDTD
+(Sec.~\ref{subsec:generalization}); even the top challenge entries generalized
+only by training on large external corpora (Sec.~\ref{subsec:challenge}), making
+multi-source training the main future direction.}
