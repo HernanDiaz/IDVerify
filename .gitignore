@@ -59,6 +59,7 @@ sota_comparison/*.npy
 *.spl
 paper/**/*.log
 paper/**/*.out
+paper/**/*.toc
 paper/prltemplate/main.pdf
 
 # ============================================================
