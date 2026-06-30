@@ -32,7 +32,7 @@ Several concerns are raised by both reviewers and will be addressed jointly:
 | Reproducibility / architecture detail | — | R2.2.5 | DONE |
 | Blind-holdout protocol timing | — | R2.1.3 | **DONE** — Sec. 3.1 sentence + 3-leg evidence (code isolation, git chronology, threshold from dev-internal val) |
 | Pre-trained backbone baseline | R1.7 | — | **DONE** — re-ran identical MOTPE/Pareto protocol on ImageNet ResNet-18 (n=30): PR-AUC 0.994, Dice 0.889; neither model dominates; script `revision_experiments/resnet18_motpe.py`, Discussion sentence added |
-| Qualitative: failure cases | R1.8 | — | **DONE** — replaced single-example figure with 2×3 figure (success / localization failure / bona-fide false positive) from blind-test seed 42; script `revision_experiments/qualitative_examples.py`, §4.7 rewritten |
+| Qualitative: failure cases | R1.8 | — | **DONE** — replaced single-example figure with 2×3 figure (success / localization failure / bonafide false positive) from blind-test seed 42; script `revision_experiments/qualitative_examples.py`, §4.7 rewritten |
 | Citation precision | R1.9 | — | DONE |
 | Compute cost vs benefit | R1.10 | — | DONE |
 | Equation citing / F1@0.5 definition | — | R2.3.1, R2.3.2 | DONE |
@@ -273,7 +273,7 @@ model (seed 42, no retraining) so the comparison is internally consistent:
    in the Discussion.
 
 Cases were selected programmatically (highest-Dice face-swap attack, lowest-Dice detected
-attack, and highest-confidence bona-fide false positive) to be representative rather than
+attack, and highest-confidence bonafide false positive) to be representative rather than
 cherry-picked; the generation script is committed for reproducibility. This makes the
 localization variance and false-positive behaviour visible directly in the paper, with the
 quantitative variance already reported in Tables 2 and 3.
@@ -607,12 +607,12 @@ Dice loss now carries a label and is referenced.
 ### R2.3.2 — F1@0.5 must be formally defined at first occurrence
 **Response:** We now define the metric at its first occurrence, including the base F1
 formula. F1@0.5 is the F1 score (the harmonic mean of precision and recall,
-F1 = 2PR/(P+R)) of the bona-fide/attack decision taken at classification threshold 0.5,
+F1 = 2PR/(P+R)) of the bonafide/attack decision taken at classification threshold 0.5,
 and F1_loc is the pixel-level F1 of the predicted mask. With the challenge comparison
 table removed (see R1.3), F1@0.5 first appears in Sec. 4.5, where all definitions are now
 given inline.
 
 **Changes:** Sec. 4.5: parenthetical definitions at first use of F1@0.5 ("the F1 score,
-2PR/(P+R), of the bona-fide/attack decision at classification threshold 0.5") and F1_loc
+2PR/(P+R), of the bonafide/attack decision at classification threshold 0.5") and F1_loc
 ("pixel-level F1 of the predicted mask"), now spelling out the base F1 harmonic-mean
 formula.
