@@ -208,7 +208,7 @@ sacrifices the objective it does not target, whereas Pareto balances both. This 
 original underpowered "no significant difference" finding into a demonstrated advantage, while
 preserving Pareto's structural benefit of requiring no a priori objective weighting.
 
-**Changes:** Sec. 4.3 (renamed "Ablation and Selection-Criterion Study"): replaced the n=10 NCV
+**Changes:** Sec. 4.4 (renamed "Ablation and Selection-Criterion Study"): replaced the n=10 NCV
 Table 4 with the 30-seed blind-test results, merged into the single full-width ablation Table 3;
 rewrote the text. Script committed to the repository; per-seed CSVs archived on Zenodo.
 
@@ -576,7 +576,7 @@ matching the released implementation (`model.py`, `train.py`; archived at the Ze
    resolutions 224/112/56/28/14 and concatenated channel-wise (not summed) with the
    upsampled decoder feature at the matching resolution.
 
-4. **Early-stopping monitored metric (Sec. 3.4).** The default multitask model is monitored
+4. **Early-stopping monitored metric (Sec. 3.5).** The default multitask model is monitored
    on the validation distance to the ideal point, √((1−PR-AUC)²+(1−Dice)²) (Eq. 4) — the
    same criterion as Pareto selection — with patience 12; ReduceLROnPlateau steps on the
    same monitor. (The single-task ablations `cls_only`/`seg_only` monitor 1−PR-AUC and
@@ -584,7 +584,7 @@ matching the released implementation (`model.py`, `train.py`; archived at the Ze
 
 **Changes:** Sec. 3.2.2 (classification head: dropout/activation/final-linear detail),
 Sec. 3.2.3 (decoder: two 3×3 convs, LeakyReLU, no BN; skip tapped before pooling and
-concatenated channel-wise), Sec. 3.4 (early-stopping monitored metric tied to Eq. 4).
+concatenated channel-wise), Sec. 3.5 (early-stopping monitored metric tied to Eq. 4).
 To stay within the 7-page limit, the qualitative figure was slightly reduced in size with
 no loss of content.
 
