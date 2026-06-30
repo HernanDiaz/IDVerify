@@ -139,6 +139,17 @@ primary objective, making the full trade-off landscape observable
 (Fig.~\ref{fig:pareto}) and remaining structurally consistent with the DeepID
 challenge protocol, which ranks detection and localization independently.
 
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_qualitative}
+  \caption{\rev{Representative blind-test predictions (single seed). Top row:
+  ground-truth altered regions (green); bottom row: regions predicted by
+  DocVerify (red). Left: a forged photograph correctly detected and localized.
+  Centre: a forgery correctly flagged but poorly localized. Right: a bona-fide
+  document misclassified as an attack.}}
+  \label{fig:qualitative}
+\end{figure*}
+
 \subsection{Comparison with Related Systems}
 \label{subsec:challenge}
 
@@ -191,15 +202,4 @@ drifts onto the portrait (centre, Dice $0.22$), and a bona-fide document wrongly
 flagged ($p_{\text{attack}}=0.96$) with a spurious mask (right), illustrating
 the localization variance and rare false positives of
 Sec.~\ref{sec:discussion}.}
-
-\begin{figure*}[!t]
-  \centering
-  \includegraphics[width=\textwidth]{fig_qualitative}
-  \caption{\rev{Representative blind-test predictions (single seed). Top row:
-  ground-truth altered regions (green); bottom row: regions predicted by
-  DocVerify (red). Left: a forged photograph correctly detected and localized.
-  Centre: a forgery correctly flagged but poorly localized. Right: a bona-fide
-  document misclassified as an attack.}}
-  \label{fig:qualitative}
-\end{figure*}
 
