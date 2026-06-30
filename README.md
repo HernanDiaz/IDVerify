@@ -4,14 +4,14 @@ DocVerify is a multi-task deep learning system that simultaneously detects forge
 
 Evaluated on the [FantasyID dataset](https://zenodo.org/records/17063366), the system achieves results competitive with top-3 submissions to the [DeepID 2025 Challenge (ICCV)](https://deepid-iccv.github.io/) while training exclusively on FantasyID with a fully custom architecture — no external data, no TruFor pretraining.
 
-| Metric | DocVerify | AG/EdgeDoc (3rd, FantasyID-only) | Sunlight (1st, 60K+ external) |
+| Metric | DocVerify (FantasyID-only) | EdgeDoc+TruFor (3rd, TruFor pretrain) | Sunlight (1st, 60K+ external) |
 |---|---|---|---|
 | PR-AUC (nested CV) | **0.9921 ± 0.0058** | — | — |
 | F1 detection (thr=0.5) | **0.969 ± 0.014** | 0.958 | 0.991 |
-| F1 localisation (per-image) | **0.807 ± 0.096** | 0.686 | 0.784 |
+| F1 localisation (per-image) | **0.807 ± 0.096** | — | 0.784 |
 | Dice (blind test, 30 seeds) | **0.875 ± 0.018** | — | — |
 
-> DocVerify was developed independently after the DeepID 2025 Challenge deadline; results are on an internal 15% holdout, not the official test set.
+> DocVerify was developed independently after the DeepID 2025 Challenge deadline; results are on an internal 15% holdout, not the official test set. The 3rd-place 0.958 above is the EdgeDoc+TruFor **fusion**, which relies on TruFor's pretrained backbone. Among the FantasyID-only entries (no external pretraining), DocVerify leads on detection: EdgeDoc standalone reaches F1@0.5 0.43 and UAM-Biometrics 0.712.
 
 ---
 
@@ -47,6 +47,8 @@ python -m venv venv
 venv\Scripts\activate          # Windows
 pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cu124
 ```
+
+> The test machine runs CUDA 13.0; PyTorch's CUDA 12.4 (`cu124`) wheels are forward-compatible and used here.
 
 ### Dataset setup
 
