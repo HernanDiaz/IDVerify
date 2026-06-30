@@ -97,7 +97,7 @@ DocVerify/
 ├── train.py                        — Nested CV, HPO, early stopping, blind test
 ├── main.py                         — Entry point
 ├── scalar_experiment.py            — Classical scalarisation baseline
-├── dataset_sidtd.py                — SIDTD dataset parser (tested, excluded from paper)
+├── dataset_sidtd.py                — SIDTD dataset parser (cross-domain generalization, Sec. 4.6)
 ├── eval_sidtd.py                   — SIDTD evaluation script
 ├── finetune_sidtd.py               — SIDTD fine-tuning script
 ├── requirements.txt
@@ -112,7 +112,7 @@ DocVerify/
 ├── paper/
 │   ├── README_paper.md             — Paper build instructions
 │   ├── tifs/                       — IEEE T-IFS version (12 pages, IEEEtran)
-│   └── prltemplate/                — Pattern Recognition Letters version (7 pages, elsarticle) — SUBMITTED
+│   └── prltemplate/                — Pattern Recognition Letters version (7 pages, elsarticle) — MAJOR REVISION
 ├── paper_figures/                  — Figure generation scripts (matplotlib)
 └── sota_comparison/                — TruFor comparison pipeline
     ├── 00_export_holdout.py        — Export holdout images
@@ -130,7 +130,7 @@ DocVerify/
 | Version | Venue | Pages | Status |
 |---|---|---|---|
 | `paper/tifs/` | IEEE T-IFS (Q1, IF ~6.8) | 12 | Draft — compiles, no errors |
-| `paper/prltemplate/` | Pattern Recognition Letters (Q1) | 7 | **Submitted — 2026-03-21** |
+| `paper/prltemplate/` | Pattern Recognition Letters (Q1) | 7 | **Major revision — in progress** |
 
 See `paper/README_paper.md` for build instructions.
 
