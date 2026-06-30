@@ -140,6 +140,8 @@ model.
            Baseline is \texttt{pos\_weight}$=1.0$. No comparison against the
            baseline reaches significance after Holm correction.}
   \label{tab:posweight}
+  \small
+  \setlength{\tabcolsep}{4pt}
   \begin{tabular}{lccccc}
     \toprule
     \texttt{pos\_weight} & PR-AUC & Dice & BAcc & Rec.\ attack & Rec.\ bonafide \\
@@ -223,13 +225,108 @@ localization over \texttt{by\_prauc} and improves \emph{both} objectives over
 
 Sec.~4.6 states that the identical MOTPE protocol, applied to an
 ImageNet-pretrained ResNet-18 backbone, yields comparable blind-test
-performance and that neither model dominates. Table~\ref{tab:resnet} gives the
-full 30-seed comparison. The ResNet-18 Pareto-selected configuration
-(distance to ideal $=0.164$) is $\eta=3.68\times10^{-4}$,
-$\lambda_{\text{wd}}=1.45\times10^{-6}$, dropout $=0.381$,
-$C_{\text{dec}}=256$, $\lambda_{\text{mask}}=2.69$, the last consistent with
-DocVerify's $2.46$. DocVerify is better on PR-AUC; ResNet-18 is better on Dice
-and the F1 metrics; balanced accuracy does not differ significantly.
+performance and that neither model dominates. This section gives the full
+experimental detail.
+
+\paragraph{Protocol (identical to the main paper).} We run a single MOTPE study
+with exactly the search space of Table~1 (learning rate, weight decay, dropout,
+decoder width $C_{\text{dec}}$, and $\lambda_{\text{mask}}$), the same 5 inner
+folds, the same 50 trials, the same 15 epochs per trial, the same MOTPE sampler,
+and the same Pareto selection by minimum Euclidean distance to the ideal point
+$(1,1)$. To bound cost we run one study (the outer-fold-0 analogue) rather than
+the full 10-fold nested loop. The Pareto-selected configuration is then
+retrained on the same blind holdout over 30 seeds, with early stopping
+(patience 12 on the validation distance to the ideal point) and the
+classification threshold fixed from the development validation split, never from
+the holdout, exactly as for DocVerify. The study is in-memory and writes no
+weights; it only reads DocVerify's released blind-test CSV as the paired
+baseline, so it leaves every paper result untouched.
+
+\paragraph{Architecture integration.} Only the encoder changes: the six-block
+Patel CNN is replaced by a torchvision \texttt{resnet18} initialized with the
+\texttt{ResNet18\_Weights.IMAGENET1K\_V1} checkpoint, downloaded automatically
+from \url{https://download.pytorch.org/models/resnet18-f37072fd.pth}. ImageNet
+normalization (mean $[0.485,0.456,0.406]$, std $[0.229,0.224,0.225]$) is applied
+inside the forward pass (inputs arrive in $[0,1]$ as in the main pipeline). The
+five encoder taps are the
+stem ($112\times112$, 64\,ch), \texttt{layer1} ($56\times56$, 64\,ch),
+\texttt{layer2} ($28\times28$, 128\,ch), \texttt{layer3} ($14\times14$,
+256\,ch), and \texttt{layer4} ($7\times7$, 512\,ch, bottleneck). The 512-d
+global-average-pooled bottleneck feeds the \emph{same} four-layer
+classification head ($512\!\to\!32\!\to\!16\!\to\!16\!\to\!1$, dropout and
+LeakyReLU as in the paper). For localization, a $1\times1$ convolution projects
+the bottleneck to $C_{\text{dec}}$, and four U-Net decoder blocks
+($7\!\to\!14\!\to\!28\!\to\!56\!\to\!112$) concatenate the \texttt{layer3},
+\texttt{layer2}, \texttt{layer1}, and stem skips in turn; a final bilinear
+upsampling to $224\times224$ and a $1\times1$ convolution produce the mask logit.
+The decoder and both heads are identical to DocVerify; only the feature
+extractor differs.
+
+Table~\ref{tab:hpo_full} lists the complete configuration applied to both
+studies: the fixed training settings, the MOTPE protocol, the blind-test
+retraining, and the search space with the Pareto-selected value for each
+backbone. The two studies share everything except the encoder and the resulting
+selected values.
+
+\begin{table}[h]
+  \centering
+  \caption{Complete hyperparameter configuration for the DocVerify and ResNet-18
+           MOTPE studies. All fixed settings and the optimization protocol are
+           identical; only the encoder and the Pareto-selected values differ.
+           Stratified group $k$-fold and MOTPE sampler are both seeded at $42$.}
+  \label{tab:hpo_full}
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    \multicolumn{3}{l}{\textbf{Fixed training settings (both backbones)}} \\
+    \midrule
+    Input            & \multicolumn{2}{l}{$224\times224$, normalized to $[0,1]$} \\
+    Batch size       & \multicolumn{2}{l}{$64$} \\
+    Optimizer        & \multicolumn{2}{l}{AdamW} \\
+    LR scheduler     & \multicolumn{2}{l}{ReduceLROnPlateau (factor $0.5$, patience $3$)} \\
+    Mixed precision  & \multicolumn{2}{l}{AMP (FP16/FP32)} \\
+    Gradient clip    & \multicolumn{2}{l}{$1.0$ (L2 norm)} \\
+    Activation       & \multicolumn{2}{l}{LeakyReLU ($\alpha=0.2$, fixed)} \\
+    Mask threshold   & \multicolumn{2}{l}{$0.5$} \\
+    Loss             & \multicolumn{2}{l}{$\mathrm{BCE}_{\mathrm{cls}} + \lambda_{\text{mask}}\,(\mathrm{BCE}+\mathrm{Dice})_{\mathrm{seg}}$} \\
+    \midrule
+    \multicolumn{3}{l}{\textbf{MOTPE protocol (both backbones)}} \\
+    \midrule
+    Inner folds      & \multicolumn{2}{l}{$5$ (stratified group $k$-fold)} \\
+    Trials           & \multicolumn{2}{l}{$50$ (MOTPE sampler)} \\
+    Epochs / trial   & \multicolumn{2}{l}{$15$ (validate every $2$, patience $1$)} \\
+    Selection        & \multicolumn{2}{l}{min.\ distance to ideal point $(1,1)$} \\
+    \midrule
+    \multicolumn{3}{l}{\textbf{Blind-test retraining (both backbones)}} \\
+    \midrule
+    Epochs           & \multicolumn{2}{l}{up to $100$, early stopping patience $12$} \\
+    Seeds            & \multicolumn{2}{l}{$30$ (seeds $42$--$71$)} \\
+    Threshold        & \multicolumn{2}{l}{from dev.\ validation split (never holdout)} \\
+    \midrule
+    \multicolumn{3}{l}{\textbf{Search space and Pareto-selected value}} \\
+    \midrule
+    Parameter & Range / set & DocVerify\,/\,ResNet-18 \\
+    \midrule
+    $\eta$            & $[5{\times}10^{-5},\,9{\times}10^{-4}]$ log & $5.21{\times}10^{-4}$\,/\,$3.68{\times}10^{-4}$ \\
+    $\lambda_{\text{wd}}$ & $[10^{-7},\,10^{-4}]$ log & $4.27{\times}10^{-5}$\,/\,$1.45{\times}10^{-6}$ \\
+    $p$ (dropout)    & $[0.1,\,0.4]$ uniform & $0.103$\,/\,$0.381$ \\
+    $C_{\text{dec}}$ & $\{96,128,192,256\}$ & $192$\,/\,$256$ \\
+    $\lambda_{\text{mask}}$ & $[0.5,\,3.0]$ uniform & $2.46$\,/\,$2.69$ \\
+    \midrule
+    Distance to ideal & \multicolumn{2}{l}{$0.316$ (DocVerify)\,/\,$0.164$ (ResNet-18)} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Result.} Table~\ref{tab:resnet} gives the full 30-seed comparison.
+The ResNet-18 Pareto-selected configuration (distance to ideal $=0.164$) is
+$\eta=3.68\times10^{-4}$, $\lambda_{\text{wd}}=1.45\times10^{-6}$, dropout
+$=0.381$, $C_{\text{dec}}=256$, $\lambda_{\text{mask}}=2.69$, the last consistent
+with DocVerify's $2.46$, confirming that the Pareto balance the method discovers
+is stable across backbones. DocVerify is better on PR-AUC; ResNet-18 is better on
+Dice and the F1 metrics; balanced accuracy does not differ significantly. Neither
+model dominates, so the optimization methodology, not a specific encoder, is what
+generalizes.
 
 \begin{table}[h]
   \centering
@@ -257,12 +354,38 @@ and the F1 metrics; balanced accuracy does not differ significantly.
 
 Sec.~4.6 reports that the FantasyID-trained model is near chance zero-shot on
 the out-of-domain SIDTD dataset, but recovers strong performance when the same
-architecture is retrained on the SIDTD training partition. Table~\ref{tab:sidtd}
-gives the full curve from zero-shot ($n_{\text{shots}}=0$) through few-shot to
-full retraining ($n_{\text{shots}}=1777$). Few-shot adaptation up to 400
-samples stays near chance; only full in-domain retraining recovers performance,
-confirming that the gap reflects domain shift rather than architectural
-capacity.
+architecture is retrained on the SIDTD training partition. This section details
+the full adaptation curve.
+
+\paragraph{Target domain.} SIDTD (Boned et~al., 2024) is a synthetic dataset of ID
+and travel documents built from real document templates, a distinct visual domain
+from FantasyID's invented \emph{fantasy} identity cards. We use only the
+\emph{templates} subset present on disk (2{,}222 images: 1{,}000 bonafide and
+1{,}222 attack), not the full SIDTD video collection. Masks are derived from the
+provided annotations at the same $224\times224$ resolution as the main pipeline.
+The dataset is obtained from its official distribution at
+\url{http://datasets.cvc.uab.es/SIDTD/} (doi:10.1038/s41597-024-04160-9).
+
+\paragraph{Zero-shot.} The 30 FantasyID blind-test multitask checkpoints are
+evaluated directly on the SIDTD templates with no adaptation, at a fixed
+classification threshold of $0.5$. We headline PR-AUC and ROC-AUC because they
+are threshold-independent and therefore measure whether the model still
+\emph{ranks} bonafide vs.\ attack across domains; balanced accuracy and F1 at a
+fixed $0.5$ threshold are unreliable cross-domain and are reported only for
+completeness.
+
+\paragraph{Few-shot and full retraining.} For each budget
+$n_{\text{shots}}\in\{10,25,50,100,200,400\}$ we draw a class-stratified sample
+from the SIDTD training partition and fine-tune the same architecture, repeating
+over 25 independent sample draws (seeds) per budget to capture sampling variance;
+the full-retraining point ($n_{\text{shots}}=1777$) uses an 80/20 stratified
+split of the templates subset (1{,}777 train, 445 test). Table~\ref{tab:sidtd}
+gives the resulting curve from zero-shot through few-shot to full retraining.
+Few-shot adaptation up to 400 samples stays near chance; only full in-domain
+retraining recovers strong detection (PR-AUC $0.878$, ROC-AUC $0.826$),
+confirming that the gap reflects domain shift rather than architectural capacity.
+Section~\ref{sec:aug_sidtd} further shows that training-time augmentation does not
+substitute for in-domain data.
 
 \begin{table}[h]
   \centering
@@ -316,7 +439,13 @@ substitute for in-domain data; closing the gap requires multi-source training
 
 \vspace{8pt}
 \noindent\textbf{Data availability.} The result CSVs underlying every table
-above, together with the experiment scripts, are released in the
-reproducibility archive accompanying this document.
+above are released in the reproducibility archive accompanying this document.
+The full source code and experiment scripts are at
+\url{https://github.com/HernanDiaz/IDVerify}. Datasets and pretrained weights are
+obtained from their original sources: FantasyID from
+\url{https://zenodo.org/records/17063366}; SIDTD from
+\url{http://datasets.cvc.uab.es/SIDTD/} (doi:10.1038/s41597-024-04160-9); and the
+ResNet-18 ImageNet weights from torchvision
+(\texttt{ResNet18\_Weights.IMAGENET1K\_V1}).
 
 \end{document}

@@ -95,3 +95,9 @@ desktop.ini
 # PDFs de referencia para la revisión (pesados, no rastrear)
 # ============================================================
 BIB/
+
+# ============================================================
+# Paquete de datos para Zenodo (staging local; los CSV ya están
+# versionados en sus ubicaciones originales)
+# ============================================================
+zenodo_package/
