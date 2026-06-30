@@ -57,40 +57,6 @@ metrics within an experiment; effect sizes are paired Cohen's~$d$.
 \hrule
 
 % ============================================================
-\section{Computational cost breakdown}
-\label{sec:compute}
-
-The ${\sim}59$-hour budget reported in Sec.~4.1 is the cost of the full
-\emph{scientific} protocol (unbiased nested cross-validation plus a 30-seed
-ablation), not the cost of \emph{using} the method. Table~\ref{tab:compute}
-gives the measured wall-clock breakdown on a single NVIDIA RTX~5060\,Ti
-(16\,GB) with VRAM caching. Once the configuration is fixed, retraining the
-single deployed model from scratch (up to 100 epochs with early stopping)
-costs only $7.7\pm1.0$~min per seed; the Pareto loss weighting adds no
-inference-time cost.
-
-\begin{table}[h]
-  \centering
-  \caption{Wall-clock cost per phase (single GPU, VRAM-cached). Per-seed
-           retraining time is the mean over the 30 blind-test seeds
-           (range 6.0--10.2\,min).}
-  \label{tab:compute}
-  \begin{tabular}{lrr}
-    \toprule
-    Phase & Trainings & Wall-clock \\
-    \midrule
-    Nested HPO search (10 outer $\times$ 50 MOTPE $\times$ 5 inner) & 2\,500 & ${\sim}50$\,h \\
-    Outer final models (one retrain per outer fold)                & 10     & ${\sim}1$\,h  \\
-    Blind-test ablation (30 seeds $\times$ 4 variants)             & 120    & ${\sim}12$\,h \\
-    \midrule
-    \textbf{Total scientific protocol}                             & \textbf{2\,630} & \textbf{${\sim}59$--$63$\,h} \\
-    \midrule
-    \textbf{Practical deployment} (one fixed config, one seed)     & \textbf{1} & \textbf{$7.7\pm1.0$\,min} \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-% ============================================================
 \section{Data-augmentation ablation}
 \label{sec:aug}
 
@@ -160,11 +126,28 @@ model.
 Table~3 of the main paper reports a compact form of the selection-criterion
 study. Table~\ref{tab:scalar} gives the complete 30-seed results with 95\%
 confidence intervals for all five metrics, and Table~\ref{tab:scalar_stats}
-the paired statistics. Both scalar criteria select the global argmax (by
-validation PR-AUC or validation Dice) over the \emph{same} 500 MOTPE trials;
-our Pareto criterion uses the distance to the ideal point. Pareto improves
-localization over \texttt{by\_prauc} and improves \emph{both} objectives over
-\texttt{by\_dice}.
+the paired statistics. The two reported objectives quantify the two tasks:
+PR-AUC (area under the precision--recall curve) is a threshold-independent
+measure of the detection head, summarizing precision over the full range of
+recall and remaining informative under class imbalance; Dice (the
+S\o{}rensen--Dice overlap coefficient, $2|A\cap B|/(|A|+|B|)$ between the
+predicted and ground-truth forged-region masks) measures localization
+quality. Our Pareto criterion selects the trial closest to the ideal point
+$(1,1)$ in the normalized PR-AUC/Dice plane, whereas \texttt{by\_prauc} and
+\texttt{by\_dice} take the global argmax of validation PR-AUC or validation
+Dice, respectively.
+
+Significance is assessed with paired two-sided Wilcoxon signed-rank tests over
+the 30 shared seeds, with Holm correction across the five metrics within each
+comparison; effect sizes are paired Cohen's~$d$. Pareto improves localization
+over \texttt{by\_prauc} (Dice $\Delta=+0.0161$, $d=0.59$,
+$p_{\text{Holm}}=0.043$) while not degrading detection ($\Delta$PR-AUC
+$=+0.0014$, $p_{\text{Holm}}=0.062$, n.s.), and improves \emph{both} objectives
+over \texttt{by\_dice} (PR-AUC $\Delta=+0.0019$, $d=0.64$,
+$p_{\text{Holm}}=0.0072$; Dice $\Delta=+0.0185$, $d=1.00$,
+$p_{\text{Holm}}=0.00039$), the latter a large effect. All gains over
+\texttt{by\_dice} except F1$_1$ reach significance after correction
+(Table~\ref{tab:scalar_stats}).
 
 \begin{table}[h]
   \centering
