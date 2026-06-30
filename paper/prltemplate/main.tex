@@ -90,8 +90,8 @@ multi-objective hyperparameter optimization (HPO) framework that treats
 detection quality (PR-AUC) and localization quality (Dice) as simultaneous
 objectives. Using the Multiobjective Tree-structured Parzen Estimator (MOTPE)
 within a 10-fold nested cross-validation protocol (50 trials per outer fold,
-500 unique configurations evaluated across 5 inner splits --- 2\,500 individual
-model trainings in total), DocVerify selects configurations from the
+500 unique configurations evaluated across 5 inner splits, totaling 2\,500
+individual model trainings), DocVerify selects configurations from the
 Pareto-optimal front by minimizing Euclidean distance to the ideal point
 (1, 1), without any manual weighting. Evaluated on the FantasyID benchmark,
 DocVerify achieves PR-AUC = 0.9921 ± 0.0058 and
