@@ -86,7 +86,7 @@ stays near chance; only full in-domain training recovers). We therefore state in
 the gap reflects domain shift rather than architectural capacity, and that the *zero-shot*
 scope of the current FantasyID-trained system is bounded to its training domain, motivating
 multi-source training as future work. The per-seed SIDTD CSVs (zero-shot, few-shot and full
-retraining) are archived externally (Zenodo); the scripts are in the repository
+retraining) are archived externally (Zenodo, doi:10.5281/zenodo.21076490); the scripts are in the repository
 (`revision_experiments/sidtd_generalization.py`, `finetune_sidtd.py`). This is consistent with
 the cross-domain augmentation check reported under R1.4, which independently confirms the
 zero-shot gap is too wide for standard augmentation to close.
@@ -142,7 +142,7 @@ and roughly doubles-to-quintuples their variance. As the reviewer anticipated ("
 degrades performance, that is itself informative"), this confirms our design choice: FantasyID is
 a clean, synthetic dataset, so the un-augmented holdout penalises the train–test distribution
 mismatch that augmentation introduces. The experiment script is included in the code repository
-(`revision_experiments/augmentation_ablation.py`); the per-seed CSVs are archived at [Zenodo].
+(`revision_experiments/augmentation_ablation.py`); the per-seed CSVs are archived at Zenodo (doi:10.5281/zenodo.21076490).
 
 To rule out the alternative hypothesis that augmentation might trade in-domain accuracy for
 *cross-domain* robustness, we additionally evaluated both sets of 30 models zero-shot on the
@@ -158,7 +158,7 @@ the FantasyID→SIDTD domain gap is too large for standard augmentation to close
 gain in favour of augmentation does not survive Holm correction, so we make **no claim** that
 augmentation improves cross-domain generalization; we report this only for completeness, and it
 reinforces that FantasyID is a narrow synthetic domain (consistent with our Limitations
-paragraph). Script: `revision_experiments/sidtd_generalization.py`; CSVs archived at [Zenodo].
+paragraph). Script: `revision_experiments/sidtd_generalization.py`; CSVs archived at Zenodo (doi:10.5281/zenodo.21076490).
 
 **Changes:** Sec. 4.1 (Experimental Setup): added one sentence justifying the no-augmentation
 protocol with the ablation result, citing the external archive. No additional paper text for the
@@ -250,7 +250,7 @@ paragraph with all caveats inline; removed competitive/ranking language.
 | DocVerify | 0.9967±0.0021 | 0.8750±0.0180 | 0.9573±0.0184 | 0.9651±0.0152 | 0.9423±0.0234 |
 | ResNet18-MOTPE | 0.9942±0.0025 | 0.8894±0.0111 | 0.9629±0.0108 | 0.9779±0.0069 | 0.9613±0.0114 |
 
-Paired Wilcoxon + Holm: DocVerify higher PR-AUC (p=3e-4, d=0.75); ResNet-18 higher Dice (p=8e-3, d=−0.60), F1 (p=4e-3) and F1-macro (p=4e-3); BAcc not significant (p=0.29). MOTPE selected `loss_w_mask=2.69` for ResNet-18, close to the 2.46 selected for DocVerify, showing the Pareto balance is consistent across architectures. Since DocVerify is better on detection while ResNet-18 is better on localization, neither model dominates the other, which confirms that the methodology transfers cleanly to a modern pretrained backbone. Full code and per-seed CSVs are also archived at [Zenodo DOI].
+Paired Wilcoxon + Holm: DocVerify higher PR-AUC (p=3e-4, d=0.75); ResNet-18 higher Dice (p=8e-3, d=−0.60), F1 (p=4e-3) and F1-macro (p=4e-3); BAcc not significant (p=0.29). MOTPE selected `loss_w_mask=2.69` for ResNet-18, close to the 2.46 selected for DocVerify, showing the Pareto balance is consistent across architectures. Since DocVerify is better on detection while ResNet-18 is better on localization, neither model dominates the other, which confirms that the methodology transfers cleanly to a modern pretrained backbone. Full code and per-seed CSVs are also archived at Zenodo (doi:10.5281/zenodo.21076490).
 
 **Changes:** Sec. 4.6 (new **Generalization** subsection): the *Across architectures* paragraph reports this result (ResNet-18 PR-AUC 0.994, Dice 0.889; neither model dominates), framing the contribution as the multi-objective selection methodology rather than the specific architecture; experiment script committed to the repository (`revision_experiments/resnet18_motpe.py`) and archived on Zenodo.
 
@@ -346,7 +346,7 @@ proportional to the gain.
 **Changes:** Sec. 4.1 (Experimental Setup): added one sentence clarifying that the 59-hour budget
 covers the full scientific protocol, whereas retraining the single deployed model from scratch
 takes 7.7 ± 1.0 min. Full breakdown reported here in the response letter to respect the 7-page
-limit; per-seed training times are released in the reproducibility archive (Zenodo DOI).
+limit; per-seed training times are released in the reproducibility archive (Zenodo, doi:10.5281/zenodo.21076490).
 
 ---
 
@@ -559,7 +559,7 @@ protocol that ranks detection and localization independently.
 > early-stopping monitored metric.*
 
 **Response:** We have completed the architecture description with all four missing details,
-matching the released implementation (`model.py`, `train.py`; archived at the Zenodo DOI):
+matching the released implementation (`model.py`, `train.py`; archived at Zenodo, doi:10.5281/zenodo.21076490):
 
 1. **Classification head (Sec. 3.2.2).** Global average pooling of the 256-channel
    bottleneck feeds four fully-connected layers (256→32→16→16→1). A dropout layer with
