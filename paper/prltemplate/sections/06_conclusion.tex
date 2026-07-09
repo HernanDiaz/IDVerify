@@ -10,12 +10,13 @@ forged identity documents, paired with a multi-objective Pareto HPO framework
 that selects hyperparameter configurations by optimizing PR-AUC and Dice
 simultaneously without fixing their relative importance in advance.
 
-Our main findings are: (i) joint multitask training with Pareto-optimized loss
-weights achieves significantly higher Dice than single-task variants and
-equal-weight joint training (blind test, 30 seeds, $p = 1.3 \times 10^{-4}$,
-$d = 1.01$) while maintaining competitive PR-AUC\rev{, and the distance-to-ideal
-selection criterion outperforms scalar PR-AUC- or Dice-maximizing selection on
-the same Pareto front}; (ii) under a rigorous 10-fold
+Our main findings are: \rev{(i) learning detection and localization jointly
+benefits both tasks: a single-task model performs well only on the axis it
+targets (detection-only Dice $0.002$; localization-only PR-AUC $0.728$; both
+$p < 0.001$), whereas the joint model attains both; it further yields higher
+Dice than equal-weight training ($p = 1.3 \times 10^{-4}$, $d = 1.01$) at no
+PR-AUC cost, and distance-to-ideal selection outperforms scalar
+PR-AUC/Dice-maximizing selection on the same front}; (ii) under a rigorous 10-fold
 nested cross-validation protocol, DocVerify achieves PR-AUC $= 0.9921 \pm
 0.0058$ and Dice $= 0.856 \pm 0.030$, demonstrating consistent generalization
 across data partitions; and (iii) training only on FantasyID, DocVerify is broadly competitive with top
@@ -24,13 +25,11 @@ F1$_{\text{loc}} = 0.807 \pm 0.096$), though this is indicative only, since
 challenge systems used a different test set.
 
 \rev{Applying the identical MOTPE protocol to a ResNet-18 backbone yields
-comparable blind-test performance (Sec.~\ref{subsec:generalization}), indicating
-the approach is not tied to a specific architecture. By contrast, our zero-shot
-evaluation on SIDTD exposed a substantial cross-domain gap
-(Sec.~\ref{subsec:generalization}); closing it through multi-source training is a
-priority for future work}, alongside integration of forgery-artifact-centric
-features (noise fingerprints, frequency
-anomalies~\citep{cozzolino2020noiseprint}) for domain-invariant representations, and
+comparable blind-test performance (Sec.~\ref{subsec:generalization}), so the
+approach is not tied to one architecture. By contrast, zero-shot evaluation on
+SIDTD exposed a substantial cross-domain gap; closing it through multi-source
+training is a priority for future work}, alongside forgery-artifact features
+(noise fingerprints, frequency anomalies~\citep{cozzolino2020noiseprint}) and
 foundation model backbones~\citep{fakeidet2025} for richer pre-training.
 
 \section*{Acknowledgments}
