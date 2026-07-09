@@ -340,7 +340,7 @@ Pareto-selected configuration is fixed, retraining the single deployed model fro
 measured over the 30 blind-test seeds). The lightweight encoder is the design choice that keeps
 this marginal cost at minute scale, and the Pareto loss weighting that the search yields adds
 **no inference-time cost** while delivering a statistically significant localization gain
-(Dice, d = 1.01 over equal weights; Sec. 4.3). The investment is therefore amortized once and is
+(Dice, d = 1.01 over equal weights; Sec. 4.4). The investment is therefore amortized once and is
 proportional to the gain.
 
 **Changes:** Sec. 4.1 (Experimental Setup): added one sentence clarifying that the 59-hour budget
@@ -481,8 +481,8 @@ table, we removed the challenge comparison table entirely, which eliminates the 
 concern at its source: there is no longer a table that could be read as a direct comparison.
 Sec. 4.5 is now a single paragraph that states the evaluation sets differ and the results are
 indicative only. All competitive language has been removed from the comparison text and from the
-Conclusion, which now states only that DocVerify is "broadly competitive... indicative only,
-since challenge systems used a different test set."
+Conclusion, which now reports its metrics alongside the DeepID 2025 Challenge for context
+only, noting that the evaluation sets differ, and makes no competitive or ranking claim.
 
 **Changes:** See R1.6 — challenge comparison table removed; Sec. 4.5 condensed with all caveats
 inline and competitive language removed from Sec. 4.5 and the Conclusion.
@@ -546,7 +546,7 @@ letter rather than in the manuscript. New experiment script and outputs are in t
 **Response:** Addressed jointly with R1.5: at n=30 Pareto significantly outperforms both scalar
 criteria after Holm correction (`by_dice`: PR-AUC d=0.64, Dice d=1.00; `by_prauc`: Dice d=0.59,
 F1-macro significant). Beyond predictive accuracy, Pareto requires no a priori commitment to a
-primary objective and exposes the full trade-off landscape (Fig. 3), consistent with the DeepID
+primary objective and exposes the full trade-off landscape (Fig. 2), consistent with the DeepID
 protocol that ranks detection and localization independently.
 
 **Changes:** See R1.5.
@@ -609,8 +609,8 @@ Dice loss now carries a label and is referenced.
 formula. F1@0.5 is the F1 score (the harmonic mean of precision and recall,
 F1 = 2PR/(P+R)) of the bonafide/attack decision taken at classification threshold 0.5,
 and F1_loc is the pixel-level F1 of the predicted mask. With the challenge comparison
-table removed (see R1.3), F1@0.5 first appears in Sec. 4.5, where all definitions are now
-given inline.
+table removed (see R1.3), F1@0.5 is defined inline in Sec. 4.5 (its first use in the main
+text), where all definitions are now given.
 
 **Changes:** Sec. 4.5: parenthetical definitions at first use of F1@0.5 ("the F1 score,
 2PR/(P+R), of the bonafide/attack decision at classification threshold 0.5") and F1_loc
