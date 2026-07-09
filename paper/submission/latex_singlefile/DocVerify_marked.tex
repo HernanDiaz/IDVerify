@@ -1,0 +1,1034 @@
+%% ============================================================
+%% DocVerify — Pattern Recognition Letters (PRL) submission
+%%
+%% Format: elsarticle, 5p two-column, author-year (elsarticle-harv)
+%% Style:  prletters.sty as required by the journal
+%% Limit:  7 pages including references
+%%
+%% Build:
+%%   pdflatex main.tex
+%%   bibtex main
+%%   pdflatex main.tex
+%%   pdflatex main.tex
+%% ============================================================
+
+\documentclass[final,5p,times,twocolumn,number]{elsarticle}
+
+%% ── Packages ─────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{microtype}
+
+%% ── PRL journal style (required by the journal) ──────────────
+\usepackage{prletters}
+\usepackage{etoolbox}
+
+%% Make abstract span full width (remove Article history / keywords panel)
+\makeatletter
+\renewcommand{\articleinfobox}{}
+\patchcmd{\MaketitleBox}%
+  {\parbox[t]{.4\textwidth}{\unvbox\absbox}}%
+  {\parbox[t]{.777\textwidth}{\unvbox\absbox}}%
+  {}{}
+\patchcmd{\pprintMaketitle}%
+  {\parbox[t]{.4\textwidth}{\unvbox\absbox}}%
+  {\parbox[t]{.777\textwidth}{\unvbox\absbox}}%
+  {}{}
+\renewenvironment{abstract}{%
+  \global\setbox\absbox=\vbox\bgroup%
+  \hsize=.777\textwidth}%
+ {\par\vspace{6pt}%
+  \noindent\mbox{~}\hfill\copyright~\the\year\
+  Elsevier~Ltd.~All~rights~reserved.\egroup}
+\makeatother
+
+%% ── hyperref ─────────────────────────────────────────────────
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+
+%% ── Convenience macros ───────────────────────────────────────
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+%% Revision highlighting: blue = changes for PRL major revision.
+%% For the final camera-ready, swap to the plain definition below.
+\newcommand{\rev}[1]{\textcolor{blue}{#1}}
+% \newcommand{\rev}[1]{#1}   % final version (no highlight)
+
+%% Journal declaration
+\journal{Pattern Recognition Letters}
+
+% ============================================================
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Multi-objective Pareto hyperparameter optimization for joint detection and
+       localization of forged identity documents}
+
+\author[1]{Hern\'{a}n D\'{i}az Rodr\'{i}guez\corref{cor1}}
+\cortext[cor1]{Corresponding author.}
+\ead{diazhernan@uniovi.es}
+
+\address[1]{Department of Computer Science, University of Oviedo, Asturias, Spain}
+
+\begin{abstract}
+Automated forensic analysis of identity documents requires simultaneously
+detecting whether a document has been tampered with and identifying which
+regions were altered. These two objectives are structurally coupled but exist
+in tension: optimizing one with a fixed loss weight may degrade the other.
+We propose DocVerify, a multi-task convolutional network paired with a
+multi-objective hyperparameter optimization (HPO) framework that treats
+detection quality (PR-AUC) and localization quality (Dice) as simultaneous
+objectives. Using the Multiobjective Tree-structured Parzen Estimator (MOTPE)
+within a 10-fold nested cross-validation protocol (50 trials per outer fold,
+500 unique configurations evaluated across 5 inner splits, totaling 2\,500
+individual model trainings), DocVerify selects configurations from the
+Pareto-optimal front by minimizing Euclidean distance to the ideal point
+(1, 1), without any manual weighting. Evaluated on the FantasyID benchmark,
+DocVerify achieves PR-AUC = 0.9921 ± 0.0058 and
+Dice = 0.856 ± 0.030 under nested cross-validation, and detection
+F1@0.5 = 0.969 ± 0.014 with localization F1 = 0.807 ± 0.096 on the
+blind test set (30 seeds). An ablation confirms that Pareto-optimized loss
+weighting provides a statistically significant Dice improvement over
+equal-weight joint training (p < 0.001, d = 1.01, large effect)
+while maintaining equivalent detection accuracy.
+\end{abstract}
+
+\begin{keyword}
+  identity document forensics \sep
+  multi-objective optimization \sep
+  hyperparameter optimization \sep
+  multi-task learning \sep
+  document forgery detection
+\end{keyword}
+
+\end{frontmatter}
+
+% ============================================================
+% SECTIONS
+% ============================================================
+
+% ============================================================
+% Section 1: Introduction
+% ============================================================
+
+\section{Introduction}
+\label{sec:intro}
+
+Identity document fraud poses a growing threat to national security, financial
+integrity, and border control worldwide. The widespread availability of
+image-editing software has made it possible to produce convincing forgeries of
+passports, national identity cards, and driver's licenses at low cost
+\citep{europol2022deepfakes}. Automated forensic analysis of identity documents
+is therefore a critical component of modern digital identity verification
+pipelines.
+
+Detection of forged identity documents is inherently a two-level problem. At the
+\emph{document level}, a system must decide whether a presented document is
+genuine or has been tampered with (binary detection). At the \emph{pixel level},
+it must also identify and delineate which specific regions have been altered
+(forgery localization). Both objectives are operationally necessary.
+
+Binary detection alone is insufficient for real-world forensic deployments.
+A positive detection decision provides no \emph{actionable information} to the
+investigator: it does not reveal whether the fraudster altered the portrait
+photograph, falsified textual fields, or combined multiple manipulations. Without
+spatial evidence, a human expert cannot determine the nature of the fraud or
+build a legal case. Detection systems are also increasingly subject to
+\emph{explainability requirements} under emerging AI regulations
+\citep{euaiact2024}: a binary ``tampered'' label cannot satisfy the obligation
+to provide a meaningful explanation of the automated decision. Conversely,
+localization alone does not yield a reliable document-level confidence score
+suitable for automated accept/reject decisions. A practical forensic system must
+address both tasks simultaneously.
+
+The primary technical difficulty in joint detection and localization is that the
+two objectives are in \emph{structural tension}: the classification head
+benefits from global image features, while the segmentation head requires
+spatially precise, pixel-level representations. Prior work either treats the
+two tasks independently \citep{trufor2023} or collapses both losses into a
+scalar objective via a fixed weight $\lambda$~\citep{kendall2018multi}. The choice of $\lambda$ is arbitrary and dataset-dependent.
+A second challenge is the risk of over-fitting the model-selection criterion:
+hyperparameter optimization (HPO) that maximizes PR-AUC may sacrifice Dice, and vice versa.
+
+This paper introduces DocVerify, a multi-task forensic document
+analysis system that addresses both challenges. Our contributions are:
+
+\begin{enumerate}
+  \item \textit{Multi-objective Pareto HPO for multitask forensics.}
+    Both PR-AUC and Dice are treated as simultaneous optimization objectives.
+    The optimal configuration is selected from the Pareto front by minimizing
+    the Euclidean distance to the ideal point~$(1,~1)$, requiring no manual
+    task-weight tuning.
+
+  \item \textit{DocVerify architecture.}
+    An end-to-end multi-task CNN comprising a lightweight convolutional encoder
+    coupled to a U-Net decoder for pixel-level mask prediction and a
+    classification head for document-level detection, trained jointly with a
+    combined BCE+Dice segmentation loss.
+
+  \item \textit{Rigorous nested cross-validation.}
+    A 10-fold outer $\times$ 5-fold inner nested cross-validation scheme with
+    50 Multiobjective Tree-structured Parzen Estimator (MOTPE) trials per
+    outer fold (2\,500 HPO evaluations total). Final performance is estimated
+    on a blind holdout using 30 independent seeds, with Wilcoxon signed-rank
+    tests~\citep{wilcoxon1945} and Holm--Bonferroni correction~\citep{holm1979}.
+\end{enumerate}
+
+The source code and experimental artifacts are publicly available at
+\url{https://github.com/HernanDiaz/IDVerify/}.
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{fig0_architecture_compact}
+  \caption{DocVerify architecture. The encoder maps a $3{\times}224{\times}224$
+    input to a $256{\times}7{\times}7$ bottleneck through six convolutional
+    blocks ($8\!\to\!256$ channels). The U-Net decoder reconstructs the forgery
+    mask via skip connections; the classification head outputs a document-level
+    tampered/genuine score.}
+  \label{fig:architecture}
+\end{figure*}
+
+The remainder of the paper is organized as follows. Section~\ref{sec:related}
+reviews related work. Section~\ref{sec:method} describes the DocVerify
+architecture and HPO framework. Section~\ref{sec:experiments} presents
+experimental results. Section~\ref{sec:discussion} discusses the findings and
+limitations. Section~\ref{sec:conclusion} concludes.
+
+% ============================================================
+% Section 2: Related Work
+% ============================================================
+
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Document and Image Forgery Detection}
+
+Deep learning has substantially advanced general-purpose image forensics:
+CNNs can detect subtle statistical fingerprints left by editing operations,
+often outperforming hand-crafted pipelines~\citep{bappy2019hybrid, mantranet2019}.
+\citet{cozzolino2020noiseprint} (Noiseprint) train a CNN via Siamese
+contrastive learning to extract camera-model noise residuals; forgeries appear
+as anomalies in this residual without requiring semantic understanding.
+\citet{trufor2023} (\textsc{TruFor}) generalize this with a transformer fusion
+network (NoisePrint++) that jointly models RGB semantics and noise-pattern
+anomalies, achieving strong performance on general image forensics benchmarks
+with ${\sim}828\,000$ pre-training images.
+
+Identity document forgery introduces unique challenges: forged regions are
+often small (a single text field or portrait), the structured background
+(guilloché patterns, UV-reactive inks) creates strong false negatives for
+general-purpose noise detectors, and document type diversity demands
+generalization beyond natural-image pre-training. Official evaluations on
+FantasyID confirm that general-purpose baselines (TruFor, MMFusion~\citep{mmfusion2024},
+FatFormer~\citep{fatformer2024}, UniFD~\citep{unifd2023}) all achieve
+false-negative rates above 50\% at a 10\% false-positive
+threshold~\citep{fantasyid2024}, motivating domain-specific approaches.
+
+Among systems trained exclusively on FantasyID, \citet{edgedoc2025} propose
+EdgeDoc, a lightweight CNN-Transformer encoder (EdgeNeXt~\citep{edgenext2022}) fed with the green
+channel and a NoisePrint residual, with a U-Net decoder optimized jointly for
+classification and localization. \citet{remtkd2025} introduce Re-MTKD, a
+reinforcement-learning multi-teacher knowledge distillation framework using a
+ConvNeXt~v2 encoder; the Sunlight team adapted this to identity documents using
+over 60\,000 additional external images, winning both tracks of the DeepID
+2025 Challenge~\citep{deepid2025challenge}.
+
+DocVerify differs from all prior document-forensics systems in three respects:
+(i) it systematically searches the task-weight $\lambda_{\text{mask}}$ via
+multi-objective HPO rather than fixing it heuristically; (ii) it selects the
+final configuration via a Pareto-optimal criterion; and (iii) it reports
+uncertainty through nested cross-validation, providing statistically rigorous
+performance estimates.
+
+\subsection{Multi-Task Learning and HPO}
+
+In multi-task learning, the
+dominant approach combines task losses via scalar scalarization~\citep{marler2004survey}
+with fixed weights set before training. \citet{kendall2018multi} propose
+learning these weights via homoscedastic uncertainty; \citet{liu2019end}
+introduce gradient normalization. All scalar approaches commit to a fixed
+trade-off before training begins.
+
+Multi-objective HPO extends single-objective search to jointly optimize multiple
+metrics~\citep{miettinen1999nonlinear}. The Multiobjective TPE
+(MOTPE)~\citep{motpe2022} adapts the TPE surrogate~\citep{tpe2011} to the
+multi-objective setting, achieving competitive Pareto-front coverage with far
+fewer function evaluations than evolutionary methods such as
+NSGA-II~\citep{nsga2_2002}, which is critical when each evaluation requires
+training a deep network. To our knowledge, this is the first work to apply Pareto-based
+multi-objective HPO to joint identity-document forgery detection and
+localization within a nested cross-validation framework.
+
+% ============================================================
+% Section 3: Methodology
+% ============================================================
+
+\section{Methodology}
+\label{sec:method}
+
+\subsection{Dataset}
+\label{subsec:dataset}
+
+We train and evaluate DocVerify on FantasyID~\citep{fantasyid2024}, a public
+benchmark for ID-document forgery detection and localization from Idiap for the
+DeepID 2025 Challenge~\citep{deepid2025challenge}. The FantasyID release we
+process contains 3\,284 labeled images of synthetic fantasy identity documents: \textit{bonafide}
+(genuine) and \textit{attack} (tampered via face swap or text inpainting).
+
+Each image is accompanied by JSON annotations specifying bounding-box regions
+with \texttt{region\_provenance: altered}. We convert these to binary
+segmentation masks at training resolution ($224 \times 224$ pixels). We
+apply \texttt{GroupShuffleSplit} to all 3\,284 available FantasyID images
+(grouping by document identity, $\text{test\_size}=0.15$,
+\texttt{random\_state}=42) to obtain approximately 2\,791 development images
+and 493 blind holdout images. \rev{This split was performed once,
+before any hyperparameter search or model-design decision, and the holdout
+was accessed only for the final blind evaluation
+(Section~\ref{subsec:ablation}).} The dataset is class-imbalanced:
+2\,351 attack images (71.6\%) and 933 bonafide images (28.4\%); this
+imbalance is preserved in all splits and not corrected via resampling or
+loss weighting. \rev{The mild imbalance (2.5:1, attack-majority)
+leaves PR-AUC robust; a \texttt{pos\_weight} sweep confirms no significant
+effect.}
+
+\subsection{Architecture}
+\label{subsec:arch}
+
+DocVerify is a multi-task encoder-decoder network for simultaneous
+document-level classification and pixel-level forgery localization
+(Fig.~\ref{fig:architecture}).
+
+\subsubsection{Encoder}
+The encoder is a six-block lightweight CNN inspired by \citet{patel2023dcnn},
+a deepfake-detection architecture specifically designed for forgery artifact
+extraction. A lightweight encoder is a deliberate design choice: the nested
+CV protocol requires training ${\sim}2\,500$ models, so per-trial cost must
+be kept low. The channel progression is $8 \to 16 \to 32 \to 64 \to 128 \to
+256$ filters. All layers use LeakyReLU ($\alpha=0.2$)
+and batch normalization. Blocks 1--4 use $3 \times 3$
+convolutions; blocks 5--6 use $5 \times 5$ convolutions. Downsampling uses
+average pooling after blocks 2 and~3 (to preserve boundary information) and
+max pooling after blocks 4 and~5 (for translation invariance).
+
+\subsubsection{Classification Head}
+Global average pooling is applied to the $7 \times 7$ bottleneck, yielding a
+256-dimensional vector passed through four fully-connected layers
+(256$\to$32$\to$16$\to$16$\to$1). \rev{Dropout (rate $p$) precedes each linear
+layer and LeakyReLU ($\alpha=0.2$) each hidden layer; the final layer is linear,}
+producing a classification logit $\hat{y}_{\text{cls}}$.
+
+\subsubsection{Segmentation Head (U-Net Decoder)}
+A five-stage U-Net decoder~\citep{unet2015} reconstructs the spatial mask.
+\rev{Each stage applies bilinear $\times2$ upsampling, concatenates channel-wise
+the matching-resolution encoder skip (tapped before pooling), then two $3\times3$
+convolutions with LeakyReLU ($\alpha=0.2$) and no batch normalization.} The
+channel width halves at each stage from
+$C_{\text{dec}}$ (a tunable HPO parameter) down to $C_{\text{dec}}/16$. A final
+$1 \times 1$ convolution produces the segmentation logit $\hat{Y}_{\text{mask}}$.
+
+\subsection{Loss Functions}
+\label{subsec:loss}
+
+The combined training loss is:
+\begin{equation}
+  \mathcal{L} = \mathcal{L}_{\text{cls}} + \lambda_{\text{mask}} \,
+                \mathcal{L}_{\text{seg}},
+  \label{eq:total_loss}
+\end{equation}
+\rev{where, in Eq.~\ref{eq:total_loss},} $\lambda_{\text{mask}} \in [0.5, 3.0]$
+is included in the HPO search
+space. $\mathcal{L}_{\text{cls}} = \text{BCEWithLogits}(\hat{y}_{\text{cls}},
+y_{\text{cls}})$. The segmentation loss combines BCE and Dice:
+\begin{equation}
+  \mathcal{L}_{\text{seg}} = \text{BCE}(\hat{Y}, Y) + 1 -
+    \frac{2 \sum_i p_i g_i + \epsilon}{\sum_i p_i + \sum_i g_i + \epsilon},
+  \label{eq:seg_loss}
+\end{equation}
+\rev{The Dice term in Eq.~\ref{eq:seg_loss},} as introduced for volumetric
+segmentation~\citep{milletari2016vnet}, \rev{addresses}
+foreground/background imbalance in small forgery regions.
+
+All models are trained with AdamW and ReduceLROnPlateau
+(factor $0.5$, patience~3). Mixed-precision training (FP16/FP32 via PyTorch AMP)
+is used throughout.
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{fig1_pareto_front}
+  \caption{Validation objective space across all 500 HPO trials (10 folds
+    $\times$ 50 MOTPE trials). Grey: evaluated; blue: Pareto-optimal;
+    dashed: Pareto frontier. Red diamond: ideal point $(1,1)$; annotated point:
+    selected configuration (distance $d=0.316$).}
+  \label{fig:pareto}
+\end{figure*}
+
+\subsection{Multi-Objective HPO}
+\label{subsec:hpo}
+
+We optimize two complementary metrics: \emph{PR-AUC} (area under the
+precision-recall curve, measuring document-level detection quality) and
+\emph{Dice} ($2|P \cap G|/(|P|+|G|)$, measuring pixel-level mask overlap).
+Our HPO formulation simultaneously maximizes:
+\begin{equation}
+  \max_{\boldsymbol{\theta} \in \Theta}\; \bigl(\text{PR-AUC}(\boldsymbol{\theta}),\;
+  \text{Dice}(\boldsymbol{\theta})\bigr).
+  \label{eq:moopt}
+\end{equation}
+\rev{In Eq.~\ref{eq:moopt},} $\Theta$ \rev{is the search space defined in
+Table~\ref{tab:hpo_space}}.
+
+\begin{table}[!t]
+  \centering
+  \caption{HPO search space \rev{and final selected configuration
+           (Section~\ref{subsec:final_config}). All log-uniform except
+           dropout and $\lambda_{\text{mask}}$ (uniform) and decoder
+           channels}.}
+  \label{tab:hpo_space}
+  \begin{tabular}{llc}
+    \toprule
+    Parameter & Range & \rev{Selected} \\
+    \midrule
+    $\eta$ (learning rate) & $[5{\times}10^{-5},\; 9{\times}10^{-4}]$ & \rev{$5.21{\times}10^{-4}$} \\
+    $\lambda_{\text{wd}}$ (weight decay) & $[10^{-7},\; 10^{-4}]$ & \rev{$4.27{\times}10^{-5}$} \\
+    $p$ (dropout) & $[0.1,\; 0.4]$ & \rev{$0.103$} \\
+    $C_{\text{dec}}$ (decoder channels) & $\{96, 128, 192, 256\}$ & \rev{$192$} \\
+    $\lambda_{\text{mask}}$ (mask loss weight) & $[0.5,\; 3.0]$ & \rev{$2.46$} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+We use MOTPE~\citep{motpe2022} as implemented in Optuna~\citep{optuna2019}.
+After 50 trials on the inner splits, we select the configuration
+$\boldsymbol{\theta}^*$ from the Pareto front $\mathcal{P}$ by minimizing the
+Euclidean distance to the ideal point \rev{(Eq.~\ref{eq:ideal_point})}:
+\begin{equation}
+  \boldsymbol{\theta}^* = \argmin_{\boldsymbol{\theta} \in \mathcal{P}}
+    \sqrt{(1 - \text{PR-AUC})^2 + (1 - \text{Dice})^2}.
+  \label{eq:ideal_point}
+\end{equation}
+This criterion requires no user-specified weighting and assigns equal importance
+to detection and localization. Figure~\ref{fig:pareto} illustrates the
+resulting objective space.
+
+\subsection{Nested Cross-Validation}
+\label{subsec:ncv}
+
+To obtain unbiased estimates while keeping HPO blind to test data, we use a
+three-level nested CV scheme \citep{varma2006bias}. The outer loop uses 10
+stratified folds \rev{of the training set ($85\%$)}; each fold serves once as
+the test set. For each outer fold,
+the remaining data is split into 5 inner folds on which 50 MOTPE trials are
+run (up to 15 epochs each, patience~$=1$). The optimal $\boldsymbol{\theta}^*$
+is then used to retrain from scratch on all outer-fold training data (up to 100
+epochs, early stopping patience~$=12$ \rev{on the validation distance to the
+ideal point (Eq.~\ref{eq:ideal_point}), as in Pareto selection}). This design ensures HPO never sees test data: 50 MOTPE trials per outer fold
+yield 500 unique hyperparameter configurations in total (10 outer
+folds $\times$ 50 trials); because each configuration is evaluated on 5 inner
+splits, this corresponds to $10 \times 50 \times 5 = 2\,500$ individual model
+trainings, plus 10 final models retrained on full outer-fold data.
+
+% ============================================================
+% Section 4: Experiments and Results
+% ============================================================
+
+\section{Experiments and Results}
+\label{sec:experiments}
+
+\subsection{Experimental Setup}
+\label{subsec:setup}
+
+All experiments are conducted on a single workstation running Windows~11,
+equipped with an AMD Ryzen~5 3400G (3.70\,GHz), 32\,GB DDR4-3200 RAM, and an NVIDIA
+RTX~5060\,Ti (16\,GB VRAM), using PyTorch 2.10.0 with CUDA 13.0 and
+Optuna~3.x. Training uses a batch size of 64 and no data augmentation
+\rev{(standard augmentation, rotation, brightness, contrast, blur and JPEG,
+significantly degraded every metric on the FantasyID holdout;
+see~\citep{docverify_zenodo})}.
+All images are resized to $224\!\times\!224$ pixels and normalised to
+$[0,1]$ prior to caching in GPU memory.
+The full NCV pipeline required
+approximately 59~hours; VRAM caching reduces per-trial training time from
+$\sim$12 to $\sim$3.5 minutes. \rev{This 59-hour budget covers the full
+scientific protocol; retraining the single deployed model from scratch takes
+$7.7 \pm 1.0$~min.}
+
+\subsection{Nested Cross-Validation Results}
+\label{subsec:ncv_results}
+
+Table~\ref{tab:nested_cv} reports per-fold test metrics. PR-AUC is
+consistently high across all folds ($0.977$--$0.999$, mean $0.9921 \pm
+0.0058$). Dice shows slightly more fold-to-fold variability ($0.800$--$0.909$,
+mean $0.856 \pm 0.030$), reflecting the difficulty of pixel-level localization.
+The Pareto-selected $\lambda_{\text{mask}}$ clusters between 2.3 and 2.7 in
+eight of ten folds; the two outlier folds (F5, F9) correspond to the two lowest
+Dice scores, confirming that $\lambda_{\text{mask}}$ is a decisive driver of
+localization quality.
+
+\begin{table}[!t]
+  \centering
+  \caption{Per-fold test results from 10-fold NCV.
+           $\overline{w}_{\text{mask}}$: selected loss weight.}
+  \label{tab:nested_cv}
+  \begin{tabular}{cccc}
+    \toprule
+    Fold & PR-AUC & Dice & $\overline{w}_{\text{mask}}$ \\
+    \midrule
+    F1  & 0.9939 & 0.861 & 2.46 \\
+    F2  & 0.9769 & 0.871 & 2.70 \\
+    F3  & 0.9993 & 0.909 & 2.47 \\
+    F4  & 0.9915 & 0.858 & 2.43 \\
+    F5  & 0.9948 & 0.827 & 1.41 \\
+    F6  & 0.9936 & 0.874 & 2.89 \\
+    F7  & 0.9940 & 0.861 & 2.67 \\
+    F8  & 0.9967 & 0.887 & 2.29 \\
+    F9  & 0.9896 & 0.807 & 1.95 \\
+    F10 & 0.9909 & 0.800 & 2.65 \\
+    \midrule
+    \textbf{Mean (Std)} & \textbf{0.9921 (0.0058)} & \textbf{0.856 (0.030)} & \textbf{2.39 (0.43)} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table*}[!t]
+  \centering
+  \caption{\rev{Ablation and selection-criterion comparison (blind test,
+           30 seeds); all variants vs.\ \textbf{Pareto (ours)}. $p$: paired
+           Wilcoxon~\citep{wilcoxon1945}\,+\,Holm~\citep{holm1979} (significant
+           at $p<0.05$); $d$: Cohen's~$d$~\citep{cohen1988statistical}
+           ($|d|\!\approx\!0.2$ small, $0.5$ medium, $\geq\!0.8$ large).}}
+  \label{tab:ablation}
+  \begin{tabular}{lcccccc}
+    \toprule
+    & \multicolumn{3}{c}{PR-AUC} & \multicolumn{3}{c}{Dice} \\
+    \cmidrule(r){2-4}\cmidrule(l){5-7}
+    Variant & Mean $\pm$ Std & $p$ & $d$ & Mean $\pm$ Std & $p$ & $d$ \\
+    \midrule
+    \textbf{Pareto (ours)} & $\mathbf{0.9967 \pm 0.0021}$ & — & — & $\mathbf{0.875 \pm 0.018}$ & — & — \\
+    \rev{\texttt{by\_prauc}} & \rev{$0.9953 \pm 0.0021$} & \rev{$0.06$} & \rev{$0.49$} & \rev{$0.859 \pm 0.023$} & \rev{$0.04$} & \rev{$0.59$} \\
+    \rev{\texttt{by\_dice}}  & \rev{$0.9948 \pm 0.0027$} & \rev{$0.007$} & \rev{$0.64$} & \rev{$0.857 \pm 0.015$} & \rev{$<0.001$} & \rev{$1.00$} \\
+    \midrule
+    \texttt{cls\_only}          & $0.9503 \pm 0.0744$ & $<0.001$ & $0.62$ & $0.002 \pm 0.008$ & $<0.001$ & $47.2$ \\
+    \texttt{seg\_only}          & $0.7277 \pm 0.0528$ & $<0.001$ & $5.15$ & $0.867 \pm 0.023$ & $0.29$ & $0.32$ \\
+    \texttt{unweighted\_losses} & $0.9958 \pm 0.0016$ & $0.08$ & $0.37$ & $0.857 \pm 0.016$ & $<0.001$ & $1.01$ \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\subsection{Final Model Configuration}
+\label{subsec:final_config}
+
+\rev{The cross-validation above yields ten fold-specific configurations and
+estimates generalization, but the deployed system is a single model. We select
+the configuration with the smallest inner-CV distance to the ideal point
+($1,1$) across all outer folds (Eq.~\ref{eq:ideal_point};
+Table~\ref{tab:hpo_space}), which fixes both
+the architecture (decoder width) and the Pareto-optimized loss weight
+$\lambda_{\text{mask}}=2.46$, consistent with the $2.3$--$2.7$ cluster of
+Section~\ref{subsec:ncv_results}. This final configuration is retrained from
+scratch on the development set (up to 100 epochs with early stopping, as in
+Section~\ref{subsec:ncv}) and evaluated on the held-out 15\% blind-test
+set; we repeat the retraining over 30 independent seeds to quantify
+run-to-run variability.}
+
+\subsection{Ablation and Selection-Criterion Study}
+\label{subsec:ablation}
+
+To isolate each design decision, we evaluate this final model against five
+variants under the same 30-seed blind-test protocol
+(Table~\ref{tab:ablation}). Three variants probe the architecture and loss
+weighting: \texttt{cls\_only} (classification head only); \texttt{seg\_only}
+(segmentation head only, detection by thresholding mean mask probability);
+and \texttt{unweighted\_losses} (full multitask, $\lambda_{\text{cls}} =
+\lambda_{\text{mask}} = 0.5$, bypassing HPO). \rev{Two further variants probe
+the HPO selection criterion applied to the \emph{same} 500 MOTPE trials:
+\texttt{by\_prauc} (the trial maximizing validation PR-AUC) and
+\texttt{by\_dice} (the trial maximizing validation Dice), against our Pareto
+criterion (distance to the ideal point).}
+
+Regarding the architecture and loss variants, three findings emerge.
+First, joint multitask training is essential:
+\texttt{cls\_only} produces near-zero Dice ($0.002 \pm 0.008$). Second, a
+dedicated classification head is necessary: \texttt{seg\_only} achieves
+competitive Dice ($0.867$) but PR-AUC drops to $0.728 \pm 0.053$, confirming
+that the segmentation logit alone is an unreliable detection signal. Third,
+Pareto-optimized weights outperform equal weights specifically on localization:
+\texttt{unweighted\_losses} matches the full model on PR-AUC ($p = 0.083$) but
+shows significantly lower Dice ($p = 1.3 \times 10^{-4}$, $d = 1.01$, large
+effect), supporting the HPO contribution.
+
+A key question for any multi-objective HPO framework is whether the added
+complexity over simpler scalar alternatives yields measurable gains. \rev{Pareto
+significantly outperforms both scalar criteria after Holm correction:
+it improves localization over \texttt{by\_prauc} (Dice $+0.016$, $d=0.59$) and
+improves \emph{both} objectives over \texttt{by\_dice} (PR-AUC $+0.0019$,
+$d=0.64$; Dice $+0.018$, $d=1.00$, large effect).}
+
+Beyond predictive accuracy, Pareto selection requires no a priori commitment to a
+primary objective, making the full trade-off landscape observable
+(Fig.~\ref{fig:pareto}) and remaining structurally consistent with the DeepID
+challenge protocol, which ranks detection and localization independently.
+
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\textwidth]{fig_qualitative}
+  \caption{\rev{Representative blind-test predictions (single seed). Top row:
+  ground-truth altered regions (green); bottom row: regions predicted by
+  DocVerify (red). Left: a forged photograph correctly detected and localized.
+  Centre: a forgery correctly flagged but poorly localized. Right: a bonafide
+  document misclassified as an attack.}}
+  \label{fig:qualitative}
+\end{figure*}
+
+\subsection{Comparison with Related Systems}
+\label{subsec:challenge}
+
+\rev{DocVerify was developed after the DeepID 2025
+Challenge~\citep{deepid2025challenge} deadline; we report results on our
+internal 15\% holdout (30 seeds), which differs from the official challenge
+set, so any comparison is indicative only. Training data also differ markedly. The leading
+entries rely on external data: Sunlight (1st) augmented FantasyID with over
+60\,000 identity images, while the third-place EdgeDoc+TruFor fusion and the
+TruFor baseline~\citep{trufor2023} build on a backbone pre-trained on
+$\sim$828\,000 manipulation images. EdgeDoc standalone~\citep{edgedoc2025},
+UAM-Biometrics, and DocVerify instead train on FantasyID alone. With these
+caveats, DocVerify reaches
+detection F1@0.5 \rev{(the F1 score, $2PR/(P{+}R)$, of the bonafide/attack
+decision at classification threshold $0.5$)} $=0.969 \pm 0.014$ and localization
+F1$_{\text{loc}}$ \rev{(pixel-level F1 of the predicted mask)}
+$= 0.807 \pm 0.096$. Reported challenge figures span EdgeDoc standalone
+($0.43$~\citep{edgedoc2025}), UAM-Biometrics ($0.712$), the EdgeDoc+TruFor fusion
+($0.958$~\citep{deepid2025challenge}, on the pre-trained TruFor backbone) and the
+winner Sunlight ($0.991$, F1$_{\text{loc}}$ $0.784$). As evaluation sets and
+training data differ, we make no superiority claim and imply no ranking; the
+figures only add context.}
+
+\subsection{\rev{Generalization}}
+\label{subsec:generalization}
+
+\rev{Two experiments probe whether the approach generalizes beyond its specific
+setting. \emph{Across architectures}, we re-ran the identical MOTPE protocol
+(50 trials, 5 inner splits, Pareto selection, 30-seed blind test; a single study
+rather than the full nested loop, to bound cost) with the encoder replaced by an
+ImageNet-pretrained ResNet-18 feeding the same U-Net decoder. MOTPE selected
+$\lambda_{\text{mask}} = 2.69$ (vs.\ $2.46$ for DocVerify), so the Pareto balance
+is consistent across backbones. It reaches PR-AUC $0.994 \pm 0.003$ and Dice
+$0.889 \pm 0.011$ (30 seeds); paired Wilcoxon\,+\,Holm gives DocVerify a small
+PR-AUC edge ($d = 0.75$) and ResNet-18 a Dice/F1 edge ($d = 0.60$--$0.67$), with
+balanced accuracy tied. Neither dominates, indicating the selection methodology
+is not tied to a specific backbone~\citep{docverify_zenodo}. \emph{Across datasets},
+we evaluate the FantasyID blind-test models zero-shot on the out-of-domain SIDTD
+dataset~\citep{sidtd2024}, using only its \emph{templates} subset (2\,222 images:
+1\,000 bonafide, 1\,222 attack) rather than the full SIDTD video collection.
+Zero-shot performance drops to near chance (PR-AUC $0.555 \pm 0.011$, ROC-AUC
+$0.504 \pm 0.009$): the FantasyID$\rightarrow$SIDTD domain gap is too wide for a
+model trained on FantasyID alone. Retraining the same architecture on an 80/20
+stratified split of the templates subset (1\,777 train, 445 test) recovers PR-AUC
+$0.878 \pm 0.016$, ROC-AUC $0.826 \pm 0.023$, whereas a few-shot sweep
+(10--400 images) stays at chance: only full in-domain training closes the gap, so
+it reflects domain shift, not architectural capacity. The zero-shot scope of the
+current FantasyID-trained system is thus bounded to its training domain.}
+
+\subsection{Qualitative Analysis}
+\label{subsec:qualitative}
+
+\rev{Figure~\ref{fig:qualitative} contrasts three blind-test outcomes: a forged
+photograph precisely localized (left, $p_{\text{attack}}=0.96$, Dice $0.96$), and
+the two failure modes, a forgery correctly flagged but with its mask drifting onto
+the portrait (centre, $p_{\text{attack}}=1.00$, Dice $0.22$) and a bonafide
+document wrongly flagged with a spurious mask (right, $p_{\text{attack}}=0.96$),
+illustrating the model's localization variance and false positives.}
+
+% ============================================================
+% Section 5: Discussion
+% ============================================================
+
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Analysis of Key Findings}
+
+The ablation reveals a task asymmetry: \texttt{seg\_only} achieves competitive
+Dice ($0.867 \pm 0.023$, $p = 0.288$ vs.\ Pareto) but its PR-AUC collapses to
+$0.728 \pm 0.053$. The U-Net decoder captures forgery evidence for pixel-level
+prediction yet cannot aggregate it into a reliable document-level decision,
+confirming the shared encoder, regularized by the segmentation loss, learns
+spatially-aware features that improve detection.
+
+Comparing Pareto against \texttt{unweighted\_losses} isolates the HPO
+loss-weighting contribution: these differ only in whether $\lambda_{\text{mask}}$
+is HPO-set \rev{($2.46$ deployed, NCV fold mean $2.39 \pm 0.43$)} or fixed at
+$0.5$. Pareto-optimized weights yield significantly higher Dice ($p =
+1.3 \times 10^{-4}$, $d = 1.01$) at equal PR-AUC, confirming
+$\lambda_{\text{mask}} \approx 2.4$ is broadly optimal. \rev{The comparison
+against the two scalar criteria (Sec.~\ref{subsec:ablation}) further shows the
+gain stems from the selection rule itself: scalar criteria over-commit to one
+axis, whereas distance-to-ideal selection balances both objectives without a
+priori weighting.}
+
+\subsection{Limitations}
+
+\paragraph{\rev{Computational cost.}}
+\rev{The full nested-CV protocol (2{,}500 trainings, ${\sim}59$~h) is computationally
+heavy, but this reflects the unbiased-estimation protocol, not MOTPE itself:
+HPO alone can be run on a single train/validation split at a fraction of the
+cost, and the deployed model retrains in $7.7 \pm 1.0$~min.}
+
+\paragraph{\rev{Generalization.}}
+\rev{Trained on FantasyID alone, DocVerify falls to near chance zero-shot on SIDTD
+(Sec.~\ref{subsec:generalization}); even the top challenge entries generalized
+only by training on large external corpora (Sec.~\ref{subsec:challenge}), making
+multi-source training the main future direction.}
+
+% ============================================================
+% Section 6: Conclusion
+% ============================================================
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented DocVerify, a multi-task CNN for joint detection and localization of
+forged identity documents, paired with a multi-objective Pareto HPO framework
+that selects hyperparameter configurations by optimizing PR-AUC and Dice
+simultaneously without fixing their relative importance in advance.
+
+Our main findings are: \rev{(i) learning detection and localization jointly
+benefits both tasks: a single-task model performs well only on the axis it
+targets (detection-only Dice $0.002$; localization-only PR-AUC $0.728$; both
+$p < 0.001$), whereas the joint model attains both; it further yields higher
+Dice than equal-weight training ($p = 1.3 \times 10^{-4}$, $d = 1.01$) at no
+PR-AUC cost, and distance-to-ideal selection outperforms scalar
+PR-AUC/Dice-maximizing selection on the same front}; (ii) under a rigorous 10-fold
+nested cross-validation protocol, DocVerify achieves PR-AUC $= 0.9921 \pm
+0.0058$ and Dice $= 0.856 \pm 0.030$, demonstrating consistent generalization
+across data partitions; and \rev{(iii) trained on FantasyID alone, DocVerify
+attains F1@0.5 $= 0.969 \pm 0.014$ and F1$_{\text{loc}} = 0.807 \pm 0.096$ on our
+internal holdout, reported alongside the DeepID 2025 Challenge for context only,
+as the evaluation sets differ.}
+
+\rev{Applying the identical MOTPE protocol to a ResNet-18 backbone yields
+comparable blind-test performance (Sec.~\ref{subsec:generalization}), so the
+approach is not tied to one architecture. By contrast, zero-shot evaluation on
+SIDTD exposed a substantial cross-domain gap; closing it through multi-source
+training is a priority for future work}, alongside forgery-artifact features
+(noise fingerprints, frequency anomalies~\citep{cozzolino2020noiseprint}) and
+foundation model backbones~\citep{fakeidet2025} for richer pre-training.
+
+\section*{Acknowledgments}
+This work was supported by the Spanish National Cybersecurity Institute (INCIBE,
+Spain). The author thanks the Idiap Research Institute for releasing the
+FantasyID dataset.
+
+% ============================================================
+% BIBLIOGRAPHY
+% ============================================================
+
+%% Bibliography inlined from .bbl (self-contained; no bibtex/.bib needed)
+\begin{thebibliography}{32}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\href}[2]{#2}
+\providecommand{\path}[1]{#1}
+\providecommand{\DOIprefix}{doi:}
+\providecommand{\ArXivprefix}{arXiv:}
+\providecommand{\URLprefix}{URL: }
+\providecommand{\Pubmedprefix}{pmid:}
+\providecommand{\doi}[1]{\href{http://dx.doi.org/#1}{\path{#1}}}
+\providecommand{\Pubmed}[1]{\href{pmid:#1}{\path{#1}}}
+\providecommand{\bibinfo}[2]{#2}
+\ifx\xfnm\relax \def\xfnm[#1]{\unskip,\space#1}\fi
+%Type = Techreport
+\bibitem[{{Europol Innovation Lab}(2022)}]{europol2022deepfakes}
+\bibinfo{author}{{Europol Innovation Lab}}, \bibinfo{title}{Facing Reality?
+  {Law} Enforcement and the Challenge of Deepfakes}, \bibinfo{type}{Observatory
+  Report}, Europol, \bibinfo{address}{The Hague, Netherlands},
+  \bibinfo{year}{2022}. \URLprefix
+  \url{https://www.europol.europa.eu/publications-events/publications/facing-reality-law-enforcement-and-challenge-of-deepfakes}.
+%Type = Misc
+\bibitem[{{European Parliament} and {Council of the European
+  Union}(2024)}]{euaiact2024}
+\bibinfo{author}{{European Parliament}}, \bibinfo{author}{{Council of the
+  European Union}}, \bibinfo{title}{Regulation ({EU}) 2024/1689 of the
+  {European Parliament} and of the {Council} of 13 {June} 2024 laying down
+  harmonised rules on artificial intelligence ({Artificial Intelligence Act})},
+  \bibinfo{howpublished}{Official Journal of the European Union, OJ L
+  2024/1689}, \bibinfo{year}{2024}. \URLprefix
+  \url{https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng},
+  \bibinfo{note}{published 12 July 2024; entered into force 1 August 2024.
+  Article~13: Transparency and provision of information to deployers}.
+%Type = Misc
+\bibitem[{Guillaro et~al.(2022)Guillaro, Cozzolino, Sud, Dufour, and
+  Verdoliva}]{trufor2023}
+\bibinfo{author}{F.~Guillaro}, \bibinfo{author}{D.~Cozzolino},
+  \bibinfo{author}{A.~Sud}, \bibinfo{author}{N.~Dufour},
+  \bibinfo{author}{L.~Verdoliva}, \bibinfo{title}{Trufor: Leveraging all-round
+  clues for trustworthy image forgery detection and localization},
+  \bibinfo{year}{2022}. \DOIprefix\doi{10.48550/ARXIV.2212.10957}.
+%Type = Inproceedings
+\bibitem[{Cipolla et~al.(2018)Cipolla, Gal, and Kendall}]{kendall2018multi}
+\bibinfo{author}{R.~Cipolla}, \bibinfo{author}{Y.~Gal},
+  \bibinfo{author}{A.~Kendall},
+\newblock \bibinfo{title}{Multi-task learning using uncertainty to weigh losses
+  for scene geometry and semantics},
+\newblock in: \bibinfo{booktitle}{2018 IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition}, \bibinfo{publisher}{IEEE}, \bibinfo{year}{2018},
+  pp. \bibinfo{pages}{7482--7491}. \DOIprefix\doi{10.1109/cvpr.2018.00781}.
+%Type = Article
+\bibitem[{Wilcoxon(1945)}]{wilcoxon1945}
+\bibinfo{author}{F.~Wilcoxon},
+\newblock \bibinfo{title}{Individual comparisons by ranking methods},
+\newblock \bibinfo{journal}{Biometrics Bulletin} \bibinfo{volume}{1}
+  (\bibinfo{year}{1945}) \bibinfo{pages}{80--83}.
+  \DOIprefix\doi{10.2307/3001968}.
+%Type = Article
+\bibitem[{Holm(1979)}]{holm1979}
+\bibinfo{author}{S.~Holm},
+\newblock \bibinfo{title}{A simple sequentially rejective multiple test
+  procedure},
+\newblock \bibinfo{journal}{Scandinavian Journal of Statistics}
+  \bibinfo{volume}{6} (\bibinfo{year}{1979}) \bibinfo{pages}{65--70}.
+%Type = Article
+\bibitem[{Bappy et~al.(2019)Bappy, Simons, Nataraj, Manjunath, and
+  Roy-Chowdhury}]{bappy2019hybrid}
+\bibinfo{author}{J.~H. Bappy}, \bibinfo{author}{C.~Simons},
+  \bibinfo{author}{L.~Nataraj}, \bibinfo{author}{B.~S. Manjunath},
+  \bibinfo{author}{A.~K. Roy-Chowdhury},
+\newblock \bibinfo{title}{Hybrid lstm and encoder--decoder architecture for
+  detection of image forgeries},
+\newblock \bibinfo{journal}{IEEE Transactions on Image Processing}
+  \bibinfo{volume}{28} (\bibinfo{year}{2019}) \bibinfo{pages}{3286--3300}.
+  \DOIprefix\doi{10.1109/tip.2019.2895466}.
+%Type = Inproceedings
+\bibitem[{Wu et~al.(2019)Wu, AbdAlmageed, and Natarajan}]{mantranet2019}
+\bibinfo{author}{Y.~Wu}, \bibinfo{author}{W.~AbdAlmageed},
+  \bibinfo{author}{P.~Natarajan},
+\newblock \bibinfo{title}{Mantra-net: Manipulation tracing network for
+  detection and localization of image forgeries with anomalous features},
+\newblock in: \bibinfo{booktitle}{2019 IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, \bibinfo{publisher}{IEEE},
+  \bibinfo{year}{2019}, pp. \bibinfo{pages}{9535--9544}.
+  \DOIprefix\doi{10.1109/cvpr.2019.00977}.
+%Type = Article
+\bibitem[{Cozzolino and Verdoliva(2020)}]{cozzolino2020noiseprint}
+\bibinfo{author}{D.~Cozzolino}, \bibinfo{author}{L.~Verdoliva},
+\newblock \bibinfo{title}{Noiseprint: A cnn-based camera model fingerprint},
+\newblock \bibinfo{journal}{IEEE Transactions on Information Forensics and
+  Security} \bibinfo{volume}{15} (\bibinfo{year}{2020})
+  \bibinfo{pages}{144--159}. \DOIprefix\doi{10.1109/tifs.2019.2916364}.
+%Type = Inproceedings
+\bibitem[{Triaridis et~al.(2024)Triaridis, Tsigos, and Mezaris}]{mmfusion2024}
+\bibinfo{author}{K.~Triaridis}, \bibinfo{author}{K.~Tsigos},
+  \bibinfo{author}{V.~Mezaris},
+\newblock \bibinfo{title}{{MMFusion}: Combining image forensic filters for
+  visual manipulation detection and localization},
+\newblock in: \bibinfo{booktitle}{Proceedings of the 30th International
+  Conference on MultiMedia Modeling (MMM)}, \bibinfo{year}{2024}.
+  \href{http://arxiv.org/abs/2312.01790}{{\tt arXiv:2312.01790}}.
+%Type = Inproceedings
+\bibitem[{Liu et~al.(2024)Liu, Tan, Tan, Wei, Zhao, and Wang}]{fatformer2024}
+\bibinfo{author}{H.~Liu}, \bibinfo{author}{Z.~Tan}, \bibinfo{author}{C.~Tan},
+  \bibinfo{author}{Y.~Wei}, \bibinfo{author}{Y.~Zhao},
+  \bibinfo{author}{J.~Wang},
+\newblock \bibinfo{title}{Forgery-aware adaptive transformer for generalizable
+  synthetic image detection},
+\newblock in: \bibinfo{booktitle}{Proceedings of the {IEEE/CVF} Conference on
+  Computer Vision and Pattern Recognition (CVPR)}, \bibinfo{year}{2024}, pp.
+  \bibinfo{pages}{10770--10780}. \href{http://arxiv.org/abs/2312.16649}{{\tt
+  arXiv:2312.16649}}.
+%Type = Inproceedings
+\bibitem[{Ojha et~al.(2023)Ojha, Li, and Lee}]{unifd2023}
+\bibinfo{author}{U.~Ojha}, \bibinfo{author}{Y.~Li}, \bibinfo{author}{Y.~J.
+  Lee},
+\newblock \bibinfo{title}{Towards universal fake image detectors that
+  generalize across generative models},
+\newblock in: \bibinfo{booktitle}{Proceedings of the {IEEE/CVF} Conference on
+  Computer Vision and Pattern Recognition (CVPR)}, \bibinfo{year}{2023}, pp.
+  \bibinfo{pages}{24480--24489}. \href{http://arxiv.org/abs/2302.10174}{{\tt
+  arXiv:2302.10174}}.
+%Type = Misc
+\bibitem[{Korshunov et~al.(2025)Korshunov, Mohammadi, Vidit, Ecabert, and
+  Marcel}]{fantasyid2024}
+\bibinfo{author}{P.~Korshunov}, \bibinfo{author}{A.~Mohammadi},
+  \bibinfo{author}{V.~Vidit}, \bibinfo{author}{C.~Ecabert},
+  \bibinfo{author}{S.~Marcel}, \bibinfo{title}{Fantasyid: A dataset for
+  detecting digital manipulations of id-documents}, \bibinfo{year}{2025}.
+  \DOIprefix\doi{10.48550/ARXIV.2507.20808}.
+%Type = Misc
+\bibitem[{George and Marcel(2025)}]{edgedoc2025}
+\bibinfo{author}{A.~George}, \bibinfo{author}{S.~Marcel},
+  \bibinfo{title}{{EdgeDoc}: Hybrid {CNN}-transformer model for accurate
+  forgery detection and localization in {ID} documents}, \bibinfo{year}{2025}.
+  \href{http://arxiv.org/abs/2508.16284}{{\tt arXiv:2508.16284}},
+  \bibinfo{note}{idiap Research Report RR-08-2025; 3rd place DeepID 2025
+  Challenge}.
+%Type = Inproceedings
+\bibitem[{Maaz et~al.(2022)Maaz, Shaker, Cholakkal, Khan, Zamir, Anwer, and
+  Khan}]{edgenext2022}
+\bibinfo{author}{M.~Maaz}, \bibinfo{author}{A.~Shaker},
+  \bibinfo{author}{H.~Cholakkal}, \bibinfo{author}{S.~Khan},
+  \bibinfo{author}{S.~W. Zamir}, \bibinfo{author}{R.~M. Anwer},
+  \bibinfo{author}{F.~S. Khan},
+\newblock \bibinfo{title}{{EdgeNeXt}: Efficiently amalgamated {CNN}-transformer
+  architecture for mobile vision applications},
+\newblock in: \bibinfo{booktitle}{European Conference on Computer Vision
+  Workshops (ECCVW)}, \bibinfo{year}{2022}, pp. \bibinfo{pages}{3--20}.
+  \href{http://arxiv.org/abs/2206.10589}{{\tt arXiv:2206.10589}}.
+%Type = Article
+\bibitem[{Yu et~al.(2025)Yu, Ni, Zhang, Deng, and Lin}]{remtkd2025}
+\bibinfo{author}{Z.~Yu}, \bibinfo{author}{J.~Ni}, \bibinfo{author}{J.~Zhang},
+  \bibinfo{author}{H.~Deng}, \bibinfo{author}{Y.~Lin},
+\newblock \bibinfo{title}{Reinforced multi-teacher knowledge distillation for
+  efficient general image forgery detection and localization},
+\newblock \bibinfo{journal}{Proceedings of the AAAI Conference on Artificial
+  Intelligence} \bibinfo{volume}{39} (\bibinfo{year}{2025})
+  \bibinfo{pages}{995--1003}. \DOIprefix\doi{10.1609/aaai.v39i1.32085}.
+%Type = Inproceedings
+\bibitem[{Korshunov et~al.(2025)Korshunov, Vidit, Mohammadi, Ecabert, Shamoska,
+  Marcel et~al.}]{deepid2025challenge}
+\bibinfo{author}{P.~Korshunov}, \bibinfo{author}{V.~Vidit},
+  \bibinfo{author}{A.~Mohammadi}, \bibinfo{author}{C.~Ecabert},
+  \bibinfo{author}{N.~Shamoska}, \bibinfo{author}{S.~Marcel}, et~al.,
+\newblock \bibinfo{title}{{DeepID}: Challenge of detecting synthetic
+  manipulations in {ID} documents},
+\newblock in: \bibinfo{booktitle}{Proceedings of the {IEEE/CVF} International
+  Conference on Computer Vision Workshops ({ICCVW})}, \bibinfo{year}{2025}, pp.
+  \bibinfo{pages}{510--519}.
+%Type = Article
+\bibitem[{Marler and Arora(2004)}]{marler2004survey}
+\bibinfo{author}{R.~T. Marler}, \bibinfo{author}{J.~S. Arora},
+\newblock \bibinfo{title}{Survey of multi-objective optimization methods for
+  engineering},
+\newblock \bibinfo{journal}{Structural and Multidisciplinary Optimization}
+  \bibinfo{volume}{26} (\bibinfo{year}{2004}) \bibinfo{pages}{369--395}.
+  \DOIprefix\doi{10.1007/s00158-003-0368-6}.
+%Type = Inproceedings
+\bibitem[{Liu et~al.(2019)Liu, Johns, and Davison}]{liu2019end}
+\bibinfo{author}{S.~Liu}, \bibinfo{author}{E.~Johns}, \bibinfo{author}{A.~J.
+  Davison},
+\newblock \bibinfo{title}{End-to-end multi-task learning with attention},
+\newblock in: \bibinfo{booktitle}{2019 IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, \bibinfo{publisher}{IEEE},
+  \bibinfo{year}{2019}, pp. \bibinfo{pages}{1871--1880}.
+  \DOIprefix\doi{10.1109/cvpr.2019.00197}.
+%Type = Book
+\bibitem[{Miettinen(1999)}]{miettinen1999nonlinear}
+\bibinfo{author}{K.~Miettinen}, \bibinfo{title}{Nonlinear Multiobjective
+  Optimization}, \bibinfo{publisher}{Springer US}, \bibinfo{year}{1999}.
+  \DOIprefix\doi{10.1007/978-1-4615-5563-6}.
+%Type = Article
+\bibitem[{Ozaki et~al.(2022)Ozaki, Tanigaki, Watanabe, Nomura, and
+  Onishi}]{motpe2022}
+\bibinfo{author}{Y.~Ozaki}, \bibinfo{author}{Y.~Tanigaki},
+  \bibinfo{author}{S.~Watanabe}, \bibinfo{author}{M.~Nomura},
+  \bibinfo{author}{M.~Onishi},
+\newblock \bibinfo{title}{Multiobjective tree-structured parzen estimator},
+\newblock \bibinfo{journal}{Journal of Artificial Intelligence Research}
+  \bibinfo{volume}{73} (\bibinfo{year}{2022}) \bibinfo{pages}{1209--1250}.
+  \DOIprefix\doi{10.1613/jair.1.13188}.
+%Type = Inproceedings
+\bibitem[{Bergstra et~al.(2011)Bergstra, Bardenet, Bengio, and
+  K{\'e}gl}]{tpe2011}
+\bibinfo{author}{J.~Bergstra}, \bibinfo{author}{R.~Bardenet},
+  \bibinfo{author}{Y.~Bengio}, \bibinfo{author}{B.~K{\'e}gl},
+\newblock \bibinfo{title}{Algorithms for hyper-parameter optimization},
+\newblock in: \bibinfo{booktitle}{Advances in Neural Information Processing
+  Systems (NeurIPS)}, volume~\bibinfo{volume}{24}, \bibinfo{year}{2011}.
+%Type = Article
+\bibitem[{Deb et~al.(2002)Deb, Pratap, Agarwal, and Meyarivan}]{nsga2_2002}
+\bibinfo{author}{K.~Deb}, \bibinfo{author}{A.~Pratap},
+  \bibinfo{author}{S.~Agarwal}, \bibinfo{author}{T.~Meyarivan},
+\newblock \bibinfo{title}{A fast and elitist multiobjective genetic algorithm:
+  Nsga-ii},
+\newblock \bibinfo{journal}{IEEE Transactions on Evolutionary Computation}
+  \bibinfo{volume}{6} (\bibinfo{year}{2002}) \bibinfo{pages}{182--197}.
+  \DOIprefix\doi{10.1109/4235.996017}.
+%Type = Article
+\bibitem[{Patel et~al.(2023)Patel, Tanwar, Bhattacharya, Gupta, Alsuwian,
+  Davidson, and Mazibuko}]{patel2023dcnn}
+\bibinfo{author}{Y.~Patel}, \bibinfo{author}{S.~Tanwar},
+  \bibinfo{author}{P.~Bhattacharya}, \bibinfo{author}{R.~Gupta},
+  \bibinfo{author}{T.~Alsuwian}, \bibinfo{author}{I.~E. Davidson},
+  \bibinfo{author}{T.~F. Mazibuko},
+\newblock \bibinfo{title}{An improved dense cnn architecture for deepfake image
+  detection},
+\newblock \bibinfo{journal}{IEEE Access} \bibinfo{volume}{11}
+  (\bibinfo{year}{2023}) \bibinfo{pages}{22081--22095}.
+  \DOIprefix\doi{10.1109/access.2023.3251417}.
+%Type = Inbook
+\bibitem[{Ronneberger et~al.(2015)Ronneberger, Fischer, and Brox}]{unet2015}
+\bibinfo{author}{O.~Ronneberger}, \bibinfo{author}{P.~Fischer},
+  \bibinfo{author}{T.~Brox}, \bibinfo{title}{U-Net: Convolutional Networks for
+  Biomedical Image Segmentation}, \bibinfo{publisher}{Springer International
+  Publishing}, \bibinfo{year}{2015}, pp. \bibinfo{pages}{234--241}.
+  \DOIprefix\doi{10.1007/978-3-319-24574-4_28}.
+%Type = Inproceedings
+\bibitem[{Milletari et~al.(2016)Milletari, Navab, and
+  Ahmadi}]{milletari2016vnet}
+\bibinfo{author}{F.~Milletari}, \bibinfo{author}{N.~Navab},
+  \bibinfo{author}{S.-A. Ahmadi},
+\newblock \bibinfo{title}{{V-Net}: Fully convolutional neural networks for
+  volumetric medical image segmentation},
+\newblock in: \bibinfo{booktitle}{Proceedings of the 4th International
+  Conference on 3D Vision (3DV)}, \bibinfo{year}{2016}, pp.
+  \bibinfo{pages}{565--571}. \DOIprefix\doi{10.1109/3DV.2016.79}.
+%Type = Inproceedings
+\bibitem[{Akiba et~al.(2019)Akiba, Sano, Yanase, Ohta, and Koyama}]{optuna2019}
+\bibinfo{author}{T.~Akiba}, \bibinfo{author}{S.~Sano},
+  \bibinfo{author}{T.~Yanase}, \bibinfo{author}{T.~Ohta},
+  \bibinfo{author}{M.~Koyama},
+\newblock \bibinfo{title}{Optuna: A next-generation hyperparameter optimization
+  framework},
+\newblock in: \bibinfo{booktitle}{Proceedings of the 25th ACM SIGKDD
+  International Conference on Knowledge Discovery \& Data Mining}, KDD ’19,
+  \bibinfo{publisher}{ACM}, \bibinfo{year}{2019}, pp.
+  \bibinfo{pages}{2623--2631}. \DOIprefix\doi{10.1145/3292500.3330701}.
+%Type = Article
+\bibitem[{Varma and Simon(2006)}]{varma2006bias}
+\bibinfo{author}{S.~Varma}, \bibinfo{author}{R.~Simon},
+\newblock \bibinfo{title}{Bias in error estimation when using cross-validation
+  for model selection},
+\newblock \bibinfo{journal}{BMC Bioinformatics} \bibinfo{volume}{7}
+  (\bibinfo{year}{2006}). \DOIprefix\doi{10.1186/1471-2105-7-91}.
+%Type = Misc
+\bibitem[{D\'{i}az~Rodr\'{i}guez(2026)}]{docverify_zenodo}
+\bibinfo{author}{H.~D\'{i}az~Rodr\'{i}guez}, \bibinfo{title}{{DocVerify}:
+  Reproducible per-seed results and extended tables for multi-objective {HPO}
+  of forged-{ID} detection}, \bibinfo{year}{2026}.
+  \DOIprefix\doi{10.5281/zenodo.21076490}.
+%Type = Book
+\bibitem[{Cohen(1988)}]{cohen1988statistical}
+\bibinfo{author}{J.~Cohen}, \bibinfo{title}{Statistical Power Analysis for the
+  Behavioral Sciences}, \bibinfo{edition}{2nd} ed.,
+  \bibinfo{publisher}{Lawrence Erlbaum Associates}, \bibinfo{year}{1988}.
+%Type = Article
+\bibitem[{Boned et~al.(2024)Boned, Talarmain, Ghanmi, Chiron, Biswas, Awal, and
+  Ramos~Terrades}]{sidtd2024}
+\bibinfo{author}{C.~Boned}, \bibinfo{author}{M.~Talarmain},
+  \bibinfo{author}{N.~Ghanmi}, \bibinfo{author}{G.~Chiron},
+  \bibinfo{author}{S.~Biswas}, \bibinfo{author}{A.~M. Awal},
+  \bibinfo{author}{O.~Ramos~Terrades},
+\newblock \bibinfo{title}{Synthetic dataset of {ID} and travel documents},
+\newblock \bibinfo{journal}{Scientific Data} \bibinfo{volume}{11}
+  (\bibinfo{year}{2024}) \bibinfo{pages}{1356}.
+  \DOIprefix\doi{10.1038/s41597-024-04160-9}.
+%Type = Inproceedings
+\bibitem[{Mu{\~n}oz-Haro et~al.(2025)Mu{\~n}oz-Haro, Tolosana, Vera-Rodriguez,
+  Morales, and Fierrez}]{fakeidet2025}
+\bibinfo{author}{J.~Mu{\~n}oz-Haro}, \bibinfo{author}{R.~Tolosana},
+  \bibinfo{author}{R.~Vera-Rodriguez}, \bibinfo{author}{A.~Morales},
+  \bibinfo{author}{J.~Fierrez},
+\newblock \bibinfo{title}{{FakeIDet}: Exploring patches for privacy-preserving
+  fake {ID} detection},
+\newblock in: \bibinfo{booktitle}{Proceedings of the IEEE International Joint
+  Conference on Biometrics (IJCB)}, \bibinfo{year}{2025}.
+  \href{http://arxiv.org/abs/2504.07761}{{\tt arXiv:2504.07761}}.
+
+\end{thebibliography}
+
+\end{document}

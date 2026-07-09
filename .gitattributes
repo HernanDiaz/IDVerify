@@ -1,0 +1,10 @@
+# Treat these as binary: never apply CRLF conversion or text diffing.
+*.pdf  binary
+*.docx binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.eps  binary
+*.zip  binary
+*.pt   binary
+*.sqlite3 binary
