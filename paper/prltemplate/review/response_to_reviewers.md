@@ -441,8 +441,8 @@ on PR-AUC or Dice.
 **Response:** We now provide both an ablation and a justification (see R1.4 for the full
 30-seed paired comparison). In short, applying five standard augmentations significantly degrades
 every metric on the clean synthetic FantasyID holdout (e.g. Dice 0.875→0.780, PR-AUC
-0.997→0.958; all Holm-corrected p < 1e−7), confirming that the no-augmentation protocol is a
-deliberate, empirically-grounded choice rather than an oversight. Sec. 4.1 now states this with
+0.997→0.958; all Holm-corrected p < 1e−7), confirming that the no-augmentation protocol is an
+empirically-grounded choice. Sec. 4.1 now states this with
 a one-sentence justification citing the external archive.
 
 **Changes:** See R1.4 (augmentation ablation added to Sec. 4.1; full 30-seed table in this
@@ -457,7 +457,7 @@ letter under R1.4).
 > DocTamper, or any real-world document dataset) or substantially revise the scope of the
 > claims to explicitly restrict them to the FantasyID domain, with appropriate hedging.*
 
-**Response:** We chose both options the reviewer offers, not one. We *provide* a cross-domain
+**Response:** We chose both options the reviewer offers. We *provide* a cross-domain
 result, the zero-shot SIDTD evaluation now reported in the new **Generalization** subsection
 (Sec. 4.6; PR-AUC 0.555, ROC-AUC 0.504, near chance), *and* we explicitly restrict the scope:
 Sec. 4.6 states that performance bounds the system to the synthetic FantasyID domain, and the
@@ -481,8 +481,9 @@ table, we removed the challenge comparison table entirely, which eliminates the 
 concern at its source: there is no longer a table that could be read as a direct comparison.
 Sec. 4.5 is now a single paragraph that states the evaluation sets differ and the results are
 indicative only. All competitive language has been removed from the comparison text and from the
-Conclusion, which now reports its metrics alongside the DeepID 2025 Challenge for context
-only, noting that the evaluation sets differ, and makes no competitive or ranking claim.
+Conclusion, which now states only that DocVerify reports its metrics alongside the DeepID
+2025 Challenge for context only, noting that the evaluation sets differ, and makes no
+competitive or ranking claim.
 
 **Changes:** See R1.6 — challenge comparison table removed; Sec. 4.5 condensed with all caveats
 inline and competitive language removed from Sec. 4.5 and the Conclusion.
