@@ -166,12 +166,12 @@ caveats, DocVerify reaches
 detection F1@0.5 \rev{(the F1 score, $2PR/(P{+}R)$, of the bonafide/attack
 decision at classification threshold $0.5$)} $=0.969 \pm 0.014$ and localization
 F1$_{\text{loc}}$ \rev{(pixel-level F1 of the predicted mask)}
-$= 0.807 \pm 0.096$, in line with the challenge winner
-Sunlight (F1@0.5 $0.991$, F1$_{\text{loc}}$ $0.784$) and ahead of the
-FantasyID-only entries (EdgeDoc standalone $0.43$, UAM-Biometrics $0.712$),
-despite using no external data; the EdgeDoc+TruFor fusion's higher F1@0.5
-$0.958$~\citep{deepid2025challenge} relies on the pre-trained TruFor backbone,
-and we make no superiority claim given the differing evaluation sets.}
+$= 0.807 \pm 0.096$. Reported challenge figures span EdgeDoc standalone
+($0.43$~\citep{edgedoc2025}), UAM-Biometrics ($0.712$), the EdgeDoc+TruFor fusion
+($0.958$~\citep{deepid2025challenge}, on the pre-trained TruFor backbone) and the
+winner Sunlight ($0.991$, F1$_{\text{loc}}$ $0.784$). As evaluation sets and
+training data differ, we make no superiority claim and imply no ranking; the
+figures only add context.}
 
 \subsection{\rev{Generalization}}
 \label{subsec:generalization}

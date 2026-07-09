@@ -19,10 +19,10 @@ PR-AUC cost, and distance-to-ideal selection outperforms scalar
 PR-AUC/Dice-maximizing selection on the same front}; (ii) under a rigorous 10-fold
 nested cross-validation protocol, DocVerify achieves PR-AUC $= 0.9921 \pm
 0.0058$ and Dice $= 0.856 \pm 0.030$, demonstrating consistent generalization
-across data partitions; and (iii) training only on FantasyID, DocVerify is broadly competitive with top
-DeepID 2025 Challenge participants (F1@0.5 $= 0.969 \pm 0.014$;
-F1$_{\text{loc}} = 0.807 \pm 0.096$), though this is indicative only, since
-challenge systems used a different test set.
+across data partitions; and \rev{(iii) trained on FantasyID alone, DocVerify
+attains F1@0.5 $= 0.969 \pm 0.014$ and F1$_{\text{loc}} = 0.807 \pm 0.096$ on our
+internal holdout, reported alongside the DeepID 2025 Challenge for context only,
+as the evaluation sets differ.}
 
 \rev{Applying the identical MOTPE protocol to a ResNet-18 backbone yields
 comparable blind-test performance (Sec.~\ref{subsec:generalization}), so the
