@@ -9,14 +9,19 @@
 
 Deep learning has substantially advanced general-purpose image forensics:
 CNNs can detect subtle statistical fingerprints left by editing operations,
-often outperforming hand-crafted pipelines~\citep{bappy2019hybrid, mantranet2019}.
+often outperforming hand-crafted pipelines~\citep{mantranet2019}.
 \citet{cozzolino2020noiseprint} (Noiseprint) train a CNN via Siamese
 contrastive learning to extract camera-model noise residuals; forgeries appear
 as anomalies in this residual without requiring semantic understanding.
 \citet{trufor2023} (\textsc{TruFor}) generalize this with a transformer fusion
 network (NoisePrint++) that jointly models RGB semantics and noise-pattern
 anomalies, achieving strong performance on general image forensics benchmarks
-with ${\sim}828\,000$ pre-training images.
+with ${\sim}828\,000$ pre-training images. \revB{Closely related, deepfake and
+face-manipulation detection has advanced rapidly in this journal:
+\citet{liang2023twostream} pair a two-stream network with hierarchical
+supervision, \citet{leporoni2024guided} fuse {RGB} and depth cues, and
+\citet{wang2024deepfake} add a self-attention discriminator, each improving
+robustness to synthetic facial forgeries.}
 
 Identity document forgery introduces unique challenges: forged regions are
 often small (a single text field or portrait), the structured background
