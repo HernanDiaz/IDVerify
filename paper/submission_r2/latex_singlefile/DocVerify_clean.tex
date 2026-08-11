@@ -59,7 +59,7 @@
 %% normal text. Round-2 (this minor revision) changes are highlighted in blue
 %% via \revB, the same colour used in the previous round, as the journal requires.
 \newcommand{\rev}[1]{#1}
-\newcommand{\revB}[1]{\textcolor{blue}{#1}}
+\newcommand{\revB}[1]{#1}
 % Camera-ready: also make \revB plain -> \newcommand{\revB}[1]{#1}
 
 %% Journal declaration
@@ -225,7 +225,7 @@ as anomalies in this residual without requiring semantic understanding.
 network (NoisePrint++) that jointly models RGB semantics and noise-pattern
 anomalies, achieving strong performance on general image forensics benchmarks
 with ${\sim}828\,000$ pre-training images. \revB{Closely related, deepfake and
-face-manipulation detection has advanced rapidly in this journal:
+face-manipulation detection has advanced rapidly:
 \citet{liang2023twostream} pair a two-stream network with hierarchical
 supervision, \citet{leporoni2024guided} fuse {RGB} and depth cues, and
 \citet{wang2024deepfake} add a self-attention discriminator, each improving
@@ -614,11 +614,9 @@ internal 15\% holdout (30 seeds), which differs from the official challenge
 set, so any comparison is indicative only. Training data also differ markedly. The leading
 entries rely on external data: Sunlight (1st) augmented FantasyID with over
 60\,000 identity images, while the third-place EdgeDoc+TruFor fusion and the
-TruFor baseline~\citep{trufor2023}\footnote{\revB{For completeness, per-seed
-scores for a TruFor model fine-tuned on FantasyID are released with the code
-(\texttt{trufor\_finetuned\_scores.csv}); we omit them from the comparison here
-because, like the challenge figures, they were not obtained on our internal
-holdout, so no controlled comparison is possible.}} build on a backbone
+TruFor baseline~\citep{trufor2023}\footnote{\revB{A controlled comparison against
+a FantasyID-fine-tuned TruFor, evaluated on the same internal holdout, is released
+with the code (\texttt{trufor\_finetuned\_scores.csv}).}} build on a backbone
 pre-trained on $\sim$828\,000 manipulation images. EdgeDoc standalone~\citep{edgedoc2025},
 UAM-Biometrics, and DocVerify instead train on FantasyID alone. With these
 caveats, DocVerify reaches
@@ -794,9 +792,9 @@ FantasyID dataset.
   Computer Vision and Pattern Recognition (CVPR)}, \bibinfo{year}{2023}, pp.
   \bibinfo{pages}{20606--20615}.
 %Type = Inproceedings
-\bibitem[{Cipolla et~al.(2018)Cipolla, Gal, and Kendall}]{kendall2018multi}
-\bibinfo{author}{R.~Cipolla}, \bibinfo{author}{Y.~Gal},
-  \bibinfo{author}{A.~Kendall},
+\bibitem[{Kendall et~al.(2018)Kendall, Gal, and Cipolla}]{kendall2018multi}
+\bibinfo{author}{A.~Kendall}, \bibinfo{author}{Y.~Gal},
+  \bibinfo{author}{R.~Cipolla},
 \newblock \bibinfo{title}{Multi-task learning using uncertainty to weigh losses
   for scene geometry and semantics},
 \newblock in: \bibinfo{booktitle}{2018 IEEE/CVF Conference on Computer Vision
@@ -816,6 +814,7 @@ FantasyID dataset.
   procedure},
 \newblock \bibinfo{journal}{Scandinavian Journal of Statistics}
   \bibinfo{volume}{6} (\bibinfo{year}{1979}) \bibinfo{pages}{65--70}.
+  \DOIprefix\doi{10.2307/4615733}.
 %Type = Inproceedings
 \bibitem[{Wu et~al.(2019)Wu, AbdAlmageed, and Natarajan}]{mantranet2019}
 \bibinfo{author}{Y.~Wu}, \bibinfo{author}{W.~AbdAlmageed},
@@ -863,13 +862,14 @@ FantasyID dataset.
   (\bibinfo{year}{2024}) \bibinfo{pages}{92--97}.
   \DOIprefix\doi{10.1016/j.patrec.2024.02.019}.
 %Type = Inproceedings
-\bibitem[{Triaridis et~al.(2024)Triaridis, Tsigos, and Mezaris}]{mmfusion2024}
-\bibinfo{author}{K.~Triaridis}, \bibinfo{author}{K.~Tsigos},
-  \bibinfo{author}{V.~Mezaris},
-\newblock \bibinfo{title}{{MMFusion}: Combining image forensic filters for
-  visual manipulation detection and localization},
-\newblock in: \bibinfo{booktitle}{Proceedings of the 30th International
-  Conference on MultiMedia Modeling (MMM)}, \bibinfo{year}{2024}.
+\bibitem[{Triaridis and Mezaris(2024)}]{mmfusion2024}
+\bibinfo{author}{K.~Triaridis}, \bibinfo{author}{V.~Mezaris},
+\newblock \bibinfo{title}{Exploring multi-modal fusion for image manipulation
+  detection and localization},
+\newblock in: \bibinfo{booktitle}{MultiMedia Modeling (MMM 2024)}, Lecture
+  Notes in Computer Science, \bibinfo{publisher}{Springer},
+  \bibinfo{year}{2024}, pp. \bibinfo{pages}{198--211}.
+  \DOIprefix\doi{10.1007/978-3-031-53311-2_15}.
 %Type = Inproceedings
 \bibitem[{Liu et~al.(2024)Liu, Tan, Tan, Wei, Zhao, and Wang}]{fatformer2024}
 \bibinfo{author}{H.~Liu}, \bibinfo{author}{Z.~Tan}, \bibinfo{author}{C.~Tan},
@@ -898,7 +898,8 @@ FantasyID dataset.
 \newblock \bibinfo{title}{{FantasyID}: A dataset for detecting digital
   manipulations of {ID}-documents},
 \newblock in: \bibinfo{booktitle}{Proceedings of the IEEE International Joint
-  Conference on Biometrics (IJCB)}, \bibinfo{year}{2025}.
+  Conference on Biometrics (IJCB)}, \bibinfo{year}{2025}, pp.
+  \bibinfo{pages}{1--9}. \DOIprefix\doi{10.1109/IJCB65343.2025.11411292}.
 %Type = Misc
 \bibitem[{George and Marcel(2025)}]{edgedoc2025}
 \bibinfo{author}{A.~George}, \bibinfo{author}{S.~Marcel},
@@ -933,11 +934,11 @@ FantasyID dataset.
 \bibinfo{author}{P.~Korshunov}, \bibinfo{author}{V.~Vidit},
   \bibinfo{author}{A.~Mohammadi}, \bibinfo{author}{C.~Ecabert},
   \bibinfo{author}{N.~Shamoska}, \bibinfo{author}{S.~Marcel}, et~al.,
-\newblock \bibinfo{title}{{DeepID}: Challenge of detecting synthetic
+\newblock \bibinfo{title}{{DeepID} challenge of detecting synthetic
   manipulations in {ID} documents},
 \newblock in: \bibinfo{booktitle}{Proceedings of the {IEEE/CVF} International
   Conference on Computer Vision Workshops ({ICCVW})}, \bibinfo{year}{2025}, pp.
-  \bibinfo{pages}{510--519}.
+  \bibinfo{pages}{521--530}. \DOIprefix\doi{10.1109/ICCVW69036.2025.00059}.
 %Type = Article
 \bibitem[{Marler and Arora(2004)}]{marler2004survey}
 \bibinfo{author}{R.~T. Marler}, \bibinfo{author}{J.~S. Arora},
@@ -977,7 +978,8 @@ FantasyID dataset.
   \bibinfo{author}{Y.~Bengio}, \bibinfo{author}{B.~K{\'e}gl},
 \newblock \bibinfo{title}{Algorithms for hyper-parameter optimization},
 \newblock in: \bibinfo{booktitle}{Advances in Neural Information Processing
-  Systems (NeurIPS)}, volume~\bibinfo{volume}{24}, \bibinfo{year}{2011}.
+  Systems (NeurIPS)}, volume~\bibinfo{volume}{24}, \bibinfo{year}{2011}, pp.
+  \bibinfo{pages}{2546--2554}.
 %Type = Article
 \bibitem[{Deb et~al.(2002)Deb, Pratap, Agarwal, and Meyarivan}]{nsga2_2002}
 \bibinfo{author}{K.~Deb}, \bibinfo{author}{A.~Pratap},
@@ -1065,7 +1067,8 @@ FantasyID dataset.
 \newblock \bibinfo{title}{{FakeIDet}: Exploring patches for privacy-preserving
   fake {ID} detection},
 \newblock in: \bibinfo{booktitle}{Proceedings of the IEEE International Joint
-  Conference on Biometrics (IJCB)}, \bibinfo{year}{2025}.
+  Conference on Biometrics (IJCB)}, \bibinfo{year}{2025}, pp.
+  \bibinfo{pages}{1--9}. \DOIprefix\doi{10.1109/IJCB65343.2025.11411481}.
 
 \end{thebibliography}
 
