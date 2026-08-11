@@ -22,6 +22,9 @@
 \captionsetup{font=small,labelfont=bf}
 \renewcommand{\arraystretch}{1.15}
 
+% Round-2 (minor revision) additions highlighted in blue, as in the main text.
+\newcommand{\revB}[1]{\textcolor{blue}{#1}}
+
 % Supplementary numbering: S1, Table S1, etc.
 \renewcommand{\thesection}{S\arabic{section}}
 \renewcommand{\thetable}{S\arabic{table}}
@@ -416,6 +419,40 @@ substitute for in-domain data; closing the gap requires multi-source training
     \midrule
     PR-AUC  & $0.5554\pm0.0110$ & $0.5639\pm0.0096$ & $+0.0085$ & $0.077$ (n.s.) \\
     ROC-AUC & $0.5041\pm0.0094$ & $0.5089\pm0.0060$ & $+0.0048$ & $0.199$ (n.s.) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================
+\section{\revB{Computational cost breakdown}}
+\label{sec:compute}
+
+\revB{The ${\sim}59$-hour budget reported in Sec.~4.1 is the cost of the full
+\emph{scientific} protocol (unbiased nested cross-validation plus a 30-seed
+ablation), not the cost of \emph{using} the method. Table~\ref{tab:compute}
+gives the measured wall-clock breakdown on a single NVIDIA RTX~5060\,Ti
+(16\,GB) with VRAM caching. Once the configuration is fixed, retraining the
+single deployed model from scratch (up to 100 epochs with early stopping)
+costs only $7.7\pm1.0$~min per seed; the Pareto loss weighting adds no
+inference-time cost.}
+
+\begin{table}[h]
+  \centering
+  \caption{\revB{Wall-clock cost per phase (single GPU, VRAM-cached). Per-seed
+           retraining time is the mean over the 30 blind-test seeds
+           (range 6.0--10.2\,min).}}
+  \label{tab:compute}
+  \begin{tabular}{lrr}
+    \toprule
+    Phase & Trainings & Wall-clock \\
+    \midrule
+    Nested HPO search (10 outer $\times$ 50 MOTPE $\times$ 5 inner) & 2\,500 & ${\sim}50$\,h \\
+    Outer final models (one retrain per outer fold)                & 10     & ${\sim}1$\,h  \\
+    Blind-test ablation (30 seeds $\times$ 4 variants)             & 120    & ${\sim}12$\,h \\
+    \midrule
+    \textbf{Total scientific protocol}                             & \textbf{2\,630} & \textbf{${\sim}59$--$63$\,h} \\
+    \midrule
+    \textbf{Practical deployment} (one fixed config, one seed)     & \textbf{1} & \textbf{$7.7\pm1.0$\,min} \\
     \bottomrule
   \end{tabular}
 \end{table}
