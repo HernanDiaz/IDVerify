@@ -687,11 +687,11 @@ loss-weighting contribution: these differ only in whether $\lambda_{\text{mask}}
 is HPO-set \rev{($2.46$ deployed, NCV fold mean $2.39 \pm 0.43$)} or fixed at
 $0.5$. Pareto-optimized weights yield significantly higher Dice ($p =
 1.3 \times 10^{-4}$, $d = 1.01$) at equal PR-AUC, confirming
-$\lambda_{\text{mask}} \approx 2.4$ is broadly optimal. \rev{The comparison
-against the two scalar criteria (Sec.~\ref{subsec:ablation}) further shows the
-gain stems from the selection rule itself: scalar criteria over-commit to one
-axis, whereas distance-to-ideal selection balances both objectives without a
-priori weighting.}
+$\lambda_{\text{mask}} \approx 2.4$ is broadly optimal. \revB{The comparison against the two scalar criteria
+(Sec.~\ref{subsec:ablation}) points the same way but more modestly: the edge over
+scalar selection is partial and metric-specific, clearest in localization, and its
+main practical appeal is that distance-to-ideal selection requires no a priori
+choice of a primary objective.}
 
 \subsection{Limitations}
 

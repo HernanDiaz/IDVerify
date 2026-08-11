@@ -29,8 +29,9 @@ bounded in-domain scope and the near-chance zero-shot SIDTD result (see R2.3-abs
 transfer to SIDTD and now also states that standard augmentation does not close the gap
 (see R2.2).
 
-**Changes:** Sec. 4.4 recalibrated; abstract sentence added; Discussion generalization
-paragraph extended. All changes are highlighted in blue.
+**Changes:** Sec. 4.4 recalibrated; the Pareto-vs-scalar sentence in the Discussion aligned
+with it; abstract sentence added; Discussion generalization paragraph extended. All changes
+are highlighted in blue.
 
 ---
 
@@ -53,18 +54,16 @@ paragraph extended. All changes are highlighted in blue.
    further entries that were already published but carried a residual arXiv identifier
    (EdgeNeXt, FakeIDet, FatFormer, MMFusion, UniFD), we removed the arXiv tag so they cite
    only the published venue. Only one arXiv-only item now remains (the EdgeDoc challenge
-   report, which has no formal venue). The list holds 32 items, no single conference series
-   dominates, and grouped citations are discussed individually in the text. After adding the
-   three recent Pattern Recognition Letters references requested under item 4, we removed three
-   non-essential citations (a threat report, a regulatory reference, and one of a pair of
-   general-forensics examples) so the list holds 32 items, close to the recommended size.
-4. **Cite recent Pattern Recognition Letters work.**
-   Done. Sec. 2.1 now cites three recent Pattern Recognition Letters papers on
-   deepfake/face-manipulation detection, each commented individually: a two-stream network
-   with hierarchical supervision (Liang et al., 2023, vol. 172), RGB-depth feature fusion
-   (Leporoni et al., 2024, vol. 181), and a self-attention discriminator (Wang et al., 2024,
-   vol. 183). This situates our document-forgery work within the journal's forensics
-   literature and connects it to the PRL readership.
+   report, which has no formal venue). We also removed three non-essential citations (a threat
+   report, a regulatory reference, and one of a pair of general-forensics examples) to offset
+   the related work newly added under item 4, so the list holds 32 items, no single conference
+   series dominates, and grouped citations are discussed individually.
+4. **Relevance to the Pattern Recognition Letters readership.**
+   We have strengthened the manuscript's positioning within the journal's scope. Section 2.1
+   now situates our approach relative to recent related work on deepfake and face-manipulation
+   detection published in Pattern Recognition Letters (Liang et al., 2023; Leporoni et al.,
+   2024; Wang et al., 2024), each discussed individually, better connecting our
+   document-forgery contribution to ongoing forensics research in the journal.
 5. **Format: single-spaced, double-column, <=8 pages.** Compliant: the paper uses the
    elsarticle two-column (5p) format and fits within 8 pages including references.
 
