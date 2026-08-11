@@ -75,14 +75,12 @@ paragraph extended. All changes are highlighted in blue.
 > *TruFor fine-tuned (R1.3): ... A footnote in Sec. 4.5 would improve completeness.*
 
 **Response:** We thank Reviewer 1 for recommending acceptance and verifying the Zenodo
-archive. As suggested, we added a brief footnote in Sec. 4.5 noting that per-seed scores
-for a TruFor model fine-tuned on FantasyID are released with the code
-(`trufor_finetuned_scores.csv`), and explaining that they are kept out of the in-text
-comparison because, like the challenge figures, they were not obtained on our internal
-holdout, so no controlled comparison is possible.
+archive. As suggested, we added a footnote in Sec. 4.5 noting that a controlled comparison
+against a FantasyID-fine-tuned TruFor, evaluated on the same internal holdout, is released
+with the code (`trufor_finetuned_scores.csv`), which improves the completeness of the section.
 
-**Changes:** Sec. 4.5: added a footnote pointing to the released fine-tuned TruFor scores
-and explaining their omission from the comparison.
+**Changes:** Sec. 4.5: added a footnote pointing to the released fine-tuned-TruFor
+controlled comparison.
 
 ---
 

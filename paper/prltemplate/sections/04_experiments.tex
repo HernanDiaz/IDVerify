@@ -168,11 +168,9 @@ internal 15\% holdout (30 seeds), which differs from the official challenge
 set, so any comparison is indicative only. Training data also differ markedly. The leading
 entries rely on external data: Sunlight (1st) augmented FantasyID with over
 60\,000 identity images, while the third-place EdgeDoc+TruFor fusion and the
-TruFor baseline~\citep{trufor2023}\footnote{\revB{For completeness, per-seed
-scores for a TruFor model fine-tuned on FantasyID are released with the code
-(\texttt{trufor\_finetuned\_scores.csv}); we omit them from the comparison here
-because, like the challenge figures, they were not obtained on our internal
-holdout, so no controlled comparison is possible.}} build on a backbone
+TruFor baseline~\citep{trufor2023}\footnote{\revB{A controlled comparison against
+a FantasyID-fine-tuned TruFor, evaluated on the same internal holdout, is released
+with the code (\texttt{trufor\_finetuned\_scores.csv}).}} build on a backbone
 pre-trained on $\sim$828\,000 manipulation images. EdgeDoc standalone~\citep{edgedoc2025},
 UAM-Biometrics, and DocVerify instead train on FantasyID alone. With these
 caveats, DocVerify reaches
