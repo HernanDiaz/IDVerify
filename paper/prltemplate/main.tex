@@ -55,10 +55,12 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 
-%% Revision highlighting: blue = changes for PRL major revision.
-%% For the final camera-ready, swap to the plain definition below.
-\newcommand{\rev}[1]{\textcolor{blue}{#1}}
-% \newcommand{\rev}[1]{#1}   % final version (no highlight)
+%% Round-1 (first major revision) changes are now ACCEPTED: \rev renders as
+%% normal text. Round-2 (this minor revision) changes are highlighted in blue
+%% via \revB, the same colour used in the previous round, as the journal requires.
+\newcommand{\rev}[1]{#1}
+\newcommand{\revB}[1]{\textcolor{blue}{#1}}
+% Camera-ready: also make \revB plain -> \newcommand{\revB}[1]{#1}
 
 %% ── Graphics path ────────────────────────────────────────────
 \graphicspath{{figures/}}
@@ -100,7 +102,10 @@ F1@0.5 = 0.969 ± 0.014 with localization F1 = 0.807 ± 0.096 on the
 blind test set (30 seeds). An ablation confirms that Pareto-optimized loss
 weighting provides a statistically significant Dice improvement over
 equal-weight joint training (p < 0.001, d = 1.01, large effect)
-while maintaining equivalent detection accuracy.
+while maintaining equivalent detection accuracy. \revB{These figures characterize
+in-domain performance on FantasyID; zero-shot transfer to the out-of-domain SIDTD
+benchmark falls to near chance (PR-AUC 0.555), so the reported accuracy should be
+read as bounded to the training domain.}
 \end{abstract}
 
 \begin{keyword}

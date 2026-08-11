@@ -15,14 +15,27 @@ benefits both tasks: a single-task model performs well only on the axis it
 targets (detection-only Dice $0.002$; localization-only PR-AUC $0.728$; both
 $p < 0.001$), whereas the joint model attains both; it further yields higher
 Dice than equal-weight training ($p = 1.3 \times 10^{-4}$, $d = 1.01$) at no
-PR-AUC cost, and distance-to-ideal selection outperforms scalar
-PR-AUC/Dice-maximizing selection on the same front}; (ii) under a rigorous 10-fold
+PR-AUC cost,} \revB{and distance-to-ideal selection improves on scalar PR-AUC- or
+Dice-maximizing selection chiefly in localization, a partial and metric-specific
+edge}; (ii) under a rigorous 10-fold
 nested cross-validation protocol, DocVerify achieves PR-AUC $= 0.9921 \pm
 0.0058$ and Dice $= 0.856 \pm 0.030$, demonstrating consistent generalization
 across data partitions; and \rev{(iii) trained on FantasyID alone, DocVerify
 attains F1@0.5 $= 0.969 \pm 0.014$ and F1$_{\text{loc}} = 0.807 \pm 0.096$ on our
 internal holdout, reported alongside the DeepID 2025 Challenge for context only,
 as the evaluation sets differ.}
+
+\revB{Two strengths and two limitations frame these results. The multi-objective
+formulation removes the need to hand-tune the detection/localization trade-off, and
+the same MOTPE protocol transfers to a ResNet-18 backbone, so the contribution is
+methodological rather than architecture-specific; the evaluation is fully
+reproducible, with per-seed results and extended tables archived openly. Set against
+this, the benefit of Pareto selection over simple scalar criteria is partial and
+concentrated in localization rather than uniform across metrics, and the reported
+accuracy is bounded to the in-domain FantasyID setting: zero-shot transfer to SIDTD
+is near chance and is not recovered by standard augmentation, so cross-domain
+deployment would require multi-source training. The nested protocol is also
+computationally heavy, though a single deployed model retrains in minutes.}
 
 \rev{Applying the identical MOTPE protocol to a ResNet-18 backbone yields
 comparable blind-test performance (Sec.~\ref{subsec:generalization}), so the

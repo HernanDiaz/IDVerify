@@ -128,11 +128,20 @@ shows significantly lower Dice ($p = 1.3 \times 10^{-4}$, $d = 1.01$, large
 effect), supporting the HPO contribution.
 
 A key question for any multi-objective HPO framework is whether the added
-complexity over simpler scalar alternatives yields measurable gains. \rev{Pareto
-significantly outperforms both scalar criteria after Holm correction:
-it improves localization over \texttt{by\_prauc} (Dice $+0.016$, $d=0.59$) and
-improves \emph{both} objectives over \texttt{by\_dice} (PR-AUC $+0.0019$,
-$d=0.64$; Dice $+0.018$, $d=1.00$, large effect).}
+complexity over simpler scalar alternatives yields measurable gains. \revB{The
+advantage over scalar selection is real but partial and metric-specific rather
+than uniform. Against \texttt{by\_dice}, Pareto is significantly better after Holm
+correction on four of five metrics: PR-AUC ($+0.0019$, $d=0.64$, $p=0.007$), Dice
+($+0.018$, $d=1.00$, $p<0.001$), balanced accuracy ($d=0.45$, $p=0.040$) and
+F1-macro ($d=0.47$, $p=0.043$), though only the Dice gain reaches a large effect.
+Against \texttt{by\_prauc} the advantage is narrower: only Dice ($d=0.59$,
+$p=0.043$) and F1-macro ($d=0.46$, $p=0.050$, at the significance threshold) are
+significant, while PR-AUC, balanced accuracy and F1-attack are not ($p>0.06$).
+Effect sizes are otherwise small-to-medium ($d\approx0.4$--$0.65$) and the
+absolute gains modest ($\Delta\lesssim0.02$), so the practical benefit is
+concentrated in localization quality; its broader value is that distance-to-ideal
+selection attains this without committing a priori to a primary objective (full
+per-metric statistics in Supplementary Table~S4).}
 
 Beyond predictive accuracy, Pareto selection requires no a priori commitment to a
 primary objective, making the full trade-off landscape observable
@@ -159,8 +168,12 @@ internal 15\% holdout (30 seeds), which differs from the official challenge
 set, so any comparison is indicative only. Training data also differ markedly. The leading
 entries rely on external data: Sunlight (1st) augmented FantasyID with over
 60\,000 identity images, while the third-place EdgeDoc+TruFor fusion and the
-TruFor baseline~\citep{trufor2023} build on a backbone pre-trained on
-$\sim$828\,000 manipulation images. EdgeDoc standalone~\citep{edgedoc2025},
+TruFor baseline~\citep{trufor2023}\footnote{\revB{For completeness, per-seed
+scores for a TruFor model fine-tuned on FantasyID are released with the code
+(\texttt{trufor\_finetuned\_scores.csv}); we omit them from the comparison here
+because, like the challenge figures, they were not obtained on our internal
+holdout, so no controlled comparison is possible.}} build on a backbone
+pre-trained on $\sim$828\,000 manipulation images. EdgeDoc standalone~\citep{edgedoc2025},
 UAM-Biometrics, and DocVerify instead train on FantasyID alone. With these
 caveats, DocVerify reaches
 detection F1@0.5 \rev{(the F1 score, $2PR/(P{+}R)$, of the bonafide/attack
