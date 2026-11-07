@@ -9,6 +9,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.analysis import Analysis, AnalysisStatus
+from app.services import storage
 
 
 async def create_analysis(
@@ -16,15 +17,20 @@ async def create_analysis(
     *,
     content_type: str,
     original_filename: str | None,
-    image_path: str,
+    data: bytes,
 ) -> Analysis:
+    """Insert a pending analysis and persist the uploaded image to disk.
+
+    The row is flushed first to obtain its id, which names the stored file.
+    """
     analysis = Analysis(
         status=AnalysisStatus.PENDING,
         content_type=content_type,
         original_filename=original_filename,
-        image_path=image_path,
     )
     session.add(analysis)
+    await session.flush()  # assign primary key
+    analysis.image_path = storage.save_upload(analysis.id, content_type, data)
     await session.commit()
     await session.refresh(analysis)
     return analysis
