@@ -102,3 +102,12 @@ BIB/
 # versionados en sus ubicaciones originales)
 # ============================================================
 zenodo_package/
+
+# ============================================================
+# Demo de Hugging Face (fuente canónica: el repo del Space) y
+# material de trabajo temporal. No forma parte del paper.
+# ============================================================
+hf_space/
+hf_static/
+.hf_tmp/
+scratch_*.png
