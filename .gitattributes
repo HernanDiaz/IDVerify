@@ -1,0 +1,9 @@
+# Normalize line endings to LF so shell scripts and configs built into the
+# Linux container work regardless of the host OS (Windows checkouts included).
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pt binary
+*.pth binary

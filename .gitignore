@@ -90,3 +90,20 @@ desktop.ini
 # Claude worktrees (uso interno)
 # ============================================================
 .claude/worktrees/
+
+# ============================================================
+# DocVerify API microservice (rama api)
+# ============================================================
+.env
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+# Model weights are never committed (mounted/downloaded at runtime):
+models/
+*.pt
+*.pth
+# Runtime storage (uploaded images and generated masks):
+data/

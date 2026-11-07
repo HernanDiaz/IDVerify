@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docverify-api"
+version = "0.1.0"
+description = "Asynchronous REST microservice for forged ID-document detection and localization (DocVerify)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Hernán Díaz Rodríguez" }]
+dependencies = [
+    "fastapi>=0.115,<0.116",
+    "uvicorn[standard]>=0.30,<0.35",
+    "python-multipart>=0.0.9",
+    "pydantic>=2.7,<3",
+    "pydantic-settings>=2.3,<3",
+    "sqlalchemy[asyncio]>=2.0.30,<2.1",
+    "alembic>=1.13,<2",
+    "asyncpg>=0.29,<0.31",
+    "psycopg[binary]>=3.1,<4",
+    "greenlet>=3.0",
+    "celery[redis]>=5.3,<6",
+    "redis>=5.0,<6",
+    # torch is pre-installed from the CPU wheel index in the Dockerfile / CI
+    # before `pip install .`, so the resolver here only needs a loose pin.
+    "torch>=2.2,<2.6",
+    "pillow>=10.2",
+    "numpy>=1.26,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2,<9",
+    "pytest-asyncio>=0.23,<0.25",
+    "httpx>=0.27,<0.28",
+    "ruff>=0.6,<0.8",
+    "mypy>=1.10,<2",
+    "locust>=2.29,<3",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4", "SIM", "RUF"]
+ignore = ["B008"]  # FastAPI uses function calls (Depends/File) in argument defaults
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/*" = ["E501"]
+"tests/*" = ["B018"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+warn_unused_ignores = false
+disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
+module = ["celery.*", "torch.*", "torchvision.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "slow: tests that load the real PyTorch model (deselect with '-m \"not slow\"')",
+]
+filterwarnings = ["ignore::DeprecationWarning"]

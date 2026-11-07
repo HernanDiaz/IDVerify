@@ -1,0 +1,24 @@
+# Keep the build context small and secret-free.
+.git
+.github
+.claude
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.env
+models/
+data/
+# Research code and artifacts that are not part of the service image:
+paper/
+paper_figures/
+exports_hpo_pareto_nested/
+sota_comparison/
+experimento1/
+baseline-docker/
+*.pt
+*.pth
+*.ipynb
