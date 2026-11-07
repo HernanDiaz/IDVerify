@@ -36,12 +36,37 @@ for _key, _value in {
 # Imported after the environment is configured.
 from PIL import Image  # noqa: E402
 from sqlalchemy import event  # noqa: E402
+from sqlalchemy.ext.asyncio import (  # noqa: E402
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.pool import NullPool  # noqa: E402
 
+import app.db.session as db_session  # noqa: E402
 import app.models  # noqa: E402, F401  (register tables on the metadata)
 from app.db.base import Base  # noqa: E402
-from app.db.session import engine as async_engine  # noqa: E402
 from app.db.sync_session import sync_engine  # noqa: E402
 from app.workers.celery_app import celery_app  # noqa: E402
+
+# Rebuild the async engine with NullPool and rebind it on the module. pytest
+# runs each async test on its own event loop; asyncpg refuses to reuse a pooled
+# connection created on a now-closed loop ("attached to a different loop").
+# NullPool opens and closes a connection within a single test's loop, so none is
+# ever carried across loops. get_session() resolves AsyncSessionLocal from the
+# module at call time, so rebinding here is enough. (SQLite tolerated the shared
+# pool locally, but Postgres in CI does not.)
+async_engine = create_async_engine(
+    os.environ["DATABASE_URL"],
+    poolclass=NullPool,
+    future=True,
+)
+db_session.engine = async_engine
+db_session.AsyncSessionLocal = async_sessionmaker(
+    bind=async_engine,
+    expire_on_commit=False,
+    class_=AsyncSession,
+)
 
 
 def _apply_sqlite_pragmas(dbapi_conn, _record) -> None:  # type: ignore[no-untyped-def]
