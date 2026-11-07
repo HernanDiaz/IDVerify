@@ -33,7 +33,15 @@ class Analysis(Base):
         Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     status: Mapped[AnalysisStatus] = mapped_column(
-        Enum(AnalysisStatus, name="analysis_status"),
+        # Store the enum *values* ("pending", …), not the member names
+        # ("PENDING"). This matches the labels the Alembic migration creates for
+        # the native Postgres enum and the lowercase status the API exposes;
+        # without it SQLAlchemy binds the name and Postgres rejects the insert.
+        Enum(
+            AnalysisStatus,
+            name="analysis_status",
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
         default=AnalysisStatus.PENDING,
         nullable=False,
         index=True,
