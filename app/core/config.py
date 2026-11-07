@@ -56,8 +56,17 @@ class Settings(BaseSettings):
 
     @property
     def sync_database_url(self) -> str:
-        """Synchronous (psycopg) URL for Alembic migrations and the Celery worker."""
-        return self.database_url.replace("+asyncpg", "+psycopg")
+        """Synchronous URL for Alembic migrations and the Celery worker.
+
+        Derived from ``database_url`` by swapping the async driver for its sync
+        counterpart (asyncpg->psycopg, aiosqlite->pysqlite for the test suite).
+        """
+        url = self.database_url
+        if "+asyncpg" in url:
+            return url.replace("+asyncpg", "+psycopg")
+        if "+aiosqlite" in url:
+            return url.replace("+aiosqlite", "+pysqlite")
+        return url
 
     @property
     def broker_url(self) -> str:

@@ -6,10 +6,12 @@ retention job. See :mod:`app.workers.tasks`.
 
 from __future__ import annotations
 
+import contextlib
 import uuid
 from pathlib import Path
 
 import numpy as np
+import numpy.typing as npt
 from PIL import Image
 
 from app.core.config import get_settings
@@ -32,7 +34,9 @@ def save_upload(analysis_id: uuid.UUID, content_type: str, data: bytes) -> str:
     return str(path)
 
 
-def save_mask(analysis_id: uuid.UUID, mask: np.ndarray, threshold: float = 0.5) -> tuple[str, float]:
+def save_mask(
+    analysis_id: uuid.UUID, mask: npt.NDArray[np.float32], threshold: float = 0.5
+) -> tuple[str, float]:
     """Binarize the mask, save it as a grayscale PNG, and return (path, coverage%)."""
     ensure_dirs()
     binary = mask > threshold
@@ -47,7 +51,5 @@ def delete_file(path: str | None) -> None:
     """Best-effort deletion of a stored file."""
     if not path:
         return
-    try:
+    with contextlib.suppress(OSError):
         Path(path).unlink(missing_ok=True)
-    except OSError:
-        pass

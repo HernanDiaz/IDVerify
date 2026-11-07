@@ -12,13 +12,14 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Protocol
 
 import numpy as np
+import numpy.typing as npt
 from PIL import Image
 
 from app.core.config import Settings, get_settings
 from app.core.logging import get_logger
 
 if TYPE_CHECKING:
-    import torch
+    pass
 
 logger = get_logger(__name__)
 
@@ -28,16 +29,16 @@ class PredictionResult:
     """Raw model outputs for one image."""
 
     p_manipulated: float
-    mask: np.ndarray  # float32, HxW in [0, 1], at model-input resolution
+    mask: npt.NDArray[np.float32]  # HxW in [0, 1], at model-input resolution
     inference_ms: float
 
 
-def preprocess(image: Image.Image, size: int) -> np.ndarray:
+def preprocess(image: Image.Image, size: int) -> npt.NDArray[np.float32]:
     """Resize to ``size`` x ``size``, scale to [0, 1], return CHW float32.
 
     Pure NumPy/PIL so it is testable without importing PyTorch.
     """
-    rgb = image.convert("RGB").resize((size, size), Image.BILINEAR)
+    rgb = image.convert("RGB").resize((size, size), Image.Resampling.BILINEAR)
     arr = np.asarray(rgb, dtype=np.float32) / 255.0
     return np.transpose(arr, (2, 0, 1)).copy()  # (3, size, size)
 

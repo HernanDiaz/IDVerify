@@ -35,6 +35,7 @@ dev = [
     "pytest>=8.2,<9",
     "pytest-asyncio>=0.23,<0.25",
     "httpx>=0.27,<0.28",
+    "aiosqlite>=0.20,<0.21",
     "ruff>=0.6,<0.8",
     "mypy>=1.10,<2",
     "locust>=2.29,<3",
@@ -52,6 +53,9 @@ src = ["app", "tests"]
 select = ["E", "F", "I", "UP", "B", "C4", "SIM", "RUF"]
 ignore = ["B008"]  # FastAPI uses function calls (Depends/File) in argument defaults
 
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
 [tool.ruff.lint.per-file-ignores]
 "alembic/*" = ["E501"]
 "tests/*" = ["B018"]
@@ -66,6 +70,13 @@ disallow_untyped_decorators = false
 [[tool.mypy.overrides]]
 module = ["celery.*", "torch.*", "torchvision.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Vendored torch model: torch has no stubs here, so subclassing nn.Module and
+# returning tensors reads as Any. Relax those two checks for this file only.
+module = ["app.services.model_arch"]
+disallow_subclassing_any = false
+warn_return_any = false
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

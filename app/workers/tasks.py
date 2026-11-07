@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -32,7 +32,7 @@ def run_analysis(self: Any, analysis_id: str) -> dict[str, Any]:
             logger.warning("run_analysis: %s not found", analysis_id)
             return {"status": "missing"}
         analysis.status = AnalysisStatus.RUNNING
-        analysis.started_at = datetime.now(timezone.utc)
+        analysis.started_at = datetime.now(UTC)
         image_path = analysis.image_path
 
     try:
@@ -57,7 +57,7 @@ def run_analysis(self: Any, analysis_id: str) -> dict[str, Any]:
             analysis.pred_coverage = coverage
             analysis.inference_ms = result.inference_ms
             analysis.mask_path = mask_path
-            analysis.finished_at = datetime.now(timezone.utc)
+            analysis.finished_at = datetime.now(UTC)
 
         logger.info("Analysis %s -> %s (%.1f ms)", analysis_id, verdict, result.inference_ms)
         return {"status": "done", "verdict": verdict}
@@ -69,7 +69,7 @@ def run_analysis(self: Any, analysis_id: str) -> dict[str, Any]:
             if analysis is not None:
                 analysis.status = AnalysisStatus.FAILED
                 analysis.error = str(exc)[:512]
-                analysis.finished_at = datetime.now(timezone.utc)
+                analysis.finished_at = datetime.now(UTC)
         return {"status": "failed", "error": str(exc)}
 
 
@@ -77,7 +77,7 @@ def run_analysis(self: Any, analysis_id: str) -> dict[str, Any]:
 def cleanup_expired() -> dict[str, int]:
     """Delete images and masks older than the retention window (privacy)."""
     settings = get_settings()
-    cutoff = datetime.now(timezone.utc) - timedelta(hours=settings.retention_hours)
+    cutoff = datetime.now(UTC) - timedelta(hours=settings.retention_hours)
     removed = 0
 
     with session_scope() as session:

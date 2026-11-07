@@ -1,0 +1,110 @@
+"""Test configuration.
+
+Environment variables are set *before* importing the application so the module
+level engines point at a throwaway SQLite file shared by the async API and the
+synchronous Celery worker. The fast suite therefore needs no external services:
+SQLite + mock model + Celery eager mode.
+"""
+
+from __future__ import annotations
+
+import io
+import os
+import pathlib
+import tempfile
+from collections.abc import AsyncIterator, Iterator
+
+import pytest
+
+_TMP = pathlib.Path(tempfile.mkdtemp(prefix="docverify_test_"))
+_DB_FILE = (_TMP / "test.db").as_posix()
+
+os.environ.update(
+    {
+        "DATABASE_URL": f"sqlite+aiosqlite:///{_DB_FILE}",
+        "USE_MOCK_MODEL": "true",
+        "UPLOAD_DIR": str(_TMP / "uploads"),
+        "MASK_DIR": str(_TMP / "masks"),
+        "REDIS_URL": "redis://localhost:6379/15",
+        "RETENTION_HOURS": "24",
+        "INPUT_SIZE": "224",
+    }
+)
+
+# Imported after the environment is configured.
+from PIL import Image  # noqa: E402
+from sqlalchemy import event  # noqa: E402
+
+import app.models  # noqa: E402, F401  (register tables on the metadata)
+from app.db.base import Base  # noqa: E402
+from app.db.session import engine as async_engine  # noqa: E402
+from app.db.sync_session import sync_engine  # noqa: E402
+from app.workers.celery_app import celery_app  # noqa: E402
+
+
+def _apply_sqlite_pragmas(dbapi_conn, _record) -> None:  # type: ignore[no-untyped-def]
+    cur = dbapi_conn.cursor()
+    cur.execute("PRAGMA journal_mode=WAL")
+    cur.execute("PRAGMA busy_timeout=5000")
+    cur.close()
+
+
+event.listen(sync_engine, "connect", _apply_sqlite_pragmas)
+event.listen(async_engine.sync_engine, "connect", _apply_sqlite_pragmas)
+
+# Run Celery tasks inline, in-process, and surface their exceptions.
+celery_app.conf.task_always_eager = True
+celery_app.conf.task_eager_propagates = True
+
+
+# --------------------------------------------------------------------------- #
+# Image helpers
+# --------------------------------------------------------------------------- #
+def make_image_bytes(fmt: str = "PNG", size: tuple[int, int] = (96, 96), color: int = 200) -> bytes:
+    """Return encoded bytes of a solid RGB image."""
+    buf = io.BytesIO()
+    Image.new("RGB", size, (color, color, color)).save(buf, format=fmt)
+    return buf.getvalue()
+
+
+@pytest.fixture
+def png_bytes() -> bytes:
+    return make_image_bytes("PNG")
+
+
+@pytest.fixture
+def jpeg_bytes() -> bytes:
+    return make_image_bytes("JPEG")
+
+
+# --------------------------------------------------------------------------- #
+# Database lifecycle
+# --------------------------------------------------------------------------- #
+@pytest.fixture(scope="session", autouse=True)
+def _schema() -> Iterator[None]:
+    Base.metadata.create_all(sync_engine)
+    yield
+    Base.metadata.drop_all(sync_engine)
+
+
+@pytest.fixture(autouse=True)
+def _clean_tables() -> Iterator[None]:
+    from app.models.analysis import Analysis
+
+    with sync_engine.begin() as conn:
+        conn.execute(Analysis.__table__.delete())
+    yield
+
+
+# --------------------------------------------------------------------------- #
+# HTTP client
+# --------------------------------------------------------------------------- #
+@pytest.fixture
+async def client() -> AsyncIterator[AsyncClient]:  # noqa: F821
+    from httpx import ASGITransport, AsyncClient
+
+    from app.main import app
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as http_client:
+        yield http_client
