@@ -1,0 +1,112 @@
+Re: Multi-Objective Pareto hyperparameter optimization for joint detection and localization of forged identity documents
+  PRLETTERS-D-26-00496R1
+  by Hernán Díaz Rodríguez
+  Submitted to Pattern Recognition Letters
+
+
+Dear Dr. Rodríguez,
+
+The Editorial Office has received the decision on your article.
+
+The Editors and/or Reviewers' comments are as follows:
+
+
+
+
+
+While you are revising your paper, here is a list of points worth checking and I will check that these are adhered to before your paper is approved for publication, assuming the revision satisfies the AE and reviewers:
+1.Make sure your title is succinct and grammatical. It should ideally not exceed 10-15 words.
+2.Make sure your conclusions reflect on the strengths and weaknesses of your work, which should also be different in content from the abstract and be rather longer too.
+3.Make sure your bibliography is well organized. Please do not make excessive citation to arXiv papers, or papers from a single conference series. Do not cite large groups of papers without individually commenting on them. Your bibliography should only exceptionally exceed about 30 items.
+4.Make sure the revised version is relevant to the readership of Pattern Recognition Letters. Please also cite recent work from the Pattern Recognition Letters journal to show the connection of your work and our readers.
+5.Do not exceed the page limits or violate the format, SINGLE spaced DOUBLE column with a maximum of 8 pages for a revised paper.
+
+AE: Thank you for submitting the revised version of your manuscript. The reviewers agree that the major concerns have been satisfactorily addressed and the manuscript is now close to acceptance. Before final acceptance, please make a minor editorial revision to ensure that the discussion of the Pareto versus scalar selection results accurately reflects the statistical significance reported in Table 3 and briefly acknowledge the limited zero shot generalization to SIDTD in the abstract and discussion. No additional experiments are required.
+
+
+Reviewer 1: Dear Dr. Díaz Rodríguez,
+
+All issues from the first round have been addressed with new experiments.
+
+- EdgeDoc (R1.1): Corrected — 0.43 (standalone) vs 0.958 (fusion). Comparison table removed.
+- SIDTD (R1.2): Included — zero-shot PR-AUC 0.555 (near chance), in-domain retraining 0.878. Honest.
+- TruFor fine-tuned (R1.3): Not in text, only in repo CSVs. Acceptable since the table was removed. A footnote in Sec. 4.5 would improve completeness.
+- Augmentation (R1.4): Ablation run, 30 seeds. Degrades all metrics (p<1e-7). Confirms design choice.
+- Pareto vs scalar (R1.5): Redone with n=30. Pareto now significantly outperforms both scalars (Dice d=1.00 vs by_dice, p=0.0004). Original "no difference" was underpowered.
+- Challenge comparison (R1.6): Table removed. No superiority claim.
+- Architecture (R1.7): ResNet-18 experiment added. Methodology transfers across backbones.
+- Qualitative (R1.8): Three cases — success, localization failure, false positive.
+- Citations (R1.9): "3,284" attributed to author's count. "876,000" corrected to "~828,000".
+- Computational cost (R1.10): Discussed. Justified by Pareto superiority result.
+
+All Reviewer 2 points also addressed (holdout timing, class imbalance, architecture details, equation refs, F1@0.5 definition).
+
+I verified the Zenodo archive (doi:10.5281/zenodo.21076490) — all per-seed CSVs match the reported numbers exactly.
+I recommend acceptance of this manuscript
+
+
+Reviewer 2: Article: Multi-Objective Pareto Hyperparameter Optimization for Joint Detection and Localization of Forged Identity Documents
+
+Summary: The author has substantially improved the manuscript. The most serious transparency concerns from the first round, i.e., the misattributed EdgeDoc figure, the selective omission of SIDTD results, and the omission of the TruFor fine-tuned baseline, have been addressed, including the disclosure of unfavorable results (near-chance zero-shot performance on SIDTD, PR-AUC = 0.555; performance degradation under standard augmentation). This is commendable and reflects good scientific practice rather than results-driven storytelling.
+
+The methodological rigor (10×5 nested cross-validation, Wilcoxon signed-rank tests with Holm-Bonferroni correction, Cohen's d, 30-seed blind evaluation, open code and archived per-seed CSVs) remains a strength and now extends to a second backbone (ResNet-18), supporting the claim that the multi-objective HPO methodology is architecture-agnostic.
+
+However, one important issue remains only partially resolved. In Section 4.4, the author claims that "Pareto significantly outperforms both scalar criteria after Holm correction," yet the reported table shows that several comparisons against by_prauc (PR-AUC, balanced accuracy, F1-attack) remain non-significant even after correction, and one p-value (F1-macro = 0.050) sits exactly at the significance threshold. The blanket phrasing overstates what is, in fact, a partial and metric-specific advantage with mostly small-to-medium effect sizes (d ≈ 0.4-0.65), except for the Dice comparison against by_dice (d = 1.00). Given that this is the paper's central methodological claim, the author must recalibrate the language to precisely state which metrics were significant and which were not. Additionally, he should discuss the practical magnitude of the gains alongside the statistical significance.
+
+Other points that deserve attention are the following:
+1. The cross-domain augmentation check (Supplementary Table S8), which shows that augmentation does not close the domain gap on SIDTD, is highly relevant to the paper's generalization narrative and deserves at least a brief mention in the main text rather than only in the supplement.
+
+2. Several quantitative justifications (computational cost breakdown, full pos_weight sensitivity table) currently exist only in the response letter, and should be incorporated, even summarized, into the supplementary material accompanying the final published version, to ensure long-term traceability independent of the review correspondence.
+
+3. The manuscript's abstract should more clearly acknowledge the bounded, in-domain scope of the reported performance, given the near-chance zero-shot cross-domain result.
+
+All other reviewer concerns, that is, dataset imbalance justification and sensitivity analysis, holdout protocol timing, architecture description completeness, qualitative failure-case analysis, citation accuracy, and the removal of the non-comparable challenge benchmark table, have been adequately and convincingly addressed.
+
+Recommendation: Minor revision.
+
+The vast majority of prior concerns have been resolved with genuine empirical evidence, including honestly reported negative results.
+
+However, the author should perform the following adequations:
+1. Rephrasing the claims in Section 4.4 regarding Pareto vs. scalar selection to accurately reflect the mixed statistical significance and moderate effect sizes rather than an unqualified "significant advantage".
+
+2. Briefly integrating the cross-domain augmentation result (Table S8) into the main discussion of generalization.
+
+3. Ensuring that quantitative justifications currently confined to the response letter are also available in the supplementary material of the published version.
+
+These are editorial and interpretive refinements rather than new experiments, and do not warrant a further major revision cycle.
+
+
+
+In view of the comments made, the Associate Editor responsible for your article has decided that the paper can be reconsidered for publication after revision. Therefore we look forward to receiving the revised version of the article as soon as possible, but before Aug 22, 2026(unless the Editor specifies otherwise), together with a list of changes or a rebuttal against each point which is being raised.
+
+If we do not receive your revision within this period, your paper will be considered withdrawn. Any revision after this will be treated as a new submission and subject to a new review cycle.
+
+To submit a revision, please login to the system at
+
+https://www.editorialmanager.com/prletters/
+Your username is: HRodríguez-288
+
+To create or change your password, please click here: click here to reset your password
+
+You will see a menu item called "Submission Needing Revision" in your Author menu. You will find your submission record and decision letter there.
+
+When submitting your revised manuscript, please ensure that you upload the source files (e.g. Word). Uploading a PDF file at this stage will create delays should your manuscript be finally accepted for publication. If your revised submission does not include the source files, we will contact you to request them.
+
+To view your reviewer feedback, please log in as an author at https://www.editorialmanager.com/prletters/ and navigate to your manuscript in the " Submissions Needing Revision " folder under the Author Main Menu. 
+ 
+When revising your manuscript, please consider all issues mentioned in the reviewers' comments carefully. Please note that your revised submission may need to be re-reviewed.
+Please note that this journal offers a new, free service called AudioSlides: brief, webcast-style presentations that are shown next to published articles on ScienceDirect (see also http://www.elsevier.com/audioslides). If your paper is accepted for publication, you will automatically receive an invitation to create an AudioSlides presentation.
+
+Pattern Recognition Letters features the Interactive Plot Viewer, see: http://www.elsevier.com/interactiveplots. Interactive Plots provide easy access to the data behind plots. To include one with your article, please prepare a .csv file with your plot data and test it online at http://authortools.elsevier.com/interactiveplots/verification before submission as supplementary material.
+
+Research Elements (optional)
+This journal encourages you to share research objects - including your raw data, methods, protocols, software, hardware and more – which support your original research article in a Research Elements journal. Research Elements are open access, multidisciplinary, peer-reviewed journals which make the objects associated with your research more discoverable, trustworthy and promote replicability and reproducibility. As open access journals, there may be an Article Publishing Charge if your paper is accepted for publication. Find out more about the Research Elements journals at https://www.elsevier.com/authors/tools-and-resources/research-elements-journals?dgcid=ec_em_research_elements_email.
+
+
+Pattern Recognition Letters values your contribution and I look forward to receiving your revised manuscript.
+
+Kind regards,  
+
+Jiwen Lu, Ph.D.
+Editor-in-Chief
+Pattern Recognition Letters
