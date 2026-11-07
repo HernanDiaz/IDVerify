@@ -1,141 +1,200 @@
-# DocVerify — Multi-Task CNN for Forged ID Document Detection
+# DocVerify API
 
-DocVerify is a multi-task deep learning system that simultaneously detects forged identity documents (binary classification) and localises the altered regions (pixel-level segmentation). Its core contribution is a **multi-objective Pareto HPO framework** (Optuna / MOTPE) that jointly optimises PR-AUC and Dice instead of collapsing both objectives into a single scalar loss weight.
+[![CI](https://github.com/HernanDiaz/IDVerify/actions/workflows/ci.yml/badge.svg?branch=api)](https://github.com/HernanDiaz/IDVerify/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.11-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-Evaluated on the [FantasyID dataset](https://zenodo.org/records/17063366), the system achieves results competitive with top-3 submissions to the [DeepID 2025 Challenge (ICCV)](https://deepid-iccv.github.io/) while training exclusively on FantasyID with a fully custom architecture — no external data, no TruFor pretraining.
+Asynchronous REST microservice that wraps **DocVerify** — a multi-task CNN that
+decides whether an identity document is **authentic** or **manipulated** and
+localizes the altered regions with a pixel mask (from the Pattern Recognition
+Letters 2026 paper, [doi:10.1016/j.patrec.2026.08.021](https://doi.org/10.1016/j.patrec.2026.08.021)).
 
-| Metric | DocVerify | AG/EdgeDoc (3rd, FantasyID-only) | Sunlight (1st, 60K+ external) |
-|---|---|---|---|
-| PR-AUC (nested CV) | **0.9921 ± 0.0058** | — | — |
-| F1 detection (thr=0.5) | **0.969 ± 0.014** | 0.958 | 0.991 |
-| F1 localisation (per-image) | **0.807 ± 0.096** | 0.686 | 0.784 |
-| Dice (blind test, 30 seeds) | **0.875 ± 0.018** | — | — |
+The focus of this branch is **backend engineering**, not the model: a clean
+async API, a background inference worker, a relational store with migrations,
+tests, containers and CI.
 
-> DocVerify was developed independently after the DeepID 2025 Challenge deadline; results are on an internal 15% holdout, not the official test set.
+> ⚠️ **Research demo — do not upload real identity documents.** Inference runs on
+> synthetic documents from the public FantasyID dataset. Uploaded images and
+> generated masks are stored on disk only and **deleted automatically after 24 h**
+> by a scheduled job.
+
+**Stack:** FastAPI · PostgreSQL (SQLAlchemy 2 async + Alembic) · Redis · Celery ·
+pytest · Docker Compose · GitHub Actions.
 
 ---
 
 ## Architecture
 
-```
-Input image (224×224)
-    └─► Encoder: Patel CNN (6 conv blocks, 8→256 filters, LeakyReLU + BN)
-            ├─► Classification head: GlobalAvgPool → 4×Dense+Dropout → logit
-            └─► Decoder: U-Net with skip connections → Conv 1×1 → mask logit
+```mermaid
+flowchart LR
+    client([Client]) -->|"POST /analyses (image)"| api[FastAPI]
+    api -->|enqueue task| redis[(Redis broker)]
+    api <-->|analysis rows| pg[(PostgreSQL)]
+    redis --> worker[Celery worker]
+    worker -->|loaded once at startup| model[[DocVerify CNN · CPU]]
+    worker <-->|status + results| pg
+    worker -->|mask PNG| vol[(shared /data volume)]
+    api -->|"GET /analyses/{id}/mask"| vol
+    beat[[Celery Beat]] -.->|hourly retention sweep| worker
 ```
 
-- **Loss:** `BCEWithLogitsLoss(cls) + λ_mask · (BCE + Dice)(seg)`
-- **HPO:** MOTPE sampler, multi-objective `maximize(PR-AUC, Dice)`, Pareto-optimal selection by minimum Euclidean distance to ideal point (1,1)
-- **Validation:** Nested CV (10 outer × 5 inner folds, 50 MOTPE trials/fold = 500 unique configs, 2,500 individual model trainings)
+1. `POST /analyses` validates the upload, stores the image on disk, inserts a
+   `pending` row and enqueues a Celery task — returning immediately.
+2. The worker (model loaded **once per process**) runs CPU inference, writes the
+   verdict, probabilities, timing and mask path back to PostgreSQL, and saves the
+   mask PNG to the shared volume.
+3. Clients poll `GET /analyses/{id}` until `done`/`failed`.
+4. Celery Beat deletes images and masks older than the retention window.
 
 ---
 
-## Requirements
+## Quickstart (about a minute)
 
-- Python 3.11
-- NVIDIA GPU with CUDA support (tested: RTX 5060 Ti 16 GB, AMD Ryzen 5 3400G, 32 GB RAM, CUDA 13.0, Windows 11)
-- FantasyID dataset
-
----
-
-## Installation
+Requires Docker and Docker Compose.
 
 ```bash
-git clone https://github.com/HernanDiaz/IDVerify.git
-cd IDVerify
-python -m venv venv
-venv\Scripts\activate          # Windows
-pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cu124
+cp .env.example .env
+
+# Option A — real model: provide the trained weights (never committed to git)
+make weights WEIGHTS_SRC=/path/to/model_multitask_seed47.pt
+
+# Option B — no weights at hand: set USE_MOCK_MODEL=true in .env to use a fake predictor
+
+make up           # docker compose up --build  (api, worker, redis, postgres)
 ```
 
-### Dataset setup
+Then open the interactive docs at **http://localhost:8000/docs** and the health
+check at **http://localhost:8000/health**.
 
-Download [FantasyID](https://zenodo.org/records/17063366) and extract to:
-
-```
-DocVerify/
-└── FantasyID/
-    ├── train/
-    │   ├── bonafide/<device>/<stem>.jpg + <stem>.json
-    │   └── attack/<attack_type>/<device>/<stem>.jpg + <stem>.json
-    └── test/  (same structure)
-```
-
-Custom location: `set DATASET_ROOT=C:\path\to\FantasyID`
+![Swagger UI](docs/swagger.jpg)
 
 ---
 
-## Running the Experiments
+## API
 
-### 1 · Full pipeline — Nested CV + Blind Test (~59 h)
+| Method | Path | Description |
+| ------ | ---- | ----------- |
+| `POST` | `/analyses` | Submit a JPEG/PNG document; returns `{id, status: "pending"}`. |
+| `GET`  | `/analyses/{id}` | Status and, when done, verdict + probabilities + mask URL. |
+| `GET`  | `/analyses` | Paginated listing (`?limit=&offset=`). |
+| `GET`  | `/analyses/{id}/mask` | The predicted mask as `image/png`. |
+| `GET`  | `/health` | Liveness/readiness for the API, database, Redis and model. |
+
+### Examples
+
 ```bash
-python main.py
-```
-Outputs: `exports_hpo_pareto_nested/`
+# Submit a document
+curl -s -X POST http://localhost:8000/analyses \
+     -F "file=@document.jpg;type=image/jpeg"
+# {"id":"7c1e...","status":"pending"}
 
-### 2 · Scalar HPO baseline (~4.6 h)
+# Poll for the result
+curl -s http://localhost:8000/analyses/7c1e...
+# {
+#   "status": "done",
+#   "verdict": "manipulated",
+#   "probabilities": {"manipulated": 0.82, "authentic": 0.18},
+#   "pred_coverage": 4.1,
+#   "inference_ms": 83.0,
+#   "mask_url": "/analyses/7c1e.../mask"
+# }
+
+# Download the mask, or embed it as base64
+curl -s http://localhost:8000/analyses/7c1e.../mask -o mask.png
+curl -s "http://localhost:8000/analyses/7c1e...?include_mask=true"
+
+# List and health
+curl -s "http://localhost:8000/analyses?limit=10&offset=0"
+curl -s http://localhost:8000/health
+```
+
+**Validation:** non-JPEG/PNG uploads and corrupt images return **422**; files over
+the size limit return **413** (both with a clear message).
+
+---
+
+## Performance
+
+Measured on an 8-core CPU with the real model, 60 inferences after warm-up
+(`scripts/bench.py` runs the end-to-end HTTP benchmark against a live stack).
+
+| `TORCH_NUM_THREADS` | mean | p50 | p95 |
+| ------------------- | ---- | --- | --- |
+| 1 | 154 ms | 154 ms | 165 ms |
+| 2 | 103 ms | 102 ms | 115 ms |
+| 4 | 82 ms  | 82 ms  | 90 ms  |
+
+**What was optimized**
+
+- **Load the model once per worker process** (via Celery's `worker_process_init`),
+  not per task — a cold `torch.load` + build would otherwise be paid on every
+  request. Readiness is published to Redis and surfaced by `/health`.
+- **`torch.inference_mode()`** around the forward pass removes autograd bookkeeping.
+- **`TORCH_NUM_THREADS`** is configurable. The model is small, so intra-op
+  threading gives sub-linear gains (above): for lowest **latency** use more
+  threads per worker; for highest **throughput** on a multi-core host, run more
+  worker processes with 1 thread each and scale horizontally.
+- **Batch size is 1** by design — requests arrive independently and latency
+  matters more than batch throughput for an interactive API.
+- The API stays responsive under load because inference happens **off the request
+  path** in the worker; the event loop only does I/O.
+
+---
+
+## Testing
+
 ```bash
-python scalar_experiment.py
+make test       # fast suite: SQLite + mock model + Celery eager — no services needed
+make test-all   # also the slow, real-model inference test (needs weights + torch)
+make lint       # ruff + mypy
 ```
 
-### 3 · DeepID Challenge metrics re-evaluation (~15 min, inference only)
-```bash
-python evaluate_challenge_metrics.py
-```
+The fast suite exercises every endpoint (httpx `AsyncClient`), upload validation,
+the Celery task in eager mode, preprocessing and the retention job. The real
+model is covered by a `@pytest.mark.slow` test that is auto-skipped when the
+weights are absent. **CI** runs ruff, mypy and pytest (against real Postgres and
+Redis service containers) plus an Alembic upgrade/downgrade round-trip on every
+push and pull request.
 
 ---
 
-## Project Structure
+## Design decisions
 
-```
-DocVerify/
-├── config.py                       — Global configuration
-├── dataset.py                      — Dataset indexing, JSON parsing, VRAMCache
-├── model.py                        — Architecture + losses
-├── evaluate.py                     — Metrics (PR-AUC, Dice, BACC, …)
-├── evaluate_challenge_metrics.py   — DeepID Challenge metrics (F1@0.5, F1 per-image)
-├── train.py                        — Nested CV, HPO, early stopping, blind test
-├── main.py                         — Entry point
-├── scalar_experiment.py            — Classical scalarisation baseline
-├── dataset_sidtd.py                — SIDTD dataset parser (tested, excluded from paper)
-├── eval_sidtd.py                   — SIDTD evaluation script
-├── finetune_sidtd.py               — SIDTD fine-tuning script
-├── requirements.txt
-├── exports_hpo_pareto_nested/      — Experiment results (CSVs + Optuna DB)
-│   ├── nested_outer_results.csv    — Per-fold NCV metrics (Table 2)
-│   ├── optuna_trials_nested.csv    — All 2,500 HPO trials
-│   ├── optuna_nested_outer.sqlite3 — Full Optuna study database
-│   ├── final_blind_test_multiseed.csv — Ablation study, 30 seeds (Table 3)
-│   ├── scalar_experiment/          — Pareto vs scalar comparison (Table 4)
-│   ├── challenge_metrics*.csv      — Track 1/2 challenge metrics (Table 5)
-│   └── stat_tests.csv              — Wilcoxon + Cohen's d statistical tests
-├── paper/
-│   ├── README_paper.md             — Paper build instructions
-│   ├── tifs/                       — IEEE T-IFS version (12 pages, IEEEtran)
-│   └── prltemplate/                — Pattern Recognition Letters version (7 pages, elsarticle) — SUBMITTED
-├── paper_figures/                  — Figure generation scripts (matplotlib)
-└── sota_comparison/                — TruFor comparison pipeline
-    ├── 00_export_holdout.py        — Export holdout images
-    ├── 01_run_trufor.py            — TruFor zero-shot inference
-    ├── 02_eval_comparison.py       — Metrics + comparison table generation
-    ├── run_trufor_finetune.py      — TruFor fine-tuning on FantasyID
-    ├── run_trufor_finetuned_inference.py — Fine-tuned model inference
-    └── *.csv                       — Result files
-```
+- **Async end to end on the API**: FastAPI + SQLAlchemy 2 async (asyncpg). The
+  Celery worker is synchronous, so it uses a **separate sync engine** (psycopg)
+  over the same ORM models — avoiding the event-loop/connection pitfalls of
+  driving an async engine from a worker, which Alembic shares too.
+- **Images on disk, never in the database.** The DB holds only metadata, outputs
+  and a filesystem path; the retention sweep deletes the files.
+- **UUID primary keys** so analysis ids are not guessable or enumerable.
+- **Validation in depth**: declared content type *and* magic bytes are checked,
+  and the body is read with an upper bound so an oversized upload is rejected
+  without buffering it whole.
+- **PyTorch is an optional extra.** The API, the mock predictor and the whole
+  fast test suite never import torch, keeping CI and local installs light; the
+  Docker image installs the CPU wheel explicitly.
+- **Small, reviewable commits**, typed code (`mypy --strict`) and a standard
+  layout.
 
 ---
 
-## Paper
+## Project layout
 
-| Version | Venue | Pages | Status |
-|---|---|---|---|
-| `paper/tifs/` | IEEE T-IFS (Q1, IF ~6.8) | 12 | Draft — compiles, no errors |
-| `paper/prltemplate/` | Pattern Recognition Letters (Q1) | 7 | **Submitted — 2026-03-21** |
-
-See `paper/README_paper.md` for build instructions.
-
----
+```
+app/
+  api/        # routes, dependencies (validation, pagination)
+  core/       # settings, logging
+  db/         # declarative base, async + sync sessions
+  models/     # SQLAlchemy ORM (Analysis)
+  schemas/    # Pydantic request/response contracts
+  services/   # model architecture, inference, storage, data access
+  workers/    # Celery app, tasks, Beat schedule
+tests/        # fast suite + slow real-model test
+alembic/      # migrations
+scripts/      # bench.py, locustfile.py
+```
 
 ## License
 
-Research purposes only. The FantasyID dataset is released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+MIT (service code). The DocVerify model and the FantasyID dataset keep their own
+licenses.
