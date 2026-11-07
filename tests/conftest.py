@@ -19,17 +19,19 @@ import pytest
 _TMP = pathlib.Path(tempfile.mkdtemp(prefix="docverify_test_"))
 _DB_FILE = (_TMP / "test.db").as_posix()
 
-os.environ.update(
-    {
-        "DATABASE_URL": f"sqlite+aiosqlite:///{_DB_FILE}",
-        "USE_MOCK_MODEL": "true",
-        "UPLOAD_DIR": str(_TMP / "uploads"),
-        "MASK_DIR": str(_TMP / "masks"),
-        "REDIS_URL": "redis://localhost:6379/15",
-        "RETENTION_HOURS": "24",
-        "INPUT_SIZE": "224",
-    }
-)
+# Defaults for a zero-service local run (SQLite + mock model). CI may inject
+# DATABASE_URL/REDIS_URL to run the same suite against Postgres and Redis, so
+# only fill in what the environment does not already provide.
+for _key, _value in {
+    "DATABASE_URL": f"sqlite+aiosqlite:///{_DB_FILE}",
+    "USE_MOCK_MODEL": "true",
+    "UPLOAD_DIR": str(_TMP / "uploads"),
+    "MASK_DIR": str(_TMP / "masks"),
+    "REDIS_URL": "redis://localhost:6379/15",
+    "RETENTION_HOURS": "24",
+    "INPUT_SIZE": "224",
+}.items():
+    os.environ.setdefault(_key, _value)
 
 # Imported after the environment is configured.
 from PIL import Image  # noqa: E402
@@ -49,8 +51,10 @@ def _apply_sqlite_pragmas(dbapi_conn, _record) -> None:  # type: ignore[no-untyp
     cur.close()
 
 
-event.listen(sync_engine, "connect", _apply_sqlite_pragmas)
-event.listen(async_engine.sync_engine, "connect", _apply_sqlite_pragmas)
+# PRAGMAs only make sense on SQLite; skip them when CI points at Postgres.
+if sync_engine.dialect.name == "sqlite":
+    event.listen(sync_engine, "connect", _apply_sqlite_pragmas)
+    event.listen(async_engine.sync_engine, "connect", _apply_sqlite_pragmas)
 
 # Run Celery tasks inline, in-process, and surface their exceptions.
 celery_app.conf.task_always_eager = True

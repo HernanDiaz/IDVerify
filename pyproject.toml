@@ -23,14 +23,16 @@ dependencies = [
     "greenlet>=3.0",
     "celery[redis]>=5.3,<6",
     "redis>=5.0,<6",
-    # torch is pre-installed from the CPU wheel index in the Dockerfile / CI
-    # before `pip install .`, so the resolver here only needs a loose pin.
-    "torch>=2.2,<2.6",
     "pillow>=10.2",
     "numpy>=1.26,<2",
 ]
 
 [project.optional-dependencies]
+# PyTorch is only needed to run the real model (worker / real-inference test).
+# The API, the mock predictor, the fast tests and the linters do not import it,
+# so it stays optional to keep CI and dev installs light. The Docker image
+# installs it explicitly from the CPU wheel index.
+inference = ["torch>=2.2,<2.6"]
 dev = [
     "pytest>=8.2,<9",
     "pytest-asyncio>=0.23,<0.25",
